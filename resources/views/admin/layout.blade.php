@@ -52,6 +52,11 @@
                             </li>
                         @endif
 
+
+                        <li class="@if(isset($sidebar)) @if($sidebar == 'cant_items') active @endif @endif">
+                            <a href="{{url('/admin/canteens/items')}}"><i class="fa fa-key" aria-hidden="true"></i>Canteen Items</a>
+                        </li>
+
                         <li class="@if(isset($sidebar)) @if($sidebar == 'change_pass') active @endif @endif">
                             <a href="{{url('/admin/reset-password')}}"><i class="fa fa-key" aria-hidden="true"></i>Reset Password</a>
                         </li>

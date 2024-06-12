@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CloakRoomController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\SittingController;
+use App\Http\Controllers\ApiController;
 
 
 /*
@@ -58,6 +59,13 @@ Route::group(['middleware'=>'auth'],function(){
 		Route::group(['prefix'=>"users"], function(){
 			Route::get('/',[UserController::class,'users']);
 		});
+
+		Route::group(['prefix'=>"canteens"], function(){
+			Route::group(['prefix'=>"items"], function(){
+				Route::get('/',[AdminController::class,'canteenItems']);
+				Route::get('/stock/{canteen_item_id}',[AdminController::class,'canteenItemStocks']);
+			});
+		});
 	});
 });
 
@@ -94,4 +102,51 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/edit-init',[UserController::class,'editUser']);
 		Route::post('/store',[UserController::class,'storeUser']);
 	});
+
+	
+});
+
+Route::group(['prefix'=>"api"], function(){
+	Route::group(['prefix'=>"daily-entries"], function(){
+		Route::post('/init',[DailyEntryContoller::class,'initEntries']);
+		Route::post('/edit-init',[DailyEntryContoller::class,'editEntry']);
+		Route::post('/store',[DailyEntryContoller::class,'store']);
+	});
+	Route::group(['prefix'=>"shift"], function(){
+		Route::post('/init',[ShiftController::class,'init']);
+		Route::post('/prev-init',[ShiftController::class,'prevInit']);
+
+	});
+	Route::group(['prefix'=>"users"], function(){
+		Route::post('/init',[ApiController::class,'initUsers']);
+		Route::post('/edit-init',[ApiController::class,'editUser']);
+		Route::post('/store',[ApiController::class,'storeUser']);
+	});
+
+	Route::group(['prefix'=>"canteens"], function(){
+		Route::post('/init',[ApiController::class,'initCanteens']);
+		Route::post('/edit-init',[ApiController::class,'editCanteen']);
+		Route::post('/store',[ApiController::class,'storeCanteen']);
+	});
+
+	// Route::group(['prefix'=>"items"], function(){
+	// 	Route::post('/init',[ApiController::class,'initItems']);
+	// 	Route::post('/edit-init',[ApiController::class,'editItem']);
+	// 	Route::post('/store',[ApiController::class,'storeItem']);
+	// });
+	Route::group(['prefix'=>"canteen-items"], function(){
+		Route::post('/init',[ApiController::class,'initCanteenItems']);
+		Route::post('/edit',[ApiController::class,'editCanteenItem']);
+		Route::post('/store',[ApiController::class,'storeCanteenItem']);
+		Route::post('/drop-list',[ApiController::class,'initCanteenItemsDrop']);
+
+		Route::group(['prefix'=>"stocks"], function(){
+			Route::post('/init',[ApiController::class,'initCanteenItemStocks']);
+			Route::post('/edit',[ApiController::class,'editCanteenItemStocks']);
+			Route::post('/store',[ApiController::class,'storeCanteenItemStock']);
+		});
+	});
+
+	
+	Route::post('canteen-item-list/{canteen_id}',[ApiController::class,'canteenItemList']);
 });

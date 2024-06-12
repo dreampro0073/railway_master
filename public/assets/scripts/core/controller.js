@@ -625,6 +625,138 @@ app.controller('userCtrl', function($scope , $http, $timeout , DBService) {
     }
 });
 
+app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService) {
+    $scope.loading = false;
+    $scope.formData = {
+        name:'',
+        email:'',
+        mobile:'',
+        password:'',
+        confirm_password:'',
+    };
+    $scope.stockData = {
+        stock:'',
+    };
+    $scope.filter = {};
+    $scope.canteen_item_id = 0;
+    $scope.canteen_item_stock_id = 0;
+    $scope.canteen_items = [];
+ 
+    $scope.init = function () {
+        DBService.postCall($scope.filter, '/api/canteen-items/init').then((data) => {
+            $scope.canteen_items = data.canteen_items;
+        });
+    }
+    $scope.filterClear = function(){
+        $scope.filter = {};
+        $scope.init();
+    }
+
+    $scope.edit = function(canteen_item_id){
+        $scope.canteen_item_id = canteen_item_id;
+        DBService.postCall({canteen_item_id : $scope.canteen_item_id}, '/api/canteen-items/edit').then((data) => {
+            if (data.success) {
+                $scope.formData = data.canteen_item;
+                $("#exampleModalCenter").modal("show");
+            }
+        });
+    }
+
+    $scope.hideModal = () => {
+        $("#exampleModalCenter").modal("hide");
+        $scope.canteen_item_id = 0;
+        $scope.formData = {
+            item_name:'',
+            item_short_name:'',
+            price:'',
+        };
+        $scope.init();
+    }
+
+    $scope.add = () => {
+        $("#exampleModalCenter").modal("show");
+        $scope.canteen_item_id = 0;
+        $scope.formData = {
+            item_name:'',
+            item_short_name:'',
+            price:'',
+        };
+    }
+
+    $scope.onSubmit = function () {
+        console.log($scope.formData);
+        $scope.loading = true;
+        DBService.postCall($scope.formData, '/api/canteen-items/store').then((data) => {
+            if (data.success) {
+                alert(data.message);
+                $("#exampleModalCenter").modal("hide");
+
+                $scope.formData = {
+                    item_name:'',
+                    item_short_name:'',
+                    price:'',
+                };
+                $scope.init();
+            }else{
+                alert(data.message);
+            }
+            $scope.loading = false;
+        });
+    }
+
+    $scope.initStocks = function () {
+        $scope.filter.canteen_item_id = $scope.canteen_item_id;
+        console.log($scope.filter+'hello');
+        DBService.postCall($scope.filter, '/api/canteen-items/stocks/init').then((data) => {
+            $scope.item_stocks = data.item_stocks;
+        });
+    }
+
+    $scope.hideStockModal = () => {
+        $("#stockModal").modal("hide");
+        $scope.stockData = {
+            stock:'',
+        };
+        $scope.initStocks();
+    }
+
+    $scope.addStock = () => {
+        $("#stockModal").modal("show");
+        $scope.stockData = {
+            stock:'',
+        };
+    }
+
+    $scope.editStock = function(canteen_item_stock_id){
+        $scope.canteen_item_stock_id = canteen_item_stock_id;
+        DBService.postCall({canteen_item_stock_id : $scope.canteen_item_stock_id}, '/api/canteen-items/stocks/edit').then((data) => {
+            if (data.success) {
+                $scope.stockData = data.item_stock;
+                $("#stockModal").modal("show");
+            }
+        });
+    }
+
+    $scope.onStockSubmit = function () {
+        $scope.loading = true;
+        $scope.stockData.canteen_item_id = $scope.canteen_item_id;
+        DBService.postCall($scope.stockData, '/api/canteen-items/stocks/store').then((data) => {
+            if (data.success) {
+                alert(data.message);
+                $("#stockModal").modal("hide");
+
+                $scope.stockData = {
+                    stock:'',
+                };
+                $scope.initStocks();
+            }else{
+                alert(data.message);
+            }
+            $scope.loading = false;
+        });
+    }
+});
+
 
 
 

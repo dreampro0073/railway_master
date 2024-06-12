@@ -32,4 +32,20 @@ class AdminController extends Controller {
             "subsidebar" => "sitting",
         ]);
 	}
+
+	public function canteenItems(Request $request){
+		    
+		return view('admin.canteens.canteen_items.index', [
+            "sidebar" => "cant_items",
+            "subsidebar" => "cant_items",
+        ]);
+	}
+	public function canteenItemStocks(Request $request,$canteen_item_id=0){
+		    
+		return view('admin.canteens.canteen_items.stock', [
+            "sidebar" => "cant_items",
+            "subsidebar" => "cant_items",
+            "canteen_item_id" => $canteen_item_id,
+        ]);
+	}
 }
