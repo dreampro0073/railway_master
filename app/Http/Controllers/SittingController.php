@@ -18,11 +18,11 @@ class SittingController extends Controller {
 	            "subsidebar" => "sitting",
 	        ]);
 		} else {
-			die("Not authorized");
+			die("Not authorized!");
 		}
 	}
 	public function initEntries(Request $request){
-		$entries = Sitting::select('sitting_entries.*','users.name as username')->leftJoin('users','users.id','=','sitting_entries.delete_by')->where("client_id", Auth::user()->client_id);
+		$entries = Sitting::select('sitting_entries.*','users.name as username')->leftJoin('users','users.id','=','sitting_entries.delete_by')->where("sitting_entries.client_id", Auth::user()->client_id);
 		if($request->unique_id){
 			$entries = $entries->where('sitting_entries.unique_id', 'LIKE', '%'.$request->unique_id.'%');
 		}		

@@ -15,18 +15,28 @@ use App\Models\CloakRoom;
 
 class CloakRoomController extends Controller {	
 	public function index(){
-		return view('admin.cloakrooms.index', [
-            "sidebar" => "cloakrooms",
-            "subsidebar" => "cloakrooms",
-            "type" => 0,
-        ]);
+		$service_ids = Session::get('service_ids');
+		if(in_array(2, $service_ids)){
+			return view('admin.cloakrooms.index', [
+	            "sidebar" => "cloakrooms",
+	            "subsidebar" => "cloakrooms",
+	            "type" => 0,
+	        ]);
+		}else{
+			die("Not authorized!");
+		}
 	}
 	public function allRooms(){
-		return view('admin.cloakrooms.index', [
-            "sidebar" => "all-cloakrooms",
-            "subsidebar" => "all-cloakrooms",
-            "type" => 1,
-        ]);
+		$service_ids = Session::get('service_ids');
+		if(in_array(2, $service_ids)){
+			return view('admin.cloakrooms.index', [
+	            "sidebar" => "all-cloakrooms",
+	            "subsidebar" => "all-cloakrooms",
+	            "type" => 1,
+	        ]);
+        }else{
+			die("Not authorized!");
+		}
 	}
 	public function initRoom(Request $request,$type =0){
 

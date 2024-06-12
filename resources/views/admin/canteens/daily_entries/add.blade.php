@@ -29,10 +29,67 @@
                             <label>Price</label><br>
                             <label><input type="radio" ng-model="formData.pay_type" value="1">&nbsp;Cash</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <label><input type="radio" ng-model="formData.pay_type" value="2">&nbsp;UPI</label>
-                            
+                        </div>   
+                    </div>
+
+                    <div style="margin-bottom: 10px;padding-bottom: 10px;border-bottom: 1px solid #f6f6f6;">
+                        <div class="row">
+                            <div class="col-md-7 form-group">
+                                <label>Select Item</label>
+                                <selectize placeholder='Select a item' config="selectConfig" options="canteen_items" ng-model="product.canteen_item_id" required></selectize>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>No of Item</label>
+                                <input type="number" ng-model="product.quantity" class="form-control" required />
+                                
+                            </div>
+                            <div class="col-md-2 form-group" style="padding-top: 27px;">
+                                
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="onAddProdcut()">
+                                    Add
+                                </button>
+                                
+                            </div>
                         </div>
-                       
-                      
+                    </div>
+
+                    <div style="margin-bottom: 10px;padding-bottom: 10px;border-bottom: 1px solid #f6f6f6;">
+                       <table class="table table-bordered table-striped">
+                           <tr>
+                               <td>
+                                   Sn
+                               </td>
+                               <td>
+                                   Item Name
+                               </td>
+                               <td>
+                                   Quantity
+                               </td>
+                               <td>
+                                   Pirice
+                               </td>
+                               <td>
+                                   Amount
+                               </td>
+                           </tr>
+                            <tr ng-repeat="item in products track by $index">
+                                <td>
+                                   @{{$index+1}}
+                                </td>
+                                <td>
+                                   Item Name
+                                </td>
+                                <td>
+                                   @{{item.quantity}}
+                                </td>
+                                <td>
+                                   Pirice
+                                </td>
+                                <td>
+                                   Amount
+                                </td>
+                            </tr>
+                       </table>
                     </div>
                    
                    

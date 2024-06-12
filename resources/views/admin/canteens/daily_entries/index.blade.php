@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
 @section('main')
-    <div class="main" ng-controller="dailyEntryCtrl" ng-init="init();"> 
+    <div class="main" ng-controller="dailyEntryCtrl" ng-init="init();initCanteenItems();"> 
         @include("admin.canteens.daily_entries.add")
         <div class="card shadow mb-4 p-4">      
             <div class="filters" style="margin:24px 0;">
