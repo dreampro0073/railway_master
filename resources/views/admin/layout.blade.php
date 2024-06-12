@@ -25,6 +25,9 @@
                         </span>
                     </div>
                     <ul class="nav nav-pills nav-stacked">
+                        <li class="@if(isset($sidebar)) @if($sidebar == 'dashboard') active @endif @endif">
+                            <a href="{{url('/admin/dashboard')}}"><i class="fa fa-home"></i>Dashboard</a>
+                        </li>
                         @if(in_array(1, $service_ids) || Auth::user()->priv == 1)
                             <li class="@if(isset($sidebar)) @if($sidebar == 'sitting') active @endif @endif">
                                 <a href="{{url('/admin/sitting')}}"><i class="fa fa-sitemap"></i>Sitting</a>
@@ -33,16 +36,24 @@
 
                         @if(in_array(2, $service_ids) || Auth::user()->priv == 1)
                             <li class="@if(isset($sidebar)) @if($sidebar == 'cloakrooms') active @endif @endif">
-                                <a href="{{url('/admin/cloak-rooms')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Cloakrooms</a>
+                                <a href="{{url('/admin/cloak-rooms')}}"><i class="fa fa-briefcase" aria-hidden="true"></i>Cloakrooms</a>
                             </li>
                             @if(Auth::user()->priv == 1 || Auth::user()->priv == 2)
                             <li class="@if(isset($sidebar)) @if($sidebar == 'all-cloakrooms') active @endif @endif">
-                                <a href="{{url('/admin/cloak-rooms/all')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Cloakrooms All</a>
+                                <a href="{{url('/admin/cloak-rooms/all')}}"><i class="fa fa-briefcase" aria-hidden="true"></i>Cloakrooms All</a>
                             </li>
                             @endif
                         @endif
                         
-                        
+                        @if(in_array(3, $service_ids) || Auth::user()->priv == 1)
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'cant_items') active @endif @endif">
+                                <a href="{{url('/admin/canteens/items')}}"><i class="fa fa-cutlery" aria-hidden="true"></i>Canteen Items</a>
+                            </li>
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'cant_items') active @endif @endif">
+                                <a href="{{url('/admin/canteens/items')}}"><i class="fa fa-cutlery" aria-hidden="true"></i>Daily Entries</a>
+                            </li>
+                        @endif
+
                         <li class="@if(isset($sidebar)) @if($sidebar == 'shift') active @endif @endif">
                             <a href="{{url('/admin/shift/current')}}"><i class="fa fa-industry" aria-hidden="true"></i>Shift Status</a>
                         </li>
@@ -51,14 +62,6 @@
                                 <a href="{{url('/admin/users')}}"><i class="fa fa-users" aria-hidden="true"></i>Users</a>
                             </li>
                         @endif
-
-
-                        <li class="@if(isset($sidebar)) @if($sidebar == 'cant_items') active @endif @endif">
-                            <a href="{{url('/admin/canteens/items')}}"><i class="fa fa-key" aria-hidden="true"></i>Canteen Items</a>
-                        </li>
-                        <li class="@if(isset($sidebar)) @if($sidebar == 'cant_items') active @endif @endif">
-                            <a href="{{url('/admin/canteens/items')}}"><i class="fa fa-key" aria-hidden="true"></i>Daily Entries</a>
-                        </li>
 
                         <li class="@if(isset($sidebar)) @if($sidebar == 'change_pass') active @endif @endif">
                             <a href="{{url('/admin/reset-password')}}"><i class="fa fa-key" aria-hidden="true"></i>Reset Password</a>

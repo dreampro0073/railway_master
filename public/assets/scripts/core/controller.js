@@ -383,16 +383,6 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.pay_types = data.pay_types;
                 $scope.hours = data.hours;
                 $scope.entries = data.entries;
-
-                // $scope.total_upi_collection = data.total_shift_upi;
-                // $scope.total_cash_collection = data.total_shift_cash;
-                // $scope.total_collection = data.total_collection;
-
-                // $scope.last_hour_upi_total = data.last_hour_upi_total;
-                // $scope.last_hour_cash_total = data.last_hour_cash_total;
-                // $scope.last_hour_total = data.last_hour_total;
-                
-                // $scope.check_shift = data.check_shift;
                 $scope.rate_list = data.rate_list;
             }
         });
@@ -500,6 +490,9 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
 });
 app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading= false;
+    $scope.sitting_data = [];
+    $scope.cloak_data = [];
+    $scope.canteen_data = [];
     $scope.filter = {
         input_date:'',
         user_id:'',
@@ -526,7 +519,9 @@ app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
 
                 $scope.users = data.users;                 
                 
+                $scope.sitting_data = data.sitting_data; 
                 $scope.cloak_data = data.cloak_data; 
+                $scope.canteen_data = data.canteen_data; 
                
                 $scope.total_shift_upi = data.total_shift_upi ; 
                 $scope.total_shift_cash = data.total_shift_cash ; 

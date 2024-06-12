@@ -60,7 +60,7 @@ class UserController extends Controller {
                     Session::put('service_ids',$service_ids);
 
                 }
-                return Redirect::to('/admin/cloak-rooms');
+                return Redirect::to('/admin/dashboard');
 
             } else {
                 return Redirect::back()->withInput()->with('failure','Invalid username or password');

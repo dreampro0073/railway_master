@@ -1,4 +1,7 @@
 @extends('admin.layout')
+<?php  
+    $service_ids = Session::get('service_ids');
+?>
 
 @section('main')
     <div class="main" ng-controller="shiftCtrl" ng-init="init();"> 
@@ -45,72 +48,61 @@
                 <thead>
                     <tr>
                         <th rowspan="2"></th>
-                        <!-- <th colspan="3">Last Hour</th> -->
+                        <th colspan="3">Last Hour</th>
                         <th colspan="3">Shift Collection</th>
                     </tr>
                     <tr>
-                        <!-- <th>UPI</th>
+                        <th>UPI</th>
                         <th>Cash</th>
-                        <th>Total</th> -->
+                        <th>Total</th>
                         <th>UPI</th>
                         <th>Cash</th>
                         <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @if(in_array(1, $service_ids))
                     <tr>
-                       <td>
-                           Cloackroom
-                       </td> 
-                        <!-- <td>
-                            @{{cloak_data.last_hour_upi_total}}
-                        </td>
-                        <td>
-                            @{{cloak_data.last_hour_cash_total}}
-
-                        </td>
-                        <td>
-                            @{{cloak_data.last_hour_total}}
-                        </td> -->
-
-                        <td>
-                            @{{cloak_data.total_shift_upi}}
-                        </td>
-                        <td>
-                            @{{cloak_data.total_shift_cash}}
-
-                        </td>
-                        <td>
-                            @{{cloak_data.total_collection}}
-
-                        </td>
+                       <td>Sitting</td> 
+                        <td>@{{sitting_data.last_hour_upi_total}}</td>
+                        <td>@{{sitting_data.last_hour_cash_total}}</td>
+                        <td>@{{sitting_data.last_hour_total}}</td>
+                        <td>@{{sitting_data.total_shift_upi}}</td>
+                        <td>@{{sitting_data.total_shift_cash}}</td>
+                        <td>@{{sitting_data.total_collection}}</td>
                     </tr>
+                    @endif                    
+                    @if(in_array(2, $service_ids))
+                    <tr>
+                        <td>Cloakroom</td> 
+                        <td>@{{cloak_data.last_hour_upi_total}}</td>
+                        <td>@{{cloak_data.last_hour_cash_total}}</td>
+                        <td>@{{cloak_data.last_hour_total}}</td>
+                        <td>@{{cloak_data.total_shift_upi}}</td>
+                        <td>@{{cloak_data.total_shift_cash}}</td>
+                        <td>@{{cloak_data.total_collection}}</td>
+                    </tr>
+                    @endif                    
+                    @if(in_array(3, $service_ids))
+                    <tr>
+                        <td>Canteen</td> 
+                        <td>@{{canteen_data.last_hour_upi_total}}</td>
+                        <td>@{{canteen_data.last_hour_cash_total}}</td>
+                        <td>@{{canteen_data.last_hour_total}}</td>
+                        <td>@{{canteen_data.total_shift_upi}}</td>
+                        <td>@{{canteen_data.total_shift_cash}}</td>
+                        <td>@{{canteen_data.total_collection}}</td>
+                    </tr>
+                    @endif
                     
                     <tr>
-                       <td>
-                           <b>Grand Total</b>
-                       </td> 
-                        <!-- <td>
-                            <b>@{{last_hour_upi_total}}</b>
-                        </td>
-                        <td>
-                            <b>@{{last_hour_cash_total}}</b>
-
-                        </td>
-                        <td>
-                            <b>@{{last_hour_total}}</b>
-                        </td> -->
-                        <td>
-                            <b>@{{total_shift_upi}}</b>
-                        </td>
-                        <td>
-                            <b>@{{total_shift_cash}}</b>
-
-                        </td>
-                        <td>
-                            <b>@{{total_collection}}</b>
-
-                        </td>
+                        <td><b>Grand Total</b></td> 
+                        <td><b>@{{last_hour_upi_total}}</b></td>
+                        <td><b>@{{last_hour_cash_total}}</b></td>
+                        <td><b>@{{last_hour_total}}</b></td>
+                        <td><b>@{{total_shift_upi}}</b></td>
+                        <td><b>@{{total_shift_cash}}</b></td>
+                        <td><b>@{{total_collection}}</b></td>
                     </tr>
                 
                 </tbody>
