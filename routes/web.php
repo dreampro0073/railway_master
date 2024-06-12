@@ -103,15 +103,33 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/store',[UserController::class,'storeUser']);
 	});
 
-	
-});
-
-Route::group(['prefix'=>"api"], function(){
 	Route::group(['prefix'=>"daily-entries"], function(){
 		Route::post('/init',[DailyEntryContoller::class,'initEntries']);
 		Route::post('/edit-init',[DailyEntryContoller::class,'editEntry']);
 		Route::post('/store',[DailyEntryContoller::class,'store']);
 	});
+	
+	Route::group(['prefix'=>"canteen-items"], function(){
+		Route::post('/init',[ApiController::class,'initCanteenItems']);
+		Route::post('/edit',[ApiController::class,'editCanteenItem']);
+		Route::post('/store',[ApiController::class,'storeCanteenItem']);
+		Route::post('/drop-list',[ApiController::class,'initCanteenItemsDrop']);
+
+		Route::group(['prefix'=>"stocks"], function(){
+			Route::post('/init',[ApiController::class,'initCanteenItemStocks']);
+			Route::post('/edit',[ApiController::class,'editCanteenItemStocks']);
+			Route::post('/store',[ApiController::class,'storeCanteenItemStock']);
+		});
+	});
+
+	
+	Route::post('canteen-item-list/{canteen_id}',[ApiController::class,'canteenItemList']);
+
+	
+});
+
+Route::group(['prefix'=>"api"], function(){
+	
 	
 
 	// Route::group(['prefix'=>"canteens"], function(){
@@ -130,20 +148,6 @@ Route::group(['prefix'=>"api"], function(){
 	// 	Route::post('/edit-init',[ApiController::class,'editItem']);
 	// 	Route::post('/store',[ApiController::class,'storeItem']);
 	// });
-	
-	Route::group(['prefix'=>"canteen-items"], function(){
-		Route::post('/init',[ApiController::class,'initCanteenItems']);
-		Route::post('/edit',[ApiController::class,'editCanteenItem']);
-		Route::post('/store',[ApiController::class,'storeCanteenItem']);
-		Route::post('/drop-list',[ApiController::class,'initCanteenItemsDrop']);
-
-		Route::group(['prefix'=>"stocks"], function(){
-			Route::post('/init',[ApiController::class,'initCanteenItemStocks']);
-			Route::post('/edit',[ApiController::class,'editCanteenItemStocks']);
-			Route::post('/store',[ApiController::class,'storeCanteenItemStock']);
-		});
-	});
 
 	
-	Route::post('canteen-item-list/{canteen_id}',[ApiController::class,'canteenItemList']);
 });
