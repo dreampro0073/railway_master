@@ -65,7 +65,15 @@ Route::group(['middleware'=>'auth'],function(){
 				Route::get('/',[AdminController::class,'canteenItems']);
 				Route::get('/stock/{canteen_item_id}',[AdminController::class,'canteenItemStocks']);
 			});
+
+
 		});
+
+		Route::group(['prefix'=>"daily-entries"], function(){
+			Route::get('/',[AdminController::class,'dailyEntries']);
+		});
+
+		
 	});
 });
 
@@ -104,11 +112,11 @@ Route::group(['prefix'=>"api"], function(){
 	});
 
 	Route::group(['prefix'=>"daily-entries"], function(){
-		Route::post('/init',[DailyEntryContoller::class,'initEntries']);
-		Route::post('/edit-init',[DailyEntryContoller::class,'editEntry']);
-		Route::post('/store',[DailyEntryContoller::class,'store']);
+		Route::post('/init',[ApiController::class,'initEntries']);
+		Route::post('/edit-init',[ApiController::class,'editEntry']);
+		Route::post('/store',[ApiController::class,'store']);
 	});
-	
+
 	Route::group(['prefix'=>"canteen-items"], function(){
 		Route::post('/init',[ApiController::class,'initCanteenItems']);
 		Route::post('/edit',[ApiController::class,'editCanteenItem']);

@@ -510,11 +510,8 @@ class ApiController extends Controller {
     }
 
     public function initEntries(Request $request){
-        // $user = User::AuthenticateUser($request->header("apiToken"));
-
         $user = Auth::user();
         $client_id = $user->client_id;
-
         $page_no = $request->page_no;
         $date = $request->date;
         $max_per_page = 10;
@@ -523,11 +520,8 @@ class ApiController extends Controller {
 
 
         if($request->search_field){
-
             $search = $request->search_field;
-
             $entries = $entries->where(function($query) use ($search) {
-
                 $query->where('daily_entries.name', 'LIKE' ,"%".$search."%")->orWhere('daily_entries.mobile', 'LIKE' ,"%".$search."%");
             });
         }
@@ -539,10 +533,13 @@ class ApiController extends Controller {
         }
 
         $data['success'] = true;
-        $data['entries'] = $entries;
+        $data['daily_entries'] = $entries;
+
+        $canteen_items = DailyEntry::canteenItemList($client_id);
+        $data['canteen_items'] = $canteen_items;
 
         return Response::json($data, 200, []);
-    }   
+    }
     
     public function editEntry(Request $request){
         $user = Auth::user();

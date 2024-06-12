@@ -48,4 +48,11 @@ class AdminController extends Controller {
             "canteen_item_id" => $canteen_item_id,
         ]);
 	}
+
+	public function dailyEntries(Request $request){
+		return view('admin.canteens.daily_entries.index', [
+            "sidebar" => "daily_entries",
+            "subsidebar" => "daily_entries",
+        ]);
+	}
 }

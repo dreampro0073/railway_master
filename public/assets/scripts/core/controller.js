@@ -628,11 +628,9 @@ app.controller('userCtrl', function($scope , $http, $timeout , DBService) {
 app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading = false;
     $scope.formData = {
-        name:'',
-        email:'',
-        mobile:'',
-        password:'',
-        confirm_password:'',
+        item_name:'',
+        item_short_name:'',
+        price:'',
     };
     $scope.stockData = {
         stock:'',
@@ -755,6 +753,92 @@ app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService
             $scope.loading = false;
         });
     }
+});
+
+app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) {
+    $scope.loading = false;
+    $scope.formData = {
+        name:'',
+        mobile:'',
+        items:[],
+    };
+    $scope.filter = {};
+    $scope.entry_id = 0;
+    $scope.daily_entries = [];
+
+    $scope.selectConfig = {
+        valueField: 'id',
+        labelField: 'item_name',
+        maxItems:1,
+        searchField: 'item_name',
+        create: false,
+        onInitialize: function(selectize){
+            
+        }
+    }
+ 
+    $scope.init = function () {
+        DBService.postCall($scope.filter, '/api/daily-entries/init').then((data) => {
+            $scope.daily_entries = data.daily_entries;
+            $scope.canteen_items = data.canteen_items;
+        });
+    }
+    $scope.filterClear = function(){
+        $scope.filter = {};
+        $scope.init();
+    }
+
+    $scope.edit = function(entry_id){
+        $scope.entry_id = entry_id;
+        DBService.postCall({entry_id : $scope.entry_id}, '/api/daily-entries/edit-init').then((data) => {
+            if (data.success) {
+                $scope.formData = data.s_entry;
+                $("#exampleModalCenter").modal("show");
+            }
+        });
+    }
+
+    $scope.hideModal = () => {
+        $("#exampleModalCenter").modal("hide");
+        $scope.entry_id = 0;
+        $scope.formData = {
+            name:'',
+            mobile:'',
+            items:[],
+        };
+        $scope.init();
+    }
+
+    $scope.add = () => {
+        $("#exampleModalCenter").modal("show");
+        $scope.entry_id = 0;
+        $scope.formData = {
+            name:'',
+            mobile:'',
+            items:[],
+        };
+    }
+
+    $scope.onSubmit = function () {
+        $scope.loading = true;
+        DBService.postCall($scope.formData, '/api/daily-entries/store').then((data) => {
+            if (data.success) {
+                alert(data.message);
+                $("#exampleModalCenter").modal("hide");
+
+                $scope.formData = {
+                    name:'',
+                    mobile:'',
+                    items:[],
+                };
+                $scope.init();
+            }else{
+                alert(data.message);
+            }
+            $scope.loading = false;
+        });
+    }
+
 });
 
 

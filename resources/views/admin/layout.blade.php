@@ -11,6 +11,8 @@
     <link rel="stylesheet" type="text/css" href="{{url('bootstrap3/css/bootstrap.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{url('assets/font-awesome/css/font-awesome.min.css')}}">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css">
+
+    <link href="{{url('assets/css/selectize.css')}}" rel="stylesheet" type="text/css"/>
     
     <link rel="stylesheet" type="text/css" href="{{url('assets/css/custom.css?v='.$version)}}">
 </head>
@@ -56,8 +58,8 @@
                         <li class="@if(isset($sidebar)) @if($sidebar == 'cant_items') active @endif @endif">
                             <a href="{{url('/admin/canteens/items')}}"><i class="fa fa-key" aria-hidden="true"></i>Canteen Items</a>
                         </li>
-                        <li class="@if(isset($sidebar)) @if($sidebar == 'cant_items') active @endif @endif">
-                            <a href="{{url('/admin/canteens/items')}}"><i class="fa fa-key" aria-hidden="true"></i>Daily Entries</a>
+                        <li class="@if(isset($sidebar)) @if($sidebar == 'daily_entries') active @endif @endif">
+                            <a href="{{url('/admin/daily-entries')}}"><i class="fa fa-key" aria-hidden="true"></i>Daily Entries</a>
                         </li>
 
                         <li class="@if(isset($sidebar)) @if($sidebar == 'change_pass') active @endif @endif">
@@ -99,7 +101,10 @@
             // format: 'dd/mm/YYYY',
         });
     </script>
+    <script type="text/javascript" src="{{url('assets/scripts/selectize.min.js')}}" ></script>
     <script type="text/javascript" src="{{url('assets/scripts/angular.min.js')}}" ></script>
+    <script type="text/javascript" src="{{url('assets/scripts/angular-selectize.js')}}" ></script>
+    
     <script type="text/javascript" src="{{url('assets/scripts/jcs-auto-validate.js')}}" ></script>
     <!-- <script type="text/javascript" src="{{url('assets/js/custom.js')}}"></script> -->
     <script type="text/javascript" src="{{url('assets/scripts/core/app.js')}}" ></script>
