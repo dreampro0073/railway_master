@@ -112,23 +112,25 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/edit-init',[DailyEntryContoller::class,'editEntry']);
 		Route::post('/store',[DailyEntryContoller::class,'store']);
 	});
+	
+
+	// Route::group(['prefix'=>"canteens"], function(){
+	// 	Route::post('/init',[ApiController::class,'initCanteens']);
+	// 	Route::post('/edit-init',[ApiController::class,'editCanteen']);
+	// 	Route::post('/store',[ApiController::class,'storeCanteen']);
+	// });
+
 	// Route::group(['prefix'=>"users"], function(){
 	// 	Route::post('/init',[ApiController::class,'initUsers']);
 	// 	Route::post('/edit-init',[ApiController::class,'editUser']);
 	// 	Route::post('/store',[ApiController::class,'storeUser']);
 	// });
-
-	Route::group(['prefix'=>"canteens"], function(){
-		Route::post('/init',[ApiController::class,'initCanteens']);
-		Route::post('/edit-init',[ApiController::class,'editCanteen']);
-		Route::post('/store',[ApiController::class,'storeCanteen']);
-	});
-
 	// Route::group(['prefix'=>"items"], function(){
 	// 	Route::post('/init',[ApiController::class,'initItems']);
 	// 	Route::post('/edit-init',[ApiController::class,'editItem']);
 	// 	Route::post('/store',[ApiController::class,'storeItem']);
 	// });
+	
 	Route::group(['prefix'=>"canteen-items"], function(){
 		Route::post('/init',[ApiController::class,'initCanteenItems']);
 		Route::post('/edit',[ApiController::class,'editCanteenItem']);
