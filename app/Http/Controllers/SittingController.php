@@ -11,14 +11,18 @@ use App\Models\Entry, App\Models\User, App\Models\Sitting;
 
 class SittingController extends Controller {
 	public function sitting(Request $request){
-		    
-		return view('admin.sitting.index_new', [
-            "sidebar" => "sitting",
-            "subsidebar" => "sitting",
-        ]);
+		$service_ids = Session::get('service_ids');
+		if(in_array(1, $service_ids)){
+			return view('admin.sitting.index_new', [
+	            "sidebar" => "sitting",
+	            "subsidebar" => "sitting",
+	        ]);
+		} else {
+			die("Not authorized");
+		}
 	}
 	public function initEntries(Request $request){
-		$entries = Sitting::select('sitting_entries.*','users.name as username')->leftJoin('users','users.id','=','sitting_entries.delete_by');
+		$entries = Sitting::select('sitting_entries.*','users.name as username')->leftJoin('users','users.id','=','sitting_entries.delete_by')->where("client_id", Auth::user()->client_id);
 		if($request->unique_id){
 			$entries = $entries->where('sitting_entries.unique_id', 'LIKE', '%'.$request->unique_id.'%');
 		}		
@@ -44,6 +48,7 @@ class SittingController extends Controller {
 		$entries = $entries->take(200);
 
 		$entries = $entries->get();
+		$rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
 
 		$pay_types = Entry::payTypes();
 		$hours = Entry::hours();
@@ -51,6 +56,7 @@ class SittingController extends Controller {
 		$data['entries'] = $entries;
 		$data['pay_types'] = $pay_types;
 		$data['hours'] = $hours;
+		$data['rate_list'] = $rate_list;
 		return Response::json($data, 200, []);
 	}	
 	
@@ -150,6 +156,7 @@ class SittingController extends Controller {
 			$entry->pay_type = $request->pay_type;
 			$entry->remarks = $request->remarks;
 			$entry->shift = $check_shift;
+			$entry->client_id = Auth::user()->client_id;
 			$entry->save();
 			$no_of_min = $entry->hours_occ*60;
 			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
@@ -191,17 +198,18 @@ class SittingController extends Controller {
         $print_data->adult_amount = 0;
         $print_data->children_amount = 0;
         $hours = $print_data->hours_occ;
+        $rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
 
         if($hours > 0) {
-            $print_data->adult_amount = $print_data->no_of_adults * 30 * $hours;
-            $print_data->children_amount = $print_data->no_of_children * 20 * $hours;
+            $print_data->adult_amount = $print_data->no_of_adults * $hours * $rate_list->adult_rate;
+            $print_data->children_amount = $print_data->no_of_children * $rate_list->child_rate * $hours;
         }
               
 		return view('admin.sitting.print_sitting',compact('print_data'));
 	}
 
     public function delete($id){
-    	DB::table('sitting_entries')->where('id',$id)->update([
+    	DB::table('sitting_entries')->where('client_id', Auth::user()->client_id)->where('id',$id)->update([
     		'deleted' => 1,
     		'delete_by' => Auth::id(),
     		'delete_time' => date("Y-m-d H:i:s"),

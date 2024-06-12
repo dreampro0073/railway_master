@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Redirect, Validator, Hash, Response, Session, DB;
 use App\Models\User;
 use App\Models\Entry;
-use App\Models\CloakRoom;
+use App\Models\CloakRoom, App\Models\Sitting;
 
 
 class ShiftController extends Controller {
@@ -32,16 +32,19 @@ class ShiftController extends Controller {
 
 		$current_shift = Entry::checkShift();
 		$cloak_data = CloakRoom::totalShiftData($input_date,$user_id);
+		$sitting_data = Sitting::totalShiftData($input_date,$user_id);
 	
 		$data['cloak_data'] = $cloak_data;
 	
-		$data['total_shift_upi'] = $cloak_data['total_shift_upi'];
-        $data['total_shift_cash'] = $cloak_data['total_shift_cash'];
-        $data['total_collection'] = $cloak_data['total_collection'];
+		$data['total_shift_upi'] = $cloak_data['total_shift_upi'] + $sitting_data['total_shift_upi'];
+        $data['total_shift_cash'] = $cloak_data['total_shift_cash'] + $sitting_data['total_shift_cash'];
+        $data['total_collection'] = $cloak_data['total_collection'] + $sitting_data['total_collection'];
 
-        $data['last_hour_upi_total'] = $cloak_data['last_hour_upi_total'];
-        $data['last_hour_cash_total'] = $cloak_data['last_hour_cash_total'];
-        $data['last_hour_total'] = $cloak_data['last_hour_total'];
+        $data['last_hour_upi_total'] = $cloak_data['last_hour_upi_total'] + $sitting_data['last_hour_upi_total'];
+        $data['last_hour_cash_total'] = $cloak_data['last_hour_cash_total'] + $sitting_data['last_hour_cash_total'];
+        $data['last_hour_total'] = $cloak_data['last_hour_total'] + $sitting_data['last_hour_total'];
+
+        $data['shift_date'] = $sitting_data['shift_date'];
         
         $data['check_shift'] = $current_shift;
 

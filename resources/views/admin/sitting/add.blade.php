@@ -82,8 +82,8 @@
                             <input type="number" ng-model="formData.paid_amount" class="form-control" readonly />
                         </div>                        
                         <div ng-if="entry_id !=0" class="col-md-3 form-group">
-                            <label>Balance Amount</label>
-                            <input type="number" ng-model="formData.balance_amount" class="form-control" readonly />
+                            <label style="color: red;">Balance Amount</label>
+                            <input type="number" ng-model="formData.balance_amount" class="form-control" style="color: red;" readonly />
                         </div>
                         <div class="col-md-4 form-group" ng-if="formData.id > 0">
                             <label>Check Out</label>

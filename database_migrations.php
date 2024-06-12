@@ -10,4 +10,10 @@ ALTER TABLE `cloakroom_penalities` ADD `client_id` INT NOT NULL DEFAULT '0' AFTE
 CREATE TABLE `cloakroom_rate_list` ( `id` INT NOT NULL AUTO_INCREMENT , `client_id` INT NULL DEFAULT NULL , `first_rate` INT NULL DEFAULT NULL , `second_rate` INT NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 ALTER TABLE `cloakroom_entries` ADD `total_day` INT NOT NULL DEFAULT '0' AFTER `no_of_day`;
 
+CREATE TABLE `cloakroom_master`.`client_services` ( `id` INT NOT NULL AUTO_INCREMENT , `services_id` INT NOT NULL DEFAULT '0' COMMENT '1=sitting,2=cloakroom, 3=canteen' , `status` TINYINT NOT NULL DEFAULT '0' COMMENT '0=no,1=yes' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+ALTER TABLE `client_services` ADD `client_id` INT NOT NULL AFTER `services_id`;
+CREATE TABLE `cloakroom_master`.`sitting_rate_list` ( `id` INT NOT NULL AUTO_INCREMENT , `client_id` INT NOT NULL , `adult_rate` INT NOT NULL COMMENT 'perHour' , `child_rate` INT NOT NULL COMMENT 'perHour' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+ALTER TABLE `sitting_entries` ADD `client_id` INT NULL DEFAULT NULL AFTER `added_by`;
+
+
 ?>

@@ -36,9 +36,6 @@ class UserController extends Controller {
     public function print(){
         return view('admin.print_page');
     }
-
-   
-
   
     public function testx(){
         $start_date = "02-01-2024";
@@ -54,10 +51,13 @@ class UserController extends Controller {
         $validator = Validator::make($cre,$rules);
         
         if($validator->passes()){
-            if(Auth::attempt($cre)){   
-                $client = DB::table("clients")->where("id", Auth::user()->client_id)->first();
+            if(Auth::attempt($cre)){
+                $client_id = Auth::user()->client_id;   
+                $client = DB::table("clients")->where("id",$client_id)->first();
                 if($client){
+                    $service_ids = DB::table('client_services')->where("client_id", $client_id)->pluck('services_id')->toArray();
                     Session::put('client_name',$client->name);
+                    Session::put('service_ids',$service_ids);
 
                 }
                 return Redirect::to('/admin/cloak-rooms');

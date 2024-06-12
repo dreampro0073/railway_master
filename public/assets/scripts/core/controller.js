@@ -373,6 +373,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     $scope.check_shift = "";
     $scope.pay_types = [];
     $scope.hours = [];
+    $scope.rate_list = {};
     
     $scope.init = function () {
         
@@ -383,15 +384,16 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.hours = data.hours;
                 $scope.entries = data.entries;
 
-                $scope.total_upi_collection = data.total_shift_upi;
-                $scope.total_cash_collection = data.total_shift_cash;
-                $scope.total_collection = data.total_collection;
+                // $scope.total_upi_collection = data.total_shift_upi;
+                // $scope.total_cash_collection = data.total_shift_cash;
+                // $scope.total_collection = data.total_collection;
 
-                $scope.last_hour_upi_total = data.last_hour_upi_total;
-                $scope.last_hour_cash_total = data.last_hour_cash_total;
-                $scope.last_hour_total = data.last_hour_total;
+                // $scope.last_hour_upi_total = data.last_hour_upi_total;
+                // $scope.last_hour_cash_total = data.last_hour_cash_total;
+                // $scope.last_hour_total = data.last_hour_total;
                 
-                $scope.check_shift = data.check_shift;
+                // $scope.check_shift = data.check_shift;
+                $scope.rate_list = data.rate_list;
             }
         });
     }
@@ -472,13 +474,13 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             var hours = $scope.formData.hours_occ - 1; 
 
             if($scope.formData.no_of_adults > 0){
-                $scope.formData.total_amount += 30 * $scope.formData.no_of_adults;
-                $scope.formData.total_amount += hours * 30 * $scope.formData.no_of_adults;
+                $scope.formData.total_amount += $scope.rate_list.adult_rate * $scope.formData.no_of_adults;
+                $scope.formData.total_amount += hours * $scope.rate_list.adult_rate * $scope.formData.no_of_adults;
             }
 
             if($scope.formData.no_of_children > 0){
-                $scope.formData.total_amount += 20 * $scope.formData.no_of_children;
-                $scope.formData.total_amount +=  hours * 20 * $scope.formData.no_of_children;
+                $scope.formData.total_amount += $scope.rate_list.child_rate * $scope.formData.no_of_children;
+                $scope.formData.total_amount +=  hours * $scope.rate_list.child_rate * $scope.formData.no_of_children;
             }
 
         }

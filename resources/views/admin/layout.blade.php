@@ -1,4 +1,6 @@
-<?php $version = env('JS_VERSION'); ?>
+<?php $version = env('JS_VERSION'); 
+    $service_ids = Session::get('service_ids');
+?>
 
 <!DOCTYPE html>
 <html>
@@ -23,18 +25,21 @@
                         </span>
                     </div>
                     <ul class="nav nav-pills nav-stacked">
+                        @if(in_array(1, $service_ids) || Auth::user()->priv == 1)
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'sitting') active @endif @endif">
+                                <a href="{{url('/admin/sitting')}}"><i class="fa fa-sitemap"></i>Sitting</a>
+                            </li>
+                        @endif
 
-                        <li class="@if(isset($sidebar)) @if($sidebar == 'sitting') active @endif @endif">
-                            <a href="{{url('/admin/sitting')}}"><i class="fa fa-sitemap"></i>Sitting</a>
-                        </li>
-                        
-                        <li class="@if(isset($sidebar)) @if($sidebar == 'cloakrooms') active @endif @endif">
-                            <a href="{{url('/admin/cloak-rooms')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Cloakrooms</a>
-                        </li>
-                        @if(Auth::user()->priv == 1 || Auth::user()->priv == 2)
-                        <li class="@if(isset($sidebar)) @if($sidebar == 'all-cloakrooms') active @endif @endif">
-                            <a href="{{url('/admin/cloak-rooms/all')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Cloakrooms All</a>
-                        </li>
+                        @if(in_array(2, $service_ids) || Auth::user()->priv == 1)
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'cloakrooms') active @endif @endif">
+                                <a href="{{url('/admin/cloak-rooms')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Cloakrooms</a>
+                            </li>
+                            @if(Auth::user()->priv == 1 || Auth::user()->priv == 2)
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'all-cloakrooms') active @endif @endif">
+                                <a href="{{url('/admin/cloak-rooms/all')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Cloakrooms All</a>
+                            </li>
+                            @endif
                         @endif
                         
                         
