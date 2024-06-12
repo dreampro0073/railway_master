@@ -112,16 +112,11 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/edit-init',[DailyEntryContoller::class,'editEntry']);
 		Route::post('/store',[DailyEntryContoller::class,'store']);
 	});
-	Route::group(['prefix'=>"shift"], function(){
-		Route::post('/init',[ShiftController::class,'init']);
-		Route::post('/prev-init',[ShiftController::class,'prevInit']);
-
-	});
-	Route::group(['prefix'=>"users"], function(){
-		Route::post('/init',[ApiController::class,'initUsers']);
-		Route::post('/edit-init',[ApiController::class,'editUser']);
-		Route::post('/store',[ApiController::class,'storeUser']);
-	});
+	// Route::group(['prefix'=>"users"], function(){
+	// 	Route::post('/init',[ApiController::class,'initUsers']);
+	// 	Route::post('/edit-init',[ApiController::class,'editUser']);
+	// 	Route::post('/store',[ApiController::class,'storeUser']);
+	// });
 
 	Route::group(['prefix'=>"canteens"], function(){
 		Route::post('/init',[ApiController::class,'initCanteens']);
