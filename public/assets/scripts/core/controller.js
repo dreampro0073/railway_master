@@ -762,18 +762,16 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     };
 
     $scope.products = [];
-    $scope.product = {
-        
-    };
 
-    $scope.total_amount= 0;
+
+    // $scope.total_amount= 0;
     $scope.filter = {};
     $scope.entry_id = 0;
     $scope.daily_entries = [];
     $scope.canteen_items = [];
 
     $scope.selectConfig = {
-        valueField: 'id',
+        valueField: 'canteen_item_id',
         labelField: 'item_name',
         maxItems:1,
         searchField: 'item_name',
@@ -827,6 +825,8 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
 
     $scope.onSubmit = function () {
         $scope.loading = true;
+        $scope.formData.products = $scope.products;
+        console.log($scope.formData);
         DBService.postCall($scope.formData, '/api/daily-entries/store').then((data) => {
             if (data.success) {
                 alert(data.message);
@@ -848,44 +848,56 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     $scope.onAddProdcut = () => {
         // console.log($scope.product);
 
-        var total_amount = $scope.total_amount;
+        // var total_amount = $scope.total_amount;
         let products = $scope.products;
-        var index = products.findIndex((obj) => obj.canteen_item_id === $scope.product.canteen_item_id);
 
-        // console.log($scope.product.canteen_item_id);return;
-
-        // var item = $scope.canteen_items.find((obj) => obj.id === $scope.product.canteen_item_id);
-
-        // var item = $scope.canteen_items.filter((obj) => obj.id === $scope.product.canteen_item_id).map((obj) => obj.item_name);
-
-
-        // console.log(item+'hello');return;
-
+        var my_item = null;
         for (let i = 0; i < $scope.canteen_items.length; i++) {
-            if ($scope.canteen_items.id == $scope.product.canteen_item_id) {
-                console.log($scope.canteen_items[i]);
+            let c_item = $scope.canteen_items[i];
+            if (c_item.canteen_item_id == $scope.product.canteen_item_id) {
+                my_item = c_item;
             }
         }
-        return;
+        let index = -1;
 
+        for (var i = 0; i < products.length; i++) {
+            let c_product = products[i];
+            if(c_product.canteen_item_id == $scope.product.canteen_item_id){
+                index = i;
+            }
+        }
 
         if (index == -1) {
-            total_amount += my_item.paid_amount;
+            my_item.paid_amount = my_item.price*$scope.product.quantity;
+            my_item.quantity = $scope.product.quantity;
             products.push(my_item);
-            this.setState({ final_items: this.state.canteen_items, searh_text: '' });
         } else {
-            // products.splice(index,1);
-            Alert.alert('Alet', 'You are already selected this Item, Kinly select The quantity.')
+            // total_amount += my_item.price*$scope.product.quantity;
+            $scope.products[index].quantity += $scope.product.quantity;
+            $scope.products[index].paid_amount = my_item.price*$scope.products[index].quantity;
         }
-        this.setState({ customer: { ...this.state.customer, products: products }, total_amount: total_amount, canteen_id: my_item.canteen_id }, () => {
-            this.setState({ modal_visible: false });
-        });
 
+        $scope.product = {
+            canteen_item_id:0,
+            item_name:'',
+            quantity:0,
+        }; 
 
-        $scope.products.push(JSON.parse(JSON.stringify($scope.product)));
-        console.log($scope.products);
-        // $scope.products.push($scope.product);
+        $scope.products = products;
 
+        var total_amount = 0;
+        for (var i = 0; i < $scope.products.length; i++) {
+            var el = $scope.products[i];
+            total_amount += total_amount+el.paid_amount;
+        }
+
+        $scope.formData.total_amount = total_amount;
+
+    }
+
+    $scope.editItem = (index) => {
+        $scope.product = $scope.products[index];
+        $scope.products.splice(index,1);
     }
 
 });

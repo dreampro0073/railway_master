@@ -47,7 +47,7 @@
                         <tr ng-repeat="item in daily_entries">
                             <td>@{{ $index+1 }}</td>
                             <td>@{{ item.name }}</td>
-                            <td>@{{ item.paid_amount }}</td>
+                            <td>@{{ item.total_amount }}</td>
                             <td>@{{ item.time }}</td>
                            
                             <td>

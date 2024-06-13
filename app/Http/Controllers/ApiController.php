@@ -535,8 +535,14 @@ class ApiController extends Controller {
         $data['success'] = true;
         $data['daily_entries'] = $entries;
 
-        $canteen_items = DailyEntry::canteenItemList($client_id);
-        $data['canteen_items'] = $canteen_items;
+        $canteen_items = DB::table('canteen_items')->select('id as canteen_item_id','price','item_name')->where('client_id',$client_id)->get();
+
+        foreach ($canteen_items as $key => $canteen_item) {
+            $canteen_item->quantity  = 1;
+            $canteen_item->paid_amount = $canteen_item->price * $canteen_item->quantity; 
+        }
+
+        $data["canteen_items"] = $canteen_items;
 
         return Response::json($data, 200, []);
     }

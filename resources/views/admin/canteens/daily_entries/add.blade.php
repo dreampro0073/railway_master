@@ -71,22 +71,26 @@
                                <td>
                                    Amount
                                </td>
+                               <td>#</td>
                            </tr>
                             <tr ng-repeat="item in products track by $index">
                                 <td>
                                    @{{$index+1}}
                                 </td>
                                 <td>
-                                   Item Name
+                                   @{{item.item_name}}
                                 </td>
                                 <td>
                                    @{{item.quantity}}
                                 </td>
                                 <td>
-                                   Pirice
+                                   @{{item.price}}
                                 </td>
                                 <td>
-                                   Amount
+                                   @{{item.paid_amount}}
+                                </td>
+                                <td>
+                                   <a class="btn btn-sm btn-warning" href="javascript:;" ng-click="editItem($index)">Edit Item</a>
                                 </td>
                             </tr>
                        </table>
