@@ -101,7 +101,7 @@
 				<td class="w-16">{{$print_data->adult_amount}}</td>
 			</tr>
 			<tr>
-				<td class="w-46">For Age 5 to 12, 30/- Person</td>
+				<td class="w-46">For Age 5 to 12, 20/- Person</td>
 				<td class="w-16" >{{$print_data->no_of_children}}</td>
 				<td class="w-16">{{$print_data->children_amount}}</td>
 			</tr>

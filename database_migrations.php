@@ -15,5 +15,7 @@ ALTER TABLE `client_services` ADD `client_id` INT NOT NULL AFTER `services_id`;
 CREATE TABLE `cloakroom_master`.`sitting_rate_list` ( `id` INT NOT NULL AUTO_INCREMENT , `client_id` INT NOT NULL , `adult_rate` INT NOT NULL COMMENT 'perHour' , `child_rate` INT NOT NULL COMMENT 'perHour' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 ALTER TABLE `sitting_entries` ADD `client_id` INT NULL DEFAULT NULL AFTER `added_by`;
 
+ALTER TABLE `daily_entries` ADD `check_in` TIME NULL DEFAULT NULL AFTER `pay_type`;
+
 
 ?>

@@ -110,14 +110,14 @@ class SittingController extends Controller {
 			$total_amount = $request->total_amount;
 			if($request->id){
 				$group_id = $request->id;
-				$entry = Sitting::find($request->id);
+				$old_entry = Sitting::find($request->id);
 				$message = "Updated Successfully!";
-				$old_entry = $entry;
+				// $old_entry = $entry;
 
 
-				if(Auth::id() != $entry->added_by){
+				// if(Auth::id() != $entry->added_by){
 					// dd($entry->check_out);
-					$total_amount = $total_amount - $entry->paid_amount;
+					$total_amount = $total_amount - $old_entry->paid_amount;
 					$entry = new Sitting;
 					$message = "Stored Successfully!";
 					$entry->unique_id = strtotime('now');
@@ -129,10 +129,10 @@ class SittingController extends Controller {
 					$entry->created_at = date('Y-m-d H:i:s');
 					$entry->save();
 
-				}else{
-					$entry->check_in = date("H:i:s",strtotime($request->check_in));
-					$entry->hours_occ = $request->hours_occ ? $request->hours_occ : 0;
-				}
+				// }else{
+				// 	$entry->check_in = date("H:i:s",strtotime($request->check_in));
+				// 	$entry->hours_occ = $request->hours_occ ? $request->hours_occ : 0;
+				// }
 			} else {
 				$entry = new Sitting;
 				$message = "Stored Successfully!";

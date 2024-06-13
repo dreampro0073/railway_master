@@ -757,6 +757,7 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
         mobile:'',
         pay_type: 1,
         total_amount: 0,
+        total_item:0,
         products: [{demo:''}],
 
     };
@@ -886,12 +887,15 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
         $scope.products = products;
 
         var total_amount = 0;
+        var total_item = 0;
         for (var i = 0; i < $scope.products.length; i++) {
             var el = $scope.products[i];
-            total_amount += total_amount+el.paid_amount;
+            total_amount = total_amount+el.paid_amount;
+            total_item = total_item+el.quantity;
         }
 
         $scope.formData.total_amount = total_amount;
+        $scope.formData.total_item = total_item;
 
     }
 

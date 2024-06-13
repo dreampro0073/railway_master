@@ -23,7 +23,7 @@
                         </div>
                         <div class="col-md-4 form-group">
                             <label>Mobile</label>
-                            <input type="number" ng-model="formData.mobile" class="form-control" required />
+                            <input type="number" ng-model="formData.mobile" class="form-control" />
                         </div>
                         <div class="col-md-4 form-group">
                             <label>Price</label><br>
@@ -62,17 +62,18 @@
                                <td>
                                    Item Name
                                </td>
+                                <td>
+                                   Pirice
+                               </td>
                                <td>
                                    Quantity
                                </td>
-                               <td>
-                                   Pirice
-                               </td>
+                              
                                <td>
                                    Amount
                                </td>
                                <td>#</td>
-                           </tr>
+                            </tr>
                             <tr ng-repeat="item in products track by $index">
                                 <td>
                                    @{{$index+1}}
@@ -81,17 +82,31 @@
                                    @{{item.item_name}}
                                 </td>
                                 <td>
-                                   @{{item.quantity}}
-                                </td>
-                                <td>
                                    @{{item.price}}
                                 </td>
+                                <td>
+                                   @{{item.quantity}}
+                                </td>
+                                
                                 <td>
                                    @{{item.paid_amount}}
                                 </td>
                                 <td>
                                    <a class="btn btn-sm btn-warning" href="javascript:;" ng-click="editItem($index)">Edit Item</a>
                                 </td>
+                            </tr>
+                            <tr ng-if="products.length > 0">
+                                <td colspan="3">
+                                   <b>Total</b>
+                                </td>
+                                <td colspan="1">
+                                   <b>@{{formData.total_item}}</b>
+                                </td>
+
+                                <td colspan="2">
+                                   <b>@{{formData.total_amount}}</b>
+                                </td>
+                                
                             </tr>
                        </table>
                     </div>

@@ -40,29 +40,27 @@ class Canteen extends Model
 
         
         if($user_id == 0){
-            $total_shift_upi = CloakRoom::where('date',$input_date)->where("client_id", $client_id)->where('pay_type',2)->sum("paid_amount");
-            $total_shift_upi += DB::table('cloakroom_penalities')->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',2)->sum("paid_amount");
-
-            $total_shift_cash = CloakRoom::where('date',$input_date)->where("client_id", $client_id)->where('pay_type',1)->sum("paid_amount");
-            $total_shift_cash += DB::table('cloakroom_penalities')->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',1)->sum("paid_amount");
-
-            $last_hour_upi_total = CloakRoom::where('date',$input_date)->where("client_id", $client_id)->where('pay_type',2)->whereBetween('check_in', [$from_time, $to_time])->sum("paid_amount"); 
-            $last_hour_upi_total += DB::table('cloakroom_penalities')->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',2)->whereBetween('current_time', [$from_time, $to_time])->sum("paid_amount"); 
+            $total_shift_upi = DB::table("daily_entries")->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',2)->sum("total_amount");
             
-            $last_hour_cash_total = CloakRoom::where('date',$input_date)->where("client_id", $client_id)->where('pay_type',1)->whereBetween('check_in', [$from_time, $to_time])->sum("paid_amount");
-            $last_hour_cash_total += DB::table('cloakroom_penalities')->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',1)->whereBetween('current_time', [$from_time, $to_time])->sum("paid_amount");
+
+            $total_shift_cash = DB::table("daily_entries")->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',1)->sum("total_amount");
+            
+
+            $last_hour_upi_total = DB::table("daily_entries")->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',2)->whereBetween('check_in', [$from_time, $to_time])->sum("total_amount"); 
+            
+            
+            $last_hour_cash_total = DB::table("daily_entries")->where('date',$input_date)->where("client_id", $client_id)->where('pay_type',1)->whereBetween('check_in', [$from_time, $to_time])->sum("total_amount");
+            
         }else{
-            $total_shift_upi = CloakRoom::where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',2)->sum("paid_amount");
-            $total_shift_upi += DB::table('cloakroom_penalities')->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',2)->sum("paid_amount");
+            $total_shift_upi = DB::table("daily_entries")->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',2)->sum("total_amount");
+           
 
-            $total_shift_cash = CloakRoom::where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',1)->sum("paid_amount");
-            $total_shift_cash += DB::table('cloakroom_penalities')->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',1)->sum("paid_amount");
+            $total_shift_cash = DB::table("daily_entries")->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',1)->sum("total_amount");
+           
+            $last_hour_upi_total = DB::table("daily_entries")->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',2)->whereBetween('check_in', [$from_time, $to_time])->sum("total_amount"); 
 
-            $last_hour_upi_total = CloakRoom::where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',2)->whereBetween('check_in', [$from_time, $to_time])->sum("paid_amount"); 
-            $last_hour_upi_total += DB::table('cloakroom_penalities')->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',2)->whereBetween('current_time', [$from_time, $to_time])->sum("paid_amount"); 
             
-            $last_hour_cash_total = CloakRoom::where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',1)->whereBetween('check_in', [$from_time, $to_time])->sum("paid_amount");
-            $last_hour_cash_total += DB::table('cloakroom_penalities')->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',1)->whereBetween('current_time', [$from_time, $to_time])->sum("paid_amount");
+            $last_hour_cash_total = DB::table("daily_entries")->where('date',$input_date)->where('added_by',$user_id)->where("client_id", $client_id)->where('pay_type',1)->whereBetween('check_in', [$from_time, $to_time])->sum("total_amount");
         }
 
 

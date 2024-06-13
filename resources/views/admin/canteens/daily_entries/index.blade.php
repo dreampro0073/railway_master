@@ -51,11 +51,12 @@
                             <td>@{{ item.time }}</td>
                            
                             <td>
-                                <a href="javascript:;" class="btn btn-sm btn-warning" ng-click="edit(item.id)">Edit</a>
+                                <a href="javascript:;" class="btn btn-sm btn-warning" ng-click="#">Print</a>
                             </td>
 
                            
                         </tr>
+
                     </tbody>
                 </table>
                 <div ng-if="daily_entries.length == 0" class="alert alert-danger">Data Not Found!</div>
