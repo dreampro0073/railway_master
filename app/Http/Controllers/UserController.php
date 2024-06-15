@@ -57,6 +57,7 @@ class UserController extends Controller {
                 if($client){
                     $service_ids = DB::table('client_services')->where("client_id", $client_id)->pluck('services_id')->toArray();
                     Session::put('client_name',$client->name);
+                    Session::put('gst_no',$client->gst);
                     Session::put('service_ids',$service_ids);
 
                 }

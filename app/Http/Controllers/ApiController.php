@@ -651,4 +651,35 @@ class ApiController extends Controller {
 
         return Response::json($data, 200, []);
     }
+
+    public function printBill($entry_id=0){
+        $user = Auth::user();
+        $client_id = $user->client_id;
+        $s_entry = DailyEntry::where('id', $entry_id)->first();  
+
+        $s_entry->mobile_no = $s_entry->mobile_no*1;
+        $s_entry->paid_amount = $s_entry->paid_amount*1;
+        $s_entry->pay_type = $s_entry->pay_type*1;
+        if($s_entry->pay_type == 1){
+            $s_entry->show_pay_type = 'UPI';
+        }
+        if($s_entry->pay_type == 2){
+            $s_entry->show_pay_type = 'Cash';
+        }
+        $s_entry->show_date = date("d M Y");
+        $s_entry->total_amount = $s_entry->total_amount*1;
+
+        $s_entry->created_time = date("h:i A",strtotime($s_entry->created_at));
+
+        $products = DB::table('daily_entry_items')->select('daily_entry_items.*','canteen_items.id','canteen_items.price','canteen_items.item_name')->leftJoin('canteen_items','canteen_items.id','=','daily_entry_items.canteen_item_id')->where('daily_entry_items.entry_id','=',$s_entry->id)->get();
+        
+        $s_entry->total_quantity = DB::table('daily_entry_items')->where('daily_entry_items.entry_id','=',$s_entry->id)->sum('quantity');
+
+
+        $s_entry->products = $products;
+
+        $print_data = $s_entry;
+
+        return view('admin.canteens.daily_entries.print_entry',compact('print_data'));
+    }
 }

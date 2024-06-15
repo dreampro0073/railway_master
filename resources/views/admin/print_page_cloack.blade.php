@@ -53,7 +53,7 @@
 		<h4>
 			{{Session::get('client_name')}}
 			<span style="display: block;text-align: center;font-size: 14px;">
-				GST No. 10AABAK5354K1ZU
+				{{Session::get('gst_no')}}
 			</span>
 		</h4>
 		<h5>

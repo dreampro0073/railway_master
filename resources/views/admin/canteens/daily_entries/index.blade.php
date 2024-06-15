@@ -51,7 +51,7 @@
                             <td>@{{ item.time }}</td>
                            
                             <td>
-                                <a href="javascript:;" class="btn btn-sm btn-warning" ng-click="#">Print</a>
+                                <a href="{{url('admin/daily-entries/print/')}}/@{{item.id}}" class="btn btn-sm btn-warning" target="_blank" ng-click="#">Print</a>
                             </td>
 
                            

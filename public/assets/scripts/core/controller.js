@@ -827,7 +827,11 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     $scope.onSubmit = function () {
         $scope.loading = true;
         $scope.formData.products = $scope.products;
-        console.log($scope.formData);
+        if($scope.products.length == 0){
+            alert("Plese select at least one item.");
+            $scope.loading = false;
+            return;
+        }
         DBService.postCall($scope.formData, '/api/daily-entries/store').then((data) => {
             if (data.success) {
                 alert(data.message);
@@ -838,7 +842,11 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
                     mobile:'',
                     items:[],
                 };
+                $scope.products = [];
                 $scope.init();
+                setTimeout(function(){
+                    window.open(base_url+'/admin/daily-entries/print/'+data.entry_id,'_blank');
+                }, 800);
             }else{
                 alert(data.message);
             }
@@ -881,7 +889,7 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
         $scope.product = {
             canteen_item_id:0,
             item_name:'',
-            quantity:0,
+            quantity:'',
         }; 
 
         $scope.products = products;

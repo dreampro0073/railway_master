@@ -71,6 +71,7 @@ Route::group(['middleware'=>'auth'],function(){
 
 		Route::group(['prefix'=>"daily-entries"], function(){
 			Route::get('/',[AdminController::class,'dailyEntries']);
+			Route::get('/print/{id}',[ApiController::class,'printBill']);
 		});
 
 		

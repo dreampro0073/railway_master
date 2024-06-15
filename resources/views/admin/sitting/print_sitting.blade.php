@@ -50,13 +50,10 @@
 <body>
 	<div id="printableArea" class="main">
 		<h4>
-			M/s New Nabaratna Hospitality Pvt. Ltd.
+			{{Session::get('client_name')}}
 		</h4>
-		<p style="padding:0 15px;text-align: center;">
-			AC Executive Lounge, Haridwar Railway Station<br>PF No. 1
-		</p>
 		<h5>
-			GSTIN: 18AAICN4763E1ZA
+			{{Session::get('gst_no')}}
 		</h5>
 		<h5>
 			SITTING
@@ -123,6 +120,9 @@
 			<p>
 				<b>*Note : Passengers must protect their own Mobile and luggage.</b>
 			</p>
+			<div style="margin-top:10px;text-align: right;">
+				Authorised Signatory : {{Auth::user()->name}}
+			</div>
 			<p style="margin-top:10px;font-size: 16px;">
 				<strong>Thanks Visit Again</strong>
 			</p>

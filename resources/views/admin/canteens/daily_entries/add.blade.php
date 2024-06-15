@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-md-3 form-group">
                                 <label>No of Item</label>
-                                <input type="number" ng-model="product.quantity" class="form-control" required />
+                                <input type="number" min="1" ng-model="product.quantity" class="form-control" />
                                 
                             </div>
                             <div class="col-md-2 form-group" style="padding-top: 27px;">
