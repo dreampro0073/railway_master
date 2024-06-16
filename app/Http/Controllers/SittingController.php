@@ -40,7 +40,7 @@ class SittingController extends Controller {
 			$entries = $entries->where('deleted',0);
 
 		}
-		$entries = $entries->orderBy('id', "DESC");
+		$entries = $entries->orderBy("checkout_status", 'ASC')->orderBy('id', "DESC");
 
 		// if(Auth::user()->priv != 1){
 
@@ -77,6 +77,42 @@ class SittingController extends Controller {
 		$data['sitting_entry'] = $sitting_entry;
 		return Response::json($data, 200, []);
 	}
+	
+	public function checkout(Request $request){
+		$sitting_entry = Sitting::where('id', $request->entry_id)->where("checkout_status", 0)->first();
+
+		if($sitting_entry){
+			$checkout_time = date('Y-m-d H:i:s', strtotime($sitting_entry->date . $sitting_entry->check_out . ' +5 minutes'));
+			$current_time = date("Y-m-d H:i:s");
+			if($checkout_time > $current_time){
+				$sitting_entry->checkout_status = 1;
+				$sitting_entry->save();
+				$data['success'] = true;
+			}else{
+				$extra_time = strtotime($current_time) - strtotime($checkout_time);
+				$extra_time = round($extra_time/60/60, 2);
+				$extra_hours = explode(".",$extra_time);
+				$ex_hours = $extra_hours[0]*1;
+				if($extra_hours[1] > 10){
+					$ex_hours += 1;
+				}
+				$sitting_entry->mobile_no = $sitting_entry->mobile_no*1;
+				$sitting_entry->train_no = $sitting_entry->train_no*1;
+				$sitting_entry->pnr_uid = $sitting_entry->pnr_uid;
+				$sitting_entry->paid_amount = $sitting_entry->paid_amount*1;
+				$sitting_entry->total_amount = $sitting_entry->paid_amount*1;
+				$sitting_entry->check_in = date("h:i A",strtotime($sitting_entry->check_in));
+				$sitting_entry->check_out = date("h:i A",strtotime($sitting_entry->check_out));
+				$data['success'] = false;
+				$data['ex_hours'] = $ex_hours;
+				$data['sitting_entry'] = $sitting_entry;
+			}
+		} else {
+			$data['success'] = true;
+		}
+		return Response::json($data, 200, []);
+	}
+
 	public function calCheck(Request $request){
 		
 		$check_in = $request->check_in;
@@ -111,28 +147,29 @@ class SittingController extends Controller {
 			if($request->id){
 				$group_id = $request->id;
 				$old_entry = Sitting::find($request->id);
+				if($request->hours_occ <= $old_entry->hours_occ){
+					$data['success'] = false;
+					$data['message'] = "Plese select a valid Balance Amount!";
+					return Response::json($data, 200, []);
+				}
 				$message = "Updated Successfully!";
-				// $old_entry = $entry;
+				
+				$total_amount = $total_amount - $old_entry->paid_amount;
+				$entry = new Sitting;
+				$message = "Stored Successfully!";
+				$entry->unique_id = strtotime('now');
+				$entry->check_in = $old_entry->check_out;
+				
+				$entry->hours_occ = $request->hours_occ - $old_entry->hours_occ;
+				$entry->added_by = Auth::id();
+				$entry->date = $date;
+				$entry->created_at = date('Y-m-d H:i:s');
+				$entry->checkout_status = $request->checkout_process ? 1 : 0;
+				$entry->save();
 
+				$old_entry->checkout_status = 1;
+				$old_entry->save();
 
-				// if(Auth::id() != $entry->added_by){
-					// dd($entry->check_out);
-					$total_amount = $total_amount - $old_entry->paid_amount;
-					$entry = new Sitting;
-					$message = "Stored Successfully!";
-					$entry->unique_id = strtotime('now');
-					$entry->check_in = $old_entry->check_out;
-					
-					$entry->hours_occ = $request->hours_occ - $old_entry->hours_occ;
-					$entry->added_by = Auth::id();
-					$entry->date = $date;
-					$entry->created_at = date('Y-m-d H:i:s');
-					$entry->save();
-
-				// }else{
-				// 	$entry->check_in = date("H:i:s",strtotime($request->check_in));
-				// 	$entry->hours_occ = $request->hours_occ ? $request->hours_occ : 0;
-				// }
 			} else {
 				$entry = new Sitting;
 				$message = "Stored Successfully!";

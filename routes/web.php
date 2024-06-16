@@ -92,6 +92,7 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/store',[SittingController::class,'store']);
 		Route::post('/cal-check',[SittingController::class,'calCheck']);
 		Route::get('/delete/{id}',[SittingController::class,'delete']);
+		Route::post('/checkout',[SittingController::class,'checkout']);
 		
 	});
 

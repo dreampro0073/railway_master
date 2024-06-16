@@ -357,7 +357,8 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         mobile:"",
         paid_amount:0,
         hours_occ:'',
-    };
+    };    
+    $scope.last_hour = 1;
 
     $scope.filter = {};
 
@@ -374,6 +375,8 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     $scope.pay_types = [];
     $scope.hours = [];
     $scope.rate_list = {};
+    $scope.checkout_process = false;
+
     
     $scope.init = function () {
         
@@ -393,16 +396,38 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     }
 
     $scope.edit = function(entry_id){
+        $scope.checkout_process = false;
         $scope.entry_id = entry_id;
         DBService.postCall({entry_id : $scope.entry_id}, '/api/sitting/edit-init').then((data) => {
             if (data.success) {
+                $scope.last_hour += data.sitting_entry.hours_occ;
                 $scope.formData = data.sitting_entry;
                 $("#exampleModalCenter").modal("show");
             }
             
         });
+    }    
+
+    $scope.editCheckout = function(entry_id){
+        $scope.entry_id = entry_id;
+        DBService.postCall({entry_id : $scope.entry_id}, '/api/sitting/checkout').then((data) => {
+            if (data.success) {
+                alert("Successfully checkout!");
+                $scope.init();
+            }else{
+                $scope.last_hour += data.sitting_entry.hours_occ;
+                $scope.formData = data.sitting_entry;
+                $scope.checkout_process = true;
+                $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
+                $("#exampleModalCenter").modal("show");
+                $scope.changeAmount();
+            }
+            
+        });
     }
+
     $scope.add = function(){
+        $scope.checkout_process = false;
         $("#exampleModalCenter").modal("show");    
     }
 
@@ -420,11 +445,13 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             balance_amount:0,
             hours_occ:0,
         };
+        $scope.checkout_process = false;
     }
 
     $scope.onSubmit = function () {
         $scope.loading = true;
         // console.log($scope.formData);return;
+        $scope.formData.checkout_process = $scope.checkout_process;
         DBService.postCall($scope.formData, '/api/sitting/store').then((data) => {
             if (data.success) {
                 $("#exampleModalCenter").modal("hide");
@@ -442,12 +469,16 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                     check_in:'',
                     check_out:'',
                 };
+                $scope.last_hour = 1;
                 $scope.init();
                 setTimeout(function(){
                     window.open(base_url+'/admin/sitting/print/'+data.id, '_blank');
 
                 }, 800);
+                $scope.checkout_process = false;
 
+            } else {
+                alert(data.message);
             }
             $scope.loading = false;
         });
@@ -455,13 +486,11 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
 
    
     $scope.changeAmount = function () {
-
-
         $scope.formData.total_amount = 0;
 
         if($scope.formData.hours_occ > 0){
             
-            var hours = $scope.formData.hours_occ - 1; 
+            var hours = $scope.formData.hours_occ - $scope.last_hour; 
 
             if($scope.formData.no_of_adults > 0){
                 $scope.formData.total_amount += $scope.rate_list.adult_rate * $scope.formData.no_of_adults;
@@ -474,7 +503,8 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             }
 
         }
-        $scope.formData.balance_amount = $scope.formData.total_amount - $scope.formData.paid_amount;
+        $scope.formData.balance_amount = $scope.formData.total_amount;
+        $scope.formData.total_amount += $scope.formData.paid_amount;
 
     }
 

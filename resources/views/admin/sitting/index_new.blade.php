@@ -82,7 +82,8 @@
                             @endif
                             
                             <td>
-                                <a href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="javascript:;" ng-if="item.checkout_status != 1" ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
+                                <a ng-if="item.checkout_status != 1" href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
                                 @if(Auth::id() !=1)
                                 <!-- <button type="button" ng-click="delete(item.id)" class="btn btn-danger btn-sm">Delete</button> -->
                                 @endif

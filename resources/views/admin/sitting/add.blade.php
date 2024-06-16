@@ -42,15 +42,15 @@
                         </div>
                         <div class="col-md-3 form-group">
                             <label>No of Adults</label>
-                            <input type="number" ng-model="formData.no_of_adults" ng-change="changeAmount()" class="form-control" />
+                            <input type="number" ng-model="formData.no_of_adults" ng-change="changeAmount()" class="form-control" ng-disabled="checkout_process" />
                         </div>
                         <div class="col-md-3 form-group">
                             <label>No of children</label>
-                            <input type="number" ng-model="formData.no_of_children" ng-change="changeAmount()" class="form-control" />
+                            <input type="number" ng-model="formData.no_of_children" ng-change="changeAmount()" class="form-control" ng-disabled="checkout_process" />
                         </div>
                         <div class="col-md-3 form-group">
                             <label>Baby/Staff</label>
-                            <input type="number" ng-model="formData.no_of_baby_staff" class="form-control" />
+                            <input type="number" ng-model="formData.no_of_baby_staff" class="form-control" ng-disabled="checkout_process" />
                         </div>
 
                         <div class="col-md-3 form-group">
@@ -65,7 +65,7 @@
 
                         <div class="col-md-3 form-group">
                             <label>Hour Occ</label>
-                            <select ng-model="formData.hours_occ" class="form-control" ng-change="changeAmount()" required >
+                            <select ng-model="formData.hours_occ" class="form-control" ng-change="changeAmount()" ng-disabled="checkout_process" required >
                                 <option value="">--select--</option>
                                 <option ng-repeat="item in hours" ng-value=@{{item.value}}>@{{ item.label}}</option>
                             </select>
