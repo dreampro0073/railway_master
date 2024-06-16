@@ -10,14 +10,19 @@
 
                         <div class="col-md-9">
                             <div class="row">
-                                                 
+         
+                                <div class="col-md-3 form-group">
+                                    <label class="label-control">Bill ID</label>
+                                    <input type="text" class="form-control" ng-model="filter.id" />
+                                </div> 
+
                                 <div class="col-md-3 form-group">
                                     <label class="label-control">Name</label>
-                                    <input type="text" class="form-control" ng-model="filter.item_name" />
+                                    <input type="text" class="form-control" ng-model="filter.name" />
                                 </div>                    
                                 <div class="col-md-3 form-group">
                                     <label class="label-control">Mobile</label>
-                                    <input type="text" class="form-control" ng-model="filter.item_short_name" />
+                                    <input type="text" class="form-control" ng-model="filter.mobile" />
                                 </div>
                               
                             </div>
@@ -36,7 +41,9 @@
                     <thead style="background-color: rgba(0,0,0,.075);">
                         <tr class="table-primary">
                             <th>S.no</th>
+                            <th>Bill ID</th>
                             <th>Name</th>
+                            <th>Mobile</th>
                             <th>Paid Amount</th>
                             <th>Time</th>
                             
@@ -46,7 +53,9 @@
                     <tbody ng-if="daily_entries.length > 0">
                         <tr ng-repeat="item in daily_entries">
                             <td>@{{ $index+1 }}</td>
+                            <td>@{{ item.id }}</td>
                             <td>@{{ item.name }}</td>
+                            <td>@{{ item.mobile }}</td>
                             <td>@{{ item.total_amount }}</td>
                             <td>@{{ item.time }}</td>
                            

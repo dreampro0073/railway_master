@@ -23,6 +23,9 @@ class SittingController extends Controller {
 	}
 	public function initEntries(Request $request){
 		$entries = Sitting::select('sitting_entries.*','users.name as username')->leftJoin('users','users.id','=','sitting_entries.delete_by')->where("sitting_entries.client_id", Auth::user()->client_id);
+		if($request->id){
+			$entries = $entries->where('sitting_entries.id', $request->id);
+		}		
 		if($request->unique_id){
 			$entries = $entries->where('sitting_entries.unique_id', 'LIKE', '%'.$request->unique_id.'%');
 		}		

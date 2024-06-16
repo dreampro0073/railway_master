@@ -12,6 +12,10 @@
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-2 form-group">
+                                    <label class="label-control">Bill ID</label>
+                                    <input type="text" class="form-control" ng-model="filter.id" />
+                                </div>                    
+                                <div class="col-md-2 form-group">
                                     <label class="label-control">Bill Number</label>
                                     <input type="text" class="form-control" ng-model="filter.unique_id" />
                                 </div>                    
@@ -44,6 +48,7 @@
                     <thead style="background-color: rgba(0,0,0,.075);">
                         <tr class="table-primary">
                             <th>S.no</th>
+                            <th>Bill ID</th>
                             <th>Bill no</th>
                             <th>Name</th>
                             <th>Mobile No</th>
@@ -60,6 +65,7 @@
                     <tbody ng-if="entries.length > 0">
                         <tr ng-repeat="item in entries" ng-class="{'my_class': item.deleted == 1}">
                             <td>@{{ $index+1 }}</td>
+                            <td>@{{ item.id }}</td>
                             <td>@{{ item.unique_id }}</td>
                             <td>@{{ item.name }}</td>
                             <td>@{{ item.mobile_no }}</td>

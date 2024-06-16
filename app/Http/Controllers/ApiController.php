@@ -517,14 +517,22 @@ class ApiController extends Controller {
         $max_per_page = 10;
 
         $entries = DailyEntry::select('daily_entries.*')->where('client_id',$user->client_id);
+        if($request->id){
+            $entries = $entries->where('daily_entries.id', $request->id);
+        }       
+        if($request->name){
+            $entries = $entries->where('daily_entries.name', 'LIKE', '%'.$request->name.'%');
+        }         
+        if($request->mobile){
+            $entries = $entries->where('daily_entries.mobile', 'LIKE', '%'.$request->mobile.'%');
+        }       
 
-
-        if($request->search_field){
-            $search = $request->search_field;
-            $entries = $entries->where(function($query) use ($search) {
-                $query->where('daily_entries.name', 'LIKE' ,"%".$search."%")->orWhere('daily_entries.mobile', 'LIKE' ,"%".$search."%");
-            });
-        }
+        // if($request->search_field){
+        //     $search = $request->search_field;
+        //     $entries = $entries->where(function($query) use ($search) {
+        //         $query->where('daily_entries.name', 'LIKE' ,"%".$search."%")->orWhere('daily_entries.mobile', 'LIKE' ,"%".$search."%");
+        //     });
+        // }
         
         $entries = $entries->skip(($page_no-1)*$max_per_page)->take($max_per_page)->orderBy('id','DESC')->where('client_id',$user->client_id)->get();
 
