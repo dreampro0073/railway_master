@@ -53,7 +53,7 @@
                             <th>Name</th>
                             <th>Mobile No</th>
                             <th>PNR</th>
-                            
+                            <th>Validity</th>
                             <th>Pay Type</th>
                             <th>Paid Amount</th>
                             @if(Auth::user()->priv == 1)
@@ -71,7 +71,7 @@
                             <td>@{{ item.mobile_no }}</td>
 
                             <td>@{{ item.pnr_uid }}</td>
-                            
+                            <td>@{{ item.check_in }} To @{{ item.check_out }}</td>
                             <td>
                                 <span ng-if="item.pay_type == 1">Cash</span>
                                 <span ng-if="item.pay_type == 2">UPI</span>

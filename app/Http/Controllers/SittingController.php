@@ -48,7 +48,7 @@ class SittingController extends Controller {
 		// if(Auth::user()->priv != 1){
 
 		// }
-		$entries = $entries->take(200);
+		$entries = $entries->take(50);
 
 		$entries = $entries->get();
 		$rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();

@@ -58,14 +58,21 @@
 		<h5>
 			SITTING
 		</h5>
+		<div style="text-align: center;">
+			<b style="font-size: 18px;">
+				Bill ID : {{ $print_data->id }}
+			</b>
+		</div>
 		<div class="table-div">
 			<div class="w-50">
-				<span class="text">Bill No: {{ $print_data->unique_id }}</span>
+				<span class="text">Bill No: {{ $print_data->unique_id }}</span><br>	
+				
 			</div>
 			<div class="w-50 text-right">
 				<span class="text">Date: <?php echo date("d-m-Y"); ?></span>
 			</div>
 		</div>
+
 		<span class="name">Name : {{$print_data->name}}</span>
 		<div class="table-div">
 			<div class="w-50">
@@ -75,13 +82,13 @@
 				<span class="text text-right">Mobile: {{$print_data->mobile_no}}</span>
 			</div>
 		</div>
-		<div class="table-div" style="margin-bottom: 20px;">
-			<div class="w-50">
-				<span class="text">In Time: <b>{{date("h:i A",strtotime($print_data->check_in))}}</b></span>
-			</div>
-			<div class="w-50">
-				<span class="text">Out Time: <b>{{date("h:i A",strtotime($print_data->check_out))}}</b></span>
-			</div>
+		<div style="margin-bottom: 20px;">
+			
+				<span class="text" style="font-size: 18px;">In Time: <b>{{date("h:i A",strtotime($print_data->check_in))}}</b></span>
+				<br>
+			
+				<span class="text" style="font-size: 18px;">Valid upto: <b>{{date("h:i A",strtotime($print_data->check_out))}}</b></span>
+			
 		</div>
 		<table style="width:100%;margin: -1;" border="1" cellpadding="4" cellspacing="0" >
 			<tr>
@@ -110,19 +117,20 @@
 			<tr>
 				<td class="w-46" ><b>Total</b></td>
 				<td class="w-20">{{$print_data->total_member}}</td>
-				<td class="w-16">{{$print_data->paid_amount}}</td>
+				<th class="w-16">{{$print_data->paid_amount}}</th>
 			</tr>
 		</table>
-		<div style="margin-top: 20px;text-align: right;">
-			<span style="text-align:right;font-weight: bold;">** Non Refundable **</span>
+		<div style="margin-top: 20px;text-align: center;">
+			<span style="text-align:center;font-weight: bold;">** Non Refundable **</span>
+		</div>
+		<div style="margin-top:10px;text-align: right;">
+			Authorised Signatory : {{Auth::user()->name}}
 		</div>
 		<div style="margin-top:10px;text-align:center;">
 			<p>
 				<b>*Note : Passengers must protect their own Mobile and luggage.</b>
 			</p>
-			<div style="margin-top:10px;text-align: right;">
-				Authorised Signatory : {{Auth::user()->name}}
-			</div>
+
 			<p style="margin-top:10px;font-size: 16px;">
 				<strong>Thanks Visit Again</strong>
 			</p>
