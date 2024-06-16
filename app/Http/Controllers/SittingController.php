@@ -85,14 +85,16 @@ class SittingController extends Controller {
 		$sitting_entry = Sitting::where('id', $request->entry_id)->where("checkout_status", 0)->first();
 
 		if($sitting_entry){
-			$checkout_time = date('Y-m-d H:i:s', strtotime($sitting_entry->date . $sitting_entry->check_out . ' +5 minutes'));
-			$current_time = date("Y-m-d H:i:s");
-			if($checkout_time > $current_time){
+			$now_time = strtotime(date("Y-m-d H:i:s",strtotime("+5 minutes")));
+			$current_time = strtotime(date("Y-m-d H:i:s"));
+    		$checkout_time = strtotime($sitting_entry->checkout_date);
+
+			if($checkout_time > $now_time){
 				$sitting_entry->checkout_status = 1;
 				$sitting_entry->save();
 				$data['success'] = true;
 			}else{
-				$extra_time = strtotime($current_time) - strtotime($checkout_time);
+				$extra_time = $current_time-$checkout_time;
 				$extra_time = round($extra_time/60/60, 2);
 				$extra_hours = explode(".",$extra_time);
 				$ex_hours = $extra_hours[0]*1;
@@ -200,6 +202,7 @@ class SittingController extends Controller {
 			$entry->save();
 			$no_of_min = $entry->hours_occ*60;
 			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
+			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
 			$entry->save();
 
 			$data['id'] = $entry->id;
@@ -261,5 +264,22 @@ class SittingController extends Controller {
 		
 		return Response::json($data, 200, []);
     }
+
+    public function testing(){    	
+    	$lists = DB::table("sitting_entries")->get();
+    	foreach ($lists as $key => $item) {
+    		$no_of_min = $item->hours_occ*60;
+    		$entry = Sitting::find($item->id);
+			$date = $entry->date;
+			$check_in = $entry->check_in;
+			$no_of_min = $entry->hours_occ*60;
+			$check_in_date = date("Y-m-d H:i:s", strtotime($date.$check_in));
+			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
+			$entry->save();
+
+
+    	}
+    }
+
 
 }

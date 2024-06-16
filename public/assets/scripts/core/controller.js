@@ -431,7 +431,6 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             DBService.postCall({entry_id : $scope.entry_id}, '/api/sitting/checkout').then((data) => {
                 if (data.success) {
                     alert("Successfully checkout!");
-                    $scope.setNullFormData();
                     $scope.init();
                 }else{
                     $scope.last_hour += data.sitting_entry.hours_occ;

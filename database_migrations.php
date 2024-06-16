@@ -18,5 +18,5 @@ ALTER TABLE `sitting_entries` ADD `client_id` INT NULL DEFAULT NULL AFTER `added
 ALTER TABLE `daily_entries` ADD `check_in` TIME NULL DEFAULT NULL AFTER `pay_type`;
 
 ALTER TABLE `clients` ADD `gst` VARCHAR(255) NULL DEFAULT NULL AFTER `status`, ADD `address` VARCHAR(255) NULL DEFAULT NULL AFTER `gst`;
-
+ALTER TABLE `sitting_entries` ADD `checkout_date` TIMESTAMP NULL DEFAULT NULL AFTER `check_out`;
 ?>

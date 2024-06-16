@@ -30,6 +30,7 @@ Route::get('/logout',function(){
 	return Redirect::to('/');
 });
 
+Route::get('/testing',[SittingController::class,'testing']);
 Route::group(['middleware'=>'auth'],function(){
 	Route::group(['prefix'=>"admin"], function(){
 		Route::get('/dashboard',[AdminController::class,'dashboard']);
