@@ -97,7 +97,7 @@ class Sitting extends Model
         }
 
         $input_date = date("Y-m-d",strtotime($input_date));
-        if(Auth::user()->priv != 1){
+        if(Auth::user()->priv != 2){
             $user_id = Auth::id();
         }
 

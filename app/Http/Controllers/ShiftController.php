@@ -28,7 +28,7 @@ class ShiftController extends Controller {
 
 		$input_date = $request->input_date;
 		$user_id = $request->has('user_id')?$request->user_id:0;
-		$users = DB::table('users')->select('id','name')->get();
+		$users = DB::table('users')->select('id','name')->where("client_id", Auth::user()->client_id)->get();
 		$service_ids = Session::get('service_ids');
 
 		$current_shift = Entry::checkShift();

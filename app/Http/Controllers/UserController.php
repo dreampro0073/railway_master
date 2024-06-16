@@ -20,8 +20,6 @@ use Dompdf\Options;
 class UserController extends Controller {
 
     public function index(){
-
-
         return Redirect::to('admin/dashboard');
         
         return view('index');
