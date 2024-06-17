@@ -231,9 +231,12 @@ class CloakRoomController extends Controller {
 
     public function checkoutInit(Request $request){
 
-    	$now_time = strtotime(date("Y-m-d H:i:s",strtotime("+5 minutes")));
+    	// $now_time = strtotime(date("Y-m-d H:i:s",strtotime("+5 minutes")));
+    	// $now_time = strtotime(date("Y-m-d H:i:s"));
+    	$now_time = strtotime(date("Y-m-d H:i:s",strtotime("-15 minutes")));
     	$l_entry = CloakRoom::where('id', $request->entry_id)->first();
     	$checkout_time = strtotime($l_entry->checkout_date);
+    	$new_checkout_time = date("Y-m-d H:i:s",strtotime("+15 minutes", strtotime($checkout_time)));
     	$rate_list = DB::table("cloakroom_rate_list")->where("client_id", Auth::user()->client_id)->first();
 
     	if($checkout_time > $now_time){
