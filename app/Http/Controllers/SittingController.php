@@ -86,15 +86,16 @@ class SittingController extends Controller {
 
 		if($sitting_entry){
 			// $now_time = strtotime(date("Y-m-d H:i:s",strtotime("+5 minutes")));
-    		$now_time = strtotime(date("Y-m-d H:i:s",strtotime("-5 minutes")));
+    		$now_time = strtotime(date("Y-m-d H:i:s",strtotime("-10 minutes")));
 
 			$current_time = strtotime(date("Y-m-d H:i:s"));
     		$checkout_time = strtotime($sitting_entry->checkout_date);
 
 			if($checkout_time > $now_time){
 				$sitting_entry->checkout_status = 1;
-				$sitting_entry->save();
 				$sitting_entry->checkout_time = date("Y-m-d H:i:s"); 
+				$sitting_entry->checkout_by = Auth::id();
+				$sitting_entry->save();
 				$data['success'] = true;
 			}else{
 				$extra_time = $current_time-$checkout_time;
@@ -176,7 +177,10 @@ class SittingController extends Controller {
 				$entry->save();
 
 				$old_entry->checkout_status = 1;
+				$old_entry->checkout_time = date("Y-m-d H:i:s");
+				$old_entry->checkout_by = Auth::id();
 				$old_entry->save();
+
 
 			} else {
 				$entry = new Sitting;
