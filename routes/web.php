@@ -7,6 +7,8 @@ use App\Http\Controllers\CloakRoomController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\SittingController;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\MassageController;
+use App\Http\Controllers\LockerController;
 
 
 /*
@@ -74,6 +76,18 @@ Route::group(['middleware'=>'auth'],function(){
 			Route::get('/print/{id}',[ApiController::class,'printBill']);
 		});
 
+		Route::group(['prefix'=>"massage"], function(){
+			Route::get('/',[MassageController::class,'massage']);
+			Route::get('/print/{id?}', [MassageController::class,'printPost']);
+			
+		});
+		Route::group(['prefix'=>"locker"], function(){
+			Route::get('/',[LockerController::class,'index']);
+			Route::get('/print/{id?}', [LockerController::class,'printPost']);
+			
+		});	
+
+		
 		
 	});
 });
@@ -132,6 +146,23 @@ Route::group(['prefix'=>"api"], function(){
 		});
 	});
 
+
+	Route::group(['prefix'=>"massage"], function(){
+		Route::post('/init',[MassageController::class,'initMassage']);
+		Route::post('/edit-init',[MassageController::class,'editMassage']);
+		Route::post('/store',[MassageController::class,'store']);
+		Route::get('/delete/{id}',[MassageController::class,'delete']);
+
+	});
+	Route::group(['prefix'=>"locker"], function(){
+		Route::post('/init',[LockerController::class,'initLocker']);
+		Route::post('/edit-init',[LockerController::class,'editLocker']);
+		Route::post('/store',[LockerController::class,'store']);
+		Route::post('/cal-check',[LockerController::class,'calCheck']);
+		Route::post('/checkout-init',[LockerController::class,'checkoutInit']);
+		Route::post('/checkout-store',[LockerController::class,'checkoutStore']);
+		Route::get('/delete/{id}',[LockerController::class,'delete']);
+	});
 	
 	Route::post('canteen-item-list/{canteen_id}',[ApiController::class,'canteenItemList']);
 
