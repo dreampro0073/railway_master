@@ -888,20 +888,31 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
         // var total_amount = $scope.total_amount;
         let products = $scope.products;
 
-        var my_item = null;
-        for (let i = 0; i < $scope.canteen_items.length; i++) {
-            let c_item = $scope.canteen_items[i];
-            if (c_item.canteen_item_id == $scope.product.canteen_item_id) {
-                my_item = c_item;
-            }
-        }
-        let index = -1;
 
-        for (var i = 0; i < products.length; i++) {
-            let c_product = products[i];
-            if(c_product.canteen_item_id == $scope.product.canteen_item_id){
-                index = i;
-            }
+
+        var my_item = $scope.canteen_items.find(item => item.canteen_item_id == $scope.product.canteen_item_id);
+
+        // console.log($scope.checkIdx);
+
+        // var my_item = null;
+        // for (let i = 0; i < $scope.canteen_items.length; i++) {
+        //     let c_item = $scope.canteen_items[i];
+        //     if (c_item.canteen_item_id == $scope.product.canteen_item_id) {
+        //         my_item = c_item;
+        //     }
+        // }
+        // let index = -1;
+
+        // for (var i = 0; i < products.length; i++) {
+        //     let c_product = products[i];
+        //     if(c_product.canteen_item_id == $scope.product.canteen_item_id){
+        //         index = i;
+        //     }
+        // }
+
+        let index = -1;
+        if(products.length > 0){
+            index = products.find(item => item.canteen_item_id == $scope.product.canteen_item_id);
         }
 
         if (index == -1) {
@@ -941,6 +952,170 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     }
 
 });
+
+// app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) {
+//     $scope.loading = false;
+//     $scope.formData = {
+//         name:'',
+//         mobile:'',
+//         pay_type: 1,
+//         total_amount: 0,
+//         total_item:0,
+//         products: [{demo:''}],
+
+//     };
+
+//     $scope.products = [];
+
+
+//     // $scope.total_amount= 0;
+//     $scope.filter = {};
+//     $scope.entry_id = 0;
+//     $scope.daily_entries = [];
+//     $scope.canteen_items = [];
+
+//     $scope.selectConfig = {
+//         valueField: 'canteen_item_id',
+//         labelField: 'item_name',
+//         maxItems:1,
+//         searchField: 'item_name',
+//         create: false,
+//         onInitialize: function(selectize){
+              
+//         }
+//     }
+//     $scope.init = function () {
+//         DBService.postCall($scope.filter, '/api/daily-entries/init').then((data) => {
+//             $scope.daily_entries = data.daily_entries;
+//             $scope.canteen_items = data.canteen_items;
+//         });
+//     }
+
+//     $scope.filterClear = function(){
+//         $scope.filter = {};
+//         $scope.init();
+//     }
+
+//     $scope.edit = function(entry_id){
+//         $scope.entry_id = entry_id;
+//         DBService.postCall({entry_id : $scope.entry_id}, '/api/daily-entries/edit-init').then((data) => {
+//             if (data.success) {
+//                 $scope.formData = data.s_entry;
+//                 $("#exampleModalCenter").modal("show");
+//             }
+//         });
+//     }
+
+//     $scope.hideModal = () => {
+//         $("#exampleModalCenter").modal("hide");
+//         $scope.entry_id = 0;
+//         $scope.formData = {
+//             name:'',
+//             mobile:'',
+//             items:[],
+//         };
+//         $scope.init();
+//     }
+
+//     $scope.add = () => {
+//         $("#exampleModalCenter").modal("show");
+//         $scope.entry_id = 0;
+//         $scope.formData = {
+//             name:'',
+//             mobile:'',
+//             items:[],
+//         };
+//     }
+
+//     $scope.onSubmit = function () {
+//         $scope.loading = true;
+//         $scope.formData.products = $scope.products;
+//         if($scope.products.length == 0){
+//             alert("Plese select at least one item.");
+//             $scope.loading = false;
+//             return;
+//         }
+//         DBService.postCall($scope.formData, '/api/daily-entries/store').then((data) => {
+//             if (data.success) {
+//                 alert(data.message);
+//                 $("#exampleModalCenter").modal("hide");
+
+//                 $scope.formData = {
+//                     name:'',
+//                     mobile:'',
+//                     items:[],
+//                 };
+//                 $scope.products = [];
+//                 $scope.init();
+//                 setTimeout(function(){
+//                     window.open(base_url+'/admin/daily-entries/print/'+data.entry_id,'_blank');
+//                 }, 800);
+//             }else{
+//                 alert(data.message);
+//             }
+//             $scope.loading = false;
+//         });
+//     }
+
+//     $scope.onAddProdcut = () => {
+//         // console.log($scope.product);
+
+//         // var total_amount = $scope.total_amount;
+//         let products = $scope.products;
+
+//         var my_item = null;
+//         for (let i = 0; i < $scope.canteen_items.length; i++) {
+//             let c_item = $scope.canteen_items[i];
+//             if (c_item.canteen_item_id == $scope.product.canteen_item_id) {
+//                 my_item = c_item;
+//             }
+//         }
+//         let index = -1;
+
+//         for (var i = 0; i < products.length; i++) {
+//             let c_product = products[i];
+//             if(c_product.canteen_item_id == $scope.product.canteen_item_id){
+//                 index = i;
+//             }
+//         }
+
+//         if (index == -1) {
+//             my_item.paid_amount = my_item.price*$scope.product.quantity;
+//             my_item.quantity = $scope.product.quantity;
+//             products.push(my_item);
+//         } else {
+//             // total_amount += my_item.price*$scope.product.quantity;
+//             $scope.products[index].quantity += $scope.product.quantity;
+//             $scope.products[index].paid_amount = my_item.price*$scope.products[index].quantity;
+//         }
+
+//         $scope.product = {
+//             canteen_item_id:0,
+//             item_name:'',
+//             quantity:'',
+//         }; 
+
+//         $scope.products = products;
+
+//         var total_amount = 0;
+//         var total_item = 0;
+//         for (var i = 0; i < $scope.products.length; i++) {
+//             var el = $scope.products[i];
+//             total_amount = total_amount+el.paid_amount;
+//             total_item = total_item+el.quantity;
+//         }
+
+//         $scope.formData.total_amount = total_amount;
+//         $scope.formData.total_item = total_item;
+
+//     }
+
+//     $scope.editItem = (index) => {
+//         $scope.product = $scope.products[index];
+//         $scope.products.splice(index,1);
+//     }
+
+// });
 
 
 
