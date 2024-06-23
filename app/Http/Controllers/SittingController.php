@@ -137,6 +137,7 @@ class SittingController extends Controller {
 	}
 
 	public function store(Request $request){
+		// dd($request->all());
 
 		$check_shift = Sitting::checkShift();
 
@@ -156,6 +157,11 @@ class SittingController extends Controller {
 			if($request->id){
 				$group_id = $request->id;
 				$old_entry = Sitting::find($request->id);
+				if($request->balance_amount > 0){
+					$data['success'] = false;
+					$data['message'] = "Balance amount should be greater than 0";
+					return Response::json($data, 200, []);
+				}
 				if($request->hours_occ <= $old_entry->hours_occ){
 					$data['success'] = false;
 					$data['message'] = "Plese select a valid Balance Amount!";
