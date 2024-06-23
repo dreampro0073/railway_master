@@ -71,7 +71,7 @@
                             <td>@{{ item.mobile_no }}</td>
 
                             <td>@{{ item.pnr_uid }}</td>
-                            <td>@{{ item.check_in }} To @{{ item.check_out }}</td>
+                            <td>@{{ item.show_time }} (@{{item.hours_occ}} Hr)</td>
                             <td>
                                 <span ng-if="item.pay_type == 1">Cash</span>
                                 <span ng-if="item.pay_type == 2">UPI</span>

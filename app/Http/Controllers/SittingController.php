@@ -49,8 +49,10 @@ class SittingController extends Controller {
 
 		// }
 		$entries = $entries->take(50);
-
 		$entries = $entries->get();
+		foreach ($entries as $item) {
+			$item->show_time = date("h:i A",strtotime($item->check_in)).' - '.date("h:i A",strtotime($item->check_out));
+		}
 		$rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
 
 		$pay_types = Entry::payTypes();
@@ -137,7 +139,7 @@ class SittingController extends Controller {
 	}
 
 	public function store(Request $request){
-		// dd($request->all());
+		// dd($request->balance_amount);
 
 		$check_shift = Sitting::checkShift();
 
@@ -157,14 +159,14 @@ class SittingController extends Controller {
 			if($request->id){
 				$group_id = $request->id;
 				$old_entry = Sitting::find($request->id);
-				if($request->balance_amount > 0){
+				if($request->balance_amount <= 0){
 					$data['success'] = false;
 					$data['message'] = "Balance amount should be greater than 0";
 					return Response::json($data, 200, []);
 				}
 				if($request->hours_occ <= $old_entry->hours_occ){
 					$data['success'] = false;
-					$data['message'] = "Plese select a valid Balance Amount!";
+					$data['message'] = "hours should be greater ".$old_entry->hours_occ." hours";
 					return Response::json($data, 200, []);
 				}
 				$message = "Updated Successfully!";
