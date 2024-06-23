@@ -272,21 +272,5 @@ class SittingController extends Controller {
 		return Response::json($data, 200, []);
     }
 
-    public function testing(){    	
-    	$lists = DB::table("sitting_entries")->get();
-    	foreach ($lists as $key => $item) {
-    		$no_of_min = $item->hours_occ*60;
-    		$entry = Sitting::find($item->id);
-			$date = $entry->date;
-			$check_in = $entry->check_in;
-			$no_of_min = $entry->hours_occ*60;
-			$check_in_date = date("Y-m-d H:i:s", strtotime($date.$check_in));
-			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
-			$entry->save();
-
-
-    	}
-    }
-
 
 }
