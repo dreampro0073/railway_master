@@ -9,6 +9,7 @@ use App\Http\Controllers\SittingController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\MassageController;
 use App\Http\Controllers\LockerController;
+use App\Http\Controllers\CloakRoomCollectController;
 
 
 /*
@@ -55,8 +56,11 @@ Route::group(['middleware'=>'auth'],function(){
 			Route::get('/all',[CloakRoomController::class,'allRooms']);
 			Route::get('/print/{id?}', [CloakRoomController::class,'printPost']);
 			Route::get('/print-luggage/{id?}', [CloakRoomController::class,'printLuggage']);
+			Route::get('/export', [CloakRoomController::class,'export']);
 			
 		});	
+	
+		Route::get('collect-cloak', [CloakRoomCollectController::class,'collectCloak']);
 	
 		Route::group(['prefix'=>"users"], function(){
 			Route::get('/',[UserController::class,'users']);
@@ -119,7 +123,12 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/checkout-init',[CloakRoomController::class,'checkoutInit']);
 		Route::post('/checkout-store',[CloakRoomController::class,'checkoutStore']);
 		Route::get('/delete/{id}',[CloakRoomController::class,'delete']);
+	});
 
+	Route::group(['prefix'=>"collect-cloak"], function(){
+		Route::post('/init',[CloakRoomCollectController::class,'initRoom']);
+		Route::post('/store',[CloakRoomCollectController::class,'storeCollectCloak']);
+		Route::post('/store-pen',[CloakRoomCollectController::class,'storePen']);
 	});
 	Route::group(['prefix'=>"users"], function(){
 		Route::post('/init',[UserController::class,'initUsers']);
@@ -169,26 +178,22 @@ Route::group(['prefix'=>"api"], function(){
 	
 });
 
-Route::group(['prefix'=>"api"], function(){
-	
-	
+// Route::group(['prefix'=>"api"], function(){
+// 	Route::group(['prefix'=>"canteens"], function(){
+// 		Route::post('/init',[ApiController::class,'initCanteens']);
+// 		Route::post('/edit-init',[ApiController::class,'editCanteen']);
+// 		Route::post('/store',[ApiController::class,'storeCanteen']);
+// 	});
 
-	// Route::group(['prefix'=>"canteens"], function(){
-	// 	Route::post('/init',[ApiController::class,'initCanteens']);
-	// 	Route::post('/edit-init',[ApiController::class,'editCanteen']);
-	// 	Route::post('/store',[ApiController::class,'storeCanteen']);
-	// });
-
-	// Route::group(['prefix'=>"users"], function(){
-	// 	Route::post('/init',[ApiController::class,'initUsers']);
-	// 	Route::post('/edit-init',[ApiController::class,'editUser']);
-	// 	Route::post('/store',[ApiController::class,'storeUser']);
-	// });
-	// Route::group(['prefix'=>"items"], function(){
-	// 	Route::post('/init',[ApiController::class,'initItems']);
-	// 	Route::post('/edit-init',[ApiController::class,'editItem']);
-	// 	Route::post('/store',[ApiController::class,'storeItem']);
-	// });
-
+// 	Route::group(['prefix'=>"users"], function(){
+// 		Route::post('/init',[ApiController::class,'initUsers']);
+// 		Route::post('/edit-init',[ApiController::class,'editUser']);
+// 		Route::post('/store',[ApiController::class,'storeUser']);
+// 	});
+// 	Route::group(['prefix'=>"items"], function(){
+// 		Route::post('/init',[ApiController::class,'initItems']);
+// 		Route::post('/edit-init',[ApiController::class,'editItem']);
+// 		Route::post('/store',[ApiController::class,'storeItem']);
+// 	});
 	
-});
+// });

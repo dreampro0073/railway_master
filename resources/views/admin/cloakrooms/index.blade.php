@@ -36,7 +36,7 @@
                         <div class="col-md-3 text-right" style="margin-top: 25px;" class="mb-2">
                             <button type="button" ng-click="init()" class="btn  btn-primary" style="width: 70px;">Search</button>
                             <button type="button" ng-click="filterClear()" class="btn  btn-warning" style="width: 70px;">Clear</button>
-                            @if($type == 0)
+                            @if($type == 0 && Auth::user()->priv !=4)
                             <button type="button" ng-click="add()" class="btn  btn-primary" style="width: 70px;">Add</button>
                             @endif
                         </div>
@@ -44,6 +44,19 @@
                 </form>
             </div>
             <hr>
+            <div class="row">
+                <div class="col-md-6">
+                   
+                </div>
+
+                <div ng-if="type == 1" class="col-md-6 text-right">
+                    <ul class="pagination">
+                        <li ng-if="filter.page_no > 1" ng-click="getData(-1)"><<</li>
+                        <li class="p">@{{filter.page_no}}</li>
+                        <li ng-if="l_entries.length == 100" ng-click="getData(1)">>></li>    
+                    </ul>
+                </div>
+            </div>
             <div>
                 <table class="table table-bordered table-striped" >
                     <thead style="background-color: rgba(0,0,0,.075);">
@@ -90,15 +103,16 @@
                                 <span ng-if="item.checkout_status == 0">No</span>
                                 <span ng-if="item.checkout_status == 1">Yes</span>
                             </td>
-                            @endif
-                            
+                            @endif  
+
                             <td>
-                                @if($type == 0)
-                                    <a href="javascript:;" ng-click="checkoutCloak(item.id)" class="btn btn-danger btn-sm">Checkout</a>
-                                   
+                                @if(Auth::user()->priv != 4)
+                                    @if($type == 0)
+                                        <a href="javascript:;" ng-click="checkoutCloak(item.id)" class="btn btn-danger btn-sm">Checkout</a>
+                                       
+                                    @endif
                                 @endif
                                 <a href="{{url('/admin/cloak-rooms/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a>
-                                <!-- <a href="{{url('/admin/cloak-rooms/print-luggage')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print Luggage</a> -->
                             </td>
                         </tr>
                     </tbody>

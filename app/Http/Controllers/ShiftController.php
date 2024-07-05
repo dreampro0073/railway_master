@@ -61,7 +61,7 @@ class ShiftController extends Controller {
 			$data['cloak_data'] = $cloak_data;
 		}
 		
-		if(in_array(1, $service_ids)){
+		if(in_array(3, $service_ids)){
 			$canteen_data = Canteen::totalShiftData($input_date,$user_id);
 			$total_shift_upi += $canteen_data['total_shift_upi'];
 			$total_shift_cash += $canteen_data['total_shift_cash'];

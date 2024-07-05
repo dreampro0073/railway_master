@@ -39,7 +39,7 @@ class UserController extends Controller {
         $start_date = "02-01-2024";
     }
 
-    public function login(){    
+    public function login(){   
         return view('login');
     }
 
