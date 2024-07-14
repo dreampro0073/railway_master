@@ -3,8 +3,8 @@
 @section('main')
     <div class="main" ng-controller="sittingCtrl" ng-init="init();"> 
         @include('admin.sitting.add')
+        @include('admin.sitting.checkout')
         <div class="card shadow mb-4 p-4">
-            
             <div class="filters" style="margin:24px 0;">
                 <form name="filterForm"  novalidate>
                     <div class="row" style="font-size: 14px">
@@ -12,8 +12,8 @@
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-2 form-group">
-                                    <label class="label-control">Bill ID</label>
-                                    <input type="text" class="form-control" ng-model="filter.id" />
+                                    <label class="label-control">Slip ID</label>
+                                    <input type="text" class="form-control" ng-model="filter.slip_id" />
                                 </div>                    
                                 <div class="col-md-2 form-group">
                                     <label class="label-control">Bill Number</label>
@@ -48,7 +48,7 @@
                     <thead style="background-color: rgba(0,0,0,.075);">
                         <tr class="table-primary">
                             <th>S.no</th>
-                            <th>Bill ID</th>
+                            <th>Slip ID</th>
                             <th>Bill no</th>
                             <th>Name</th>
                             <th>Mobile No</th>
@@ -63,9 +63,9 @@
                         </tr>
                     </thead>
                     <tbody ng-if="entries.length > 0">
-                        <tr ng-repeat="item in entries" ng-class="{'my_class': item.deleted == 1}">
+                        <tr ng-repeat="item in entries">
                             <td>@{{ $index+1 }}</td>
-                            <td>@{{ item.id }}</td>
+                            <td>@{{ item.slip_id }}</td>
                             <td>@{{ item.unique_id }}</td>
                             <td>@{{ item.name }}</td>
                             <td>@{{ item.mobile_no }}</td>
@@ -88,12 +88,10 @@
                             @endif
                             
                             <td>
-                                <a href="javascript:;" ng-if="item.checkout_status != 1" ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
+                                <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
                                 <a ng-if="item.checkout_status != 1" href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
-                                @if(Auth::id() !=1)
-                                <!-- <button type="button" ng-click="delete(item.id)" class="btn btn-danger btn-sm">Delete</button> -->
-                                @endif
-                                <a href="{{url('/admin/sitting/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a>
+                                
+                                <!-- <a href="{{url('/admin/sitting/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a> -->
                             </td>
                         </tr>
                     </tbody>

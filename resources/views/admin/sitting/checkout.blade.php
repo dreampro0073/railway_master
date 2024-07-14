@@ -1,4 +1,4 @@
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static">
+<div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalTitle" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -15,8 +15,7 @@
                 
             </div>
             <div class="modal-body">
-                <form name="myForm" novalidate="novalidate" ng-submit="onSubmit(myForm.$valid)">
-
+                <form name="myForm" novalidate="novalidate" ng-submit="onSubmitCheckout(myForm.$valid)">
                     <div class="row">
                         <div class="col-md-4 form-group">
                             <label>Name</label>
@@ -28,8 +27,10 @@
                         </div>
                         <div class="col-md-4 form-group">
                             <label>PNR/UID</label>
-                            <input type="text" ng-model="formData.pnr_uid" class="form-control" ng-disabled="formData.id > 0" />
-                        </div>   
+                            <input type="text" ng-model="formData.pnr_uid" class="form-control"  />
+                        </div>
+                       
+                      
                     </div>
                    
                     <div class="row">
@@ -40,15 +41,15 @@
                         </div>
                         <div class="col-md-3 form-group">
                             <label>No of Adults</label>
-                            <input type="number" ng-model="formData.no_of_adults" ng-change="changeAmount()" class="form-control" ng-disabled="formData.id > 0" />
+                            <input type="number" ng-model="formData.no_of_adults" ng-change="changeAmount()" class="form-control" ng-disabled="checkout_process" />
                         </div>
                         <div class="col-md-3 form-group">
                             <label>No of children</label>
-                            <input type="number" ng-model="formData.no_of_children" ng-change="changeAmount()" class="form-control" ng-disabled="formData.id > 0" />
+                            <input type="number" ng-model="formData.no_of_children" ng-change="changeAmount()" class="form-control" ng-disabled="checkout_process" />
                         </div>
                         <div class="col-md-3 form-group">
                             <label>Baby/Staff</label>
-                            <input type="number" ng-model="formData.no_of_baby_staff" class="form-control" ng-disabled="formData.id > 0" />
+                            <input type="number" ng-model="formData.no_of_baby_staff" class="form-control" ng-disabled="checkout_process" />
                         </div>
 
                         <div class="col-md-3 form-group">
@@ -84,8 +85,8 @@
                             <input type="number" ng-model="formData.balance_amount" class="form-control" style="color: red;" readonly />
                         </div>
                         <div class="col-md-4 form-group" ng-if="formData.id > 0">
-                            <label>Check Out</label>
-                            <input type="text" class="form-control" ng-model="formData.check_out" readonly>
+                            <label>Valid Upto</label>
+                            <input type="text" class="form-control" ng-model="formData.checkout_date" readonly>
                         </div>
                         <div class="col-md-12 form-group">
                             <label>Remarks</label>

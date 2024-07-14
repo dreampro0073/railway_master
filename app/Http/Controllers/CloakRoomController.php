@@ -37,10 +37,11 @@ class CloakRoomController extends Controller {
 		if(Auth::user()->priv == 2){
 			CollectedPenalities::setCheckStatus();
 		}
+		$current_time = strtotime(date("Y-m-d H:i:s"));
 
 		$l_entries = DB::table('cloakroom_entries')->select('cloakroom_entries.*','users.name as username')->leftJoin('users','users.id','=','cloakroom_entries.delete_by')->where("cloakroom_entries.client_id", Auth::user()->client_id);
-		if($request->id){
-			$l_entries = $l_entries->where('cloakroom_entries.id', $request->id);
+		if($request->slip_id){
+			$l_entries = $l_entries->where('cloakroom_entries.slip_id', $request->slip_id);
 		}
 
 		if($request->unique_id){
@@ -74,6 +75,8 @@ class CloakRoomController extends Controller {
 			$item->sh_paid_amount = $item->paid_amount + $bm_amount;
 			$item->checkin_date_show = date("d M, h:i A",strtotime($item->checkin_date));
 			$item->checkout_date_show = date("d M, h:i A",strtotime($item->checkout_date));
+
+			$item->is_exeed = strtotime(date("Y-m-d H:i:s",strtotime($item->checkout_date))) > $current_time ? false : true;
 		}
 
 		if($request->has('export') && $request->export == 1){
@@ -185,6 +188,7 @@ class CloakRoomController extends Controller {
 			$entry->paid_amount = $request->paid_amount;
 			$entry->client_id = Auth::user()->client_id;
 			$entry->save();
+			$entry->slip_id = Auth::user()->client_id.$entry->id;
 
 			$checkout_date = date("Y-m-d H:i:s",strtotime("+".$entry->no_of_day.' day',strtotime($entry->check_in)));
 	        $entry->checkout_date = $checkout_date;

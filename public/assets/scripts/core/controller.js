@@ -1,5 +1,6 @@
 app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading = false;
+    $scope.current_time = new Date();
     $scope.filter = {
         page_no:1,
         export:0,
@@ -385,6 +386,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     $scope.last_hour = 1;
 
     $scope.filter = {};
+    $scope.checkout_number = '';
 
     $scope.entry_id = 0;
     $scope.total_upi_collection = 0;
@@ -416,7 +418,6 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         $scope.last_hour = 1;
     }
     $scope.init = function () {
-        
         DBService.postCall($scope.filter, '/api/sitting/init').then((data) => {
 
             if (data.success) {
@@ -461,13 +462,34 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                     $scope.formData = data.sitting_entry;
                     $scope.checkout_process = true;
                     $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
-                    $("#exampleModalCenter").modal("show");
+                    $("#checkoutModal").modal("show");
                     $scope.changeAmount();
                 }
                 
             });
         }
     }
+
+    // $scope.editCheckout = function(entry_id){
+    //     $scope.entry_id = entry_id;
+    //     if(confirm("Are you sure?") == true){
+    //         $scope.setNullFormData();
+    //         DBService.postCall({entry_id : $scope.entry_id}, '/api/sitting/checkout').then((data) => {
+    //             if (data.success) {
+    //                 alert("Successfully checkout!");
+    //                 $scope.init();
+    //             }else{
+    //                 $scope.last_hour += data.sitting_entry.hours_occ;
+    //                 $scope.formData = data.sitting_entry;
+    //                 $scope.checkout_process = true;
+    //                 $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
+    //                 $("#checkoutModal").modal("show");
+    //                 $scope.changeAmount();
+    //             }
+                
+    //         });
+    //     }
+    // }
 
     $scope.add = function(){
         $scope.setNullFormData();
@@ -479,16 +501,18 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         $scope.entry_id = 0;
         $scope.setNullFormData();
         $("#exampleModalCenter").modal("hide");
+        $("#checkoutModal").modal("hide");
         $scope.checkout_process = false;
     }
 
+
+
     $scope.onSubmit = function () {
         $scope.loading = true;
-        // console.log($scope.formData);return;
-        $scope.formData.checkout_process = $scope.checkout_process;
         DBService.postCall($scope.formData, '/api/sitting/store').then((data) => {
             if (data.success) {
                 $("#exampleModalCenter").modal("hide");
+                $("#checkoutModal").modal("hide");
                 $scope.entry_id = 0;
                 $scope.setNullFormData();
                 $scope.last_hour = 1;
@@ -496,6 +520,29 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 setTimeout(function(){
                     window.open(base_url+'/admin/sitting/print/'+data.id, '_blank');
 
+                }, 800);
+                $scope.checkout_process = false;
+
+            } else {
+                alert(data.message);
+            }
+            $scope.loading = false;
+        });
+    }
+
+    $scope.onSubmitCheckout = function () {
+        $scope.loading = true;
+        // console.log($scope.formData);return;
+        DBService.postCall($scope.formData, '/api/sitting/checkout-store').then((data) => {
+            if (data.success) {
+                $("#exampleModalCenter").modal("hide");
+                $("#checkoutModal").modal("hide");
+                $scope.entry_id = 0;
+                $scope.setNullFormData();
+                $scope.last_hour = 1;
+                $scope.init();
+                setTimeout(function(){
+                    window.open(base_url+'/admin/sitting/print/'+data.id, '_blank');
                 }, 800);
                 $scope.checkout_process = false;
 
@@ -988,6 +1035,10 @@ app.controller('cloackPenltyCollectCtrl', function($scope , $http, $timeout , DB
     $scope.pData = {
 
     }
+
+    $scope.hideModal = () => {
+       $("#exampleModalCenter").modal("hide");
+    }
    
     $scope.init = function () {
 
@@ -1003,6 +1054,83 @@ app.controller('cloackPenltyCollectCtrl', function($scope , $http, $timeout , DB
     $scope.filterClear = function(){
         $scope.filter = {};
         $scope.init();
+    }
+
+    $scope.collectCloak = function(item){
+        $scope.formData.id = item.id;
+        $scope.formData.total_bag = item.total_bag;
+        $scope.formData.no_of_bag = item.no_of_bag;
+        $("#exampleModalCenter").modal("show");
+    }
+
+    $scope.onSubmit = function () {
+        $scope.loading = true;
+        // console.log($scope.formData);return;
+        DBService.postCall($scope.formData, '/api/collect-cloak/store').then((data) => {
+            if (data.success) {
+                alert(data.message);
+                $("#exampleModalCenter").modal("hide");
+                $scope.formData = {
+                    id:0,
+                    no_of_bag:0,
+                    total_bag:0,
+                };
+                $scope.init();
+            }else{
+                alert(data.message);
+            }
+            $scope.loading = false;
+        });
+    }
+
+    $scope.onPSubmit = function (pData) {
+        $scope.ploading = true;
+        $scope.pData = pData;
+        DBService.postCall($scope.pData, '/api/collect-cloak/store-pen').then((data) => {
+            if (data.success) {
+                alert(data.message);
+                $scope.pData = {
+                   
+                };
+                $scope.init();
+            }else{
+                alert(data.message);
+            }
+            $scope.ploading = false;
+        });
+    }
+    
+});
+
+app.controller('sittingCollectCtrl', function($scope , $http, $timeout , DBService) {
+    $scope.loading = false;
+    $scope.formData = {
+        id:0,
+        no_of_bag:0,
+        total_bag:0,
+    };
+
+    $scope.pData = {
+
+    }
+    $scope.entries =[];
+   
+    $scope.init = function () {
+
+        DBService.postCall($scope.filter, '/api/collect-sitting/init').then((data) => {
+            if (data.success) {
+                $scope.entries = data.entries;
+                $scope.c_sum = data.c_sum;
+            }
+        });
+    }
+    $scope.filterClear = function(){
+        $scope.filter = {};
+        $scope.init();
+    }
+
+    $scope.hideModal = () => {
+       $("#exampleModalCenter").modal("hide");
     }
 
     $scope.collectCloak = function(item){

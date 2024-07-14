@@ -57,7 +57,7 @@
 			</span>
 		</h4>
 		<h5>
-			<span class="text">Sl. No: <b style="font-size:18px;">{{ $print_data->id }}</b></span>
+			<span class="text">Slip No: <b style="font-size:18px;">{{ $print_data->slip_id }}</b></span>
 		</h5>
 		<h5>
 			<span class="text"><span class="text">Bill No: <b style="font-size:18px;">{{ $print_data->unique_id }}</b></span></b></span>

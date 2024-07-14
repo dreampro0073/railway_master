@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Redirect, Validator, Hash, Response, Session, DB;
 use App\Models\Entry, App\Models\User, App\Models\Sitting;
 
-class SittingController extends Controller {
+class SittingControllerOld13july extends Controller {
 	public function sitting(Request $request){
 		$service_ids = Session::get('service_ids');
 		if(in_array(1, $service_ids)){
@@ -69,15 +69,8 @@ class SittingController extends Controller {
 			$sitting_entry->mobile_no = $sitting_entry->mobile_no*1;
 			$sitting_entry->train_no = $sitting_entry->train_no*1;
 			$sitting_entry->pnr_uid = $sitting_entry->pnr_uid;
-			// $sitting_entry->paid_amount = $sitting_entry->paid_amount*1;
-			// $sitting_entry->total_amount = $sitting_entry->paid_amount*1;
-
-			$e_total = DB::table('e_entries')->where('entry_id',$sitting_entry->id)->sum('paid_amount');
-
-			$sitting_entry->paid_amount = $sitting_entry->paid_amount*1 + $e_total;
-
-			$sitting_entry->total_amount = $sitting_entry->paid_amount;
-
+			$sitting_entry->paid_amount = $sitting_entry->paid_amount*1;
+			$sitting_entry->total_amount = $sitting_entry->paid_amount*1;
 			$sitting_entry->check_in = date("h:i A",strtotime($sitting_entry->check_in));
 			$sitting_entry->check_out = date("h:i A",strtotime($sitting_entry->check_out));
 		}
@@ -113,15 +106,8 @@ class SittingController extends Controller {
 				$sitting_entry->mobile_no = $sitting_entry->mobile_no*1;
 				$sitting_entry->train_no = $sitting_entry->train_no*1;
 				$sitting_entry->pnr_uid = $sitting_entry->pnr_uid;
-				// $sitting_entry->paid_amount = $sitting_entry->paid_amount*1;
-				// $sitting_entry->total_amount = $sitting_entry->paid_amount*1;
-
-				$e_total = DB::table('e_entries')->where('entry_id',$sitting_entry->id)->sum('paid_amount');
-
-				$sitting_entry->paid_amount = $sitting_entry->paid_amount*1 + $e_total;
-
-				$sitting_entry->total_amount = $sitting_entry->paid_amount;
-
+				$sitting_entry->paid_amount = $sitting_entry->paid_amount*1;
+				$sitting_entry->total_amount = $sitting_entry->paid_amount*1;
 				$sitting_entry->check_in = date("h:i A",strtotime($sitting_entry->check_in));
 				$sitting_entry->check_out = date("h:i A",strtotime($sitting_entry->check_out));
 				$sitting_entry->checkout_date = date("d-m-Y h:i A",strtotime($sitting_entry->checkout_date));
@@ -150,10 +136,8 @@ class SittingController extends Controller {
 	}
 
 	public function store(Request $request){
-
 		$date = Entry::getPDate();
 		$user = Auth::user();
-
 		$check_shift = Entry::checkShift();
 
 		$cre = [
@@ -181,9 +165,7 @@ class SittingController extends Controller {
 
 				$message = "Updated Successfully!";
 				$e_total = Db::table('e_entries')->where('entry_id',$entry->id)->sum('paid_amount');
-
 				$total_amount = $total_amount - ($entry->paid_amount + $e_total);
-
 				DB::table('e_entries')->insert([
 					'entry_id' => $entry->id,
 					'added_by' => Auth::id(),
@@ -193,7 +175,7 @@ class SittingController extends Controller {
 					'paid_amount' => $total_amount,
 					'created_at' => date("Y-m-d H:i:s"),
 					'current_time' => date("H:i:s"),
-					'client_id' => Auth::user()->client_id,
+					'client_id' => $entry->client_id,
 				]);
 
 			} else {
@@ -203,9 +185,6 @@ class SittingController extends Controller {
 				$entry->date = $date;
 				$entry->added_by = Auth::id();
 				$entry->paid_amount = $total_amount;
-				$entry->pay_type = $request->pay_type;
-				$entry->slip_id = Sitting::getSlipId();  
-
 				
 			}
 
@@ -222,22 +201,20 @@ class SittingController extends Controller {
 			}else{
 				$entry->check_in = date("H:i:s");
 			}
-
+			$entry->pay_type = $request->pay_type;
 			$entry->remarks = $request->remarks;
 			$entry->shift = $check_shift;
 			$entry->save();
 			$entry->total_hours = $entry->hours_occ;
+
 			$no_of_min = $request->hours_occ*60;
+
 			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
+
 			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
 
-
 			$entry->client_id = Auth::user()->client_id;
-
-			$e_total = Db::table('e_entries')->where('entry_id',$entry->id)->sum('paid_amount');
-
-			$entry->total_amount = $e_total + $entry->paid_amount;
-
+			$entry->slip_id = Auth::user()->client_id.$entry->id;      
 			$entry->save();
 
 			$data['id'] = $entry->id;
@@ -296,8 +273,11 @@ class SittingController extends Controller {
 			$data['success'] = false;
 			$message = $validator->errors()->first();
 		}
+
 		return Response::json($data, 200, []);
+
 	}
+
 	public function printReports(){
 		$print_data = new \stdClass;
 		$data = Sitting::totalShiftData();

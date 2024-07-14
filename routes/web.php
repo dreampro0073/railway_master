@@ -10,6 +10,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\MassageController;
 use App\Http\Controllers\LockerController;
 use App\Http\Controllers\CloakRoomCollectController;
+use App\Http\Controllers\SittingCollectController;
 
 
 /*
@@ -61,7 +62,8 @@ Route::group(['middleware'=>'auth'],function(){
 		});	
 	
 		Route::get('collect-cloak', [CloakRoomCollectController::class,'collectCloak']);
-	
+		Route::get('/collect-sitting',[SittingCollectController::class,'collectSitting']);
+
 		Route::group(['prefix'=>"users"], function(){
 			Route::get('/',[UserController::class,'users']);
 		});
@@ -90,31 +92,23 @@ Route::group(['middleware'=>'auth'],function(){
 			Route::get('/print/{id?}', [LockerController::class,'printPost']);
 			
 		});	
-
-		
-		
 	});
 });
 
-Route::group(['prefix'=>"api"], function(){
-	
+Route::group(['prefix'=>"api"], function(){	
 	Route::group(['prefix'=>"shift"], function(){
 		Route::post('/init',[ShiftController::class,'init']);
 		Route::post('/prev-init',[ShiftController::class,'prevInit']);
-
 	});
-
 	Route::group(['prefix'=>"sitting"], function(){
 		Route::post('/init',[SittingController::class,'initEntries']);
 		Route::post('/edit-init',[SittingController::class,'editEntry']);
 		Route::post('/store',[SittingController::class,'store']);
 		Route::post('/cal-check',[SittingController::class,'calCheck']);
 		Route::get('/delete/{id}',[SittingController::class,'delete']);
-		Route::post('/checkout',[SittingController::class,'checkout']);
-		
+		Route::post('/checkout',[SittingController::class,'checkout']);	
+		Route::post('/checkout-store',[SittingController::class,'checkoutStore']);	
 	});
-
-
 	Route::group(['prefix'=>"cloak-rooms"], function(){
 		Route::post('/init/{type}',[CloakRoomController::class,'initRoom']);
 		Route::post('/edit-init',[CloakRoomController::class,'editRoom']);
@@ -176,6 +170,12 @@ Route::group(['prefix'=>"api"], function(){
 	Route::post('canteen-item-list/{canteen_id}',[ApiController::class,'canteenItemList']);
 
 	
+
+	Route::group(['prefix'=>"collect-sitting"], function(){
+		Route::post('/init',[SittingCollectController::class,'init']);
+		Route::post('/store',[SittingCollectController::class,'storeCollect']);
+		Route::post('/store-pen',[SittingCollectController::class,'store']);
+	});
 });
 
 // Route::group(['prefix'=>"api"], function(){

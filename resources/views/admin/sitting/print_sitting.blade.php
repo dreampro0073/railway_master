@@ -60,7 +60,7 @@
 		</h5>
 		<div style="text-align: center;">
 			<b style="font-size: 18px;">
-				Bill ID : {{ $print_data->id }}
+				Slip ID : {{ $print_data->slip_id }}
 			</b>
 		</div>
 		<div class="table-div">
@@ -117,7 +117,7 @@
 			<tr>
 				<td class="w-46" ><b>Total</b></td>
 				<td class="w-20">{{$print_data->total_member}}</td>
-				<th class="w-16">{{$print_data->paid_amount}}</th>
+				<td class="w-16">{{$total_amount}}</td>
 			</tr>
 		</table>
 		<div style="margin-top: 20px;text-align: center;">

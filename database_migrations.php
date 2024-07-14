@@ -19,4 +19,24 @@ ALTER TABLE `daily_entries` ADD `check_in` TIME NULL DEFAULT NULL AFTER `pay_typ
 
 ALTER TABLE `clients` ADD `gst` VARCHAR(255) NULL DEFAULT NULL AFTER `status`, ADD `address` VARCHAR(255) NULL DEFAULT NULL AFTER `gst`;
 ALTER TABLE `sitting_entries` ADD `checkout_date` TIMESTAMP NULL DEFAULT NULL AFTER `check_out`;
+ALTER TABLE `cloakroom_entries` ADD `slip_id` VARCHAR(50) NULL DEFAULT NULL AFTER `id`;
+ALTER TABLE `sitting_entries` ADD `slip_id` VARCHAR(50) NULL DEFAULT NULL AFTER `id`;
+
+ALTER TABLE `sitting_entries` ADD `total_amount` INT NOT NULL DEFAULT '0' AFTER `paid_amount`;
+
+ALTER TABLE `sitting_entries`
+  DROP `deleted`,
+  DROP `delete_by`,
+  DROP `delete_time`;
+
+  ALTER TABLE `sitting_entries` ADD `total_hours` INT NOT NULL DEFAULT '0' AFTER `hours_occ`;
+
+  ALTER TABLE `sitting_entries`
+  DROP `seat_no`;
+
+
+ALTER TABLE `sitting_entries` ADD `is_checked` TINYINT NOT NULL DEFAULT '0' AFTER `client_id`;
+ALTER TABLE `sitting_entries` ADD `is_collected` TINYINT NOT NULL DEFAULT '0' AFTER `is_checked`;
+ALTER TABLE `sitting_entries` ADD `checkout_enabled` TINYINT NOT NULL DEFAULT '0' AFTER `status`;
+
 ?>

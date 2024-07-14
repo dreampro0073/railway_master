@@ -36,6 +36,12 @@
                             </li>
                         @endif
 
+                        @if(in_array(1, $service_ids) && Auth::user()->priv == 2)
+                           <!--  <li class="@if(isset($sidebar)) @if($sidebar == 'csitting') active @endif @endif">
+                                <a href="{{url('/admin/collect-sitting')}}"><i class="fa fa-sitemap"></i>Collect Sit</a>
+                            </li> -->
+                        @endif
+
                         @if(in_array(2, $service_ids) || Auth::user()->priv == 1)
                             <li class="@if(isset($sidebar)) @if($sidebar == 'cloakrooms') active @endif @endif">
                                 <a href="{{url('/admin/cloak-rooms')}}"><i class="fa fa-briefcase" aria-hidden="true"></i>Cloakrooms</a>
@@ -45,7 +51,12 @@
                                 <a href="{{url('/admin/cloak-rooms/all')}}"><i class="fa fa-briefcase" aria-hidden="true"></i>Cloakrooms All</a>
                             </li>
                             @endif
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'export') active @endif @endif">
+                                <a href="{{url('/admin/cloak-rooms/export')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Export Cloackroom</a>
+                            </li>
                         @endif
+
+
                         
                         @if(in_array(3, $service_ids) || Auth::user()->priv == 1)
                             @if(Auth::user()->priv == 2 || Auth::user()->priv == 1)
