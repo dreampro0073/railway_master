@@ -81,7 +81,7 @@ class Sitting extends Model
         $slip_id = Auth::user()->client_id.'1';
 
         if($entry){
-            $slip_id = Auth::user()->client_id.$entry->slip_id+1;
+            $slip_id = $entry->slip_id+1;
         }
 
         return $slip_id;
