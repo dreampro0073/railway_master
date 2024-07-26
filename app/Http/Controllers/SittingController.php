@@ -234,9 +234,13 @@ class SittingController extends Controller {
 			$entry->save();
 			$entry->total_hours = $entry->hours_occ;
 			$no_of_min = $request->hours_occ*60;
-			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
-			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
 
+
+			$check_in_date = $entry->date." ".$entry->check_in;
+
+
+			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
+			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
 
 			$entry->client_id = Auth::user()->client_id;
 
@@ -294,9 +298,16 @@ class SittingController extends Controller {
 			$entry->checkout_by = Auth::id();
 			$entry->total_amount = $request->total_amount;
 			$entry->hours_occ = $request->hours_occ;
+			$entry->total_hours = $entry->hours_occ;
+			
 			$entry->save();
 
-			$entry->total_hours = $request->hours_occ;
+			$no_of_min = $entry->total_hours*60;
+
+			$check_in_date = $entry->date." ".$entry->check_in;
+			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
+			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
+
 			$entry->save();
 			
 			$data['id'] = $entry->id;
