@@ -5,6 +5,11 @@
         @include('admin.cloakrooms.add')
         <div class="card shadow mb-4 p-4">    
             <div class="filters" style="margin:24px 0;">
+                <div class="form-group">
+                    <input autofocus type="text" id="productName" ng-model="productName" ng-keypress="handleKeyPress($event)"
+                   style="padding: 10px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 10px; width: 100%;"
+                   placeholder="Barcodevalue">
+                </div>
                 <form name="filterForm"  novalidate>
                     <div class="row" style="font-size: 14px">
 
@@ -12,7 +17,7 @@
                             <div class="row">
                                 <div class="col-md-2 form-group">
                                     <label class="label-control">Slip ID</label>
-                                    <input type="text" class="form-control" ng-model="filter.slip_id" />
+                                    <input type="text" class="form-control" ng-model="filter.id" />
                                 </div>                    
                                 <div class="col-md-2 form-group">
                                     <label class="label-control">Bill Number</label>
@@ -62,7 +67,6 @@
                     <thead style="background-color: rgba(0,0,0,.075);">
                         <tr class="table-primary">
                             <th>S.no</th>
-                            <th>Silip Id</th>
                             <th>Bill no</th>
                             <th>Name</th>
                             <th>Mobile No</th>
@@ -81,9 +85,8 @@
                         </tr>
                     </thead>
                     <tbody ng-if="l_entries.length > 0" >
-                        <tr style="" ng-repeat="item in l_entries " ng-class="{'text-danger': item.is_exeed}">
-                            <td>@{{ $index+1 }}</td>
-                            <td>@{{ item.slip_id }}</td>
+                        <tr ng-repeat="item in l_entries " ng-class="{'my_class': item.deleted == 1}">
+                            <td>@{{ item.id }}</td>
                             <td>@{{ item.unique_id }}</td>
                             <td>@{{ item.name }}</td>
                             <td>@{{ item.mobile_no }}</td>
@@ -114,7 +117,10 @@
                                        
                                     @endif
                                 @endif
+                                <div style="margin-top:4px;"></div>
                                 <a href="{{url('/admin/cloak-rooms/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a>
+                                <div style="margin-top:4px;"></div>
+                                 <a ng-if="item.barcodevalue" href="{{url('/admin/cloak-rooms/print-unq/1')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print Slip</a>
                             </td>
                         </tr>
                     </tbody>

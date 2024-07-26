@@ -52,7 +52,7 @@
                             </li>
                             @endif
                             <li class="@if(isset($sidebar)) @if($sidebar == 'export') active @endif @endif">
-                                <a href="{{url('/admin/cloak-rooms/export')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Export Cloackroom</a>
+                                <a href="{{url('/admin/cloak-rooms/export')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Export Cloakroom</a>
                             </li>
                         @endif
 

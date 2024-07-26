@@ -37,11 +37,10 @@ class CloakRoomController extends Controller {
 		if(Auth::user()->priv == 2){
 			CollectedPenalities::setCheckStatus();
 		}
-		$current_time = strtotime(date("Y-m-d H:i:s"));
 
 		$l_entries = DB::table('cloakroom_entries')->select('cloakroom_entries.*','users.name as username')->leftJoin('users','users.id','=','cloakroom_entries.delete_by')->where("cloakroom_entries.client_id", Auth::user()->client_id);
-		if($request->slip_id){
-			$l_entries = $l_entries->where('cloakroom_entries.slip_id', $request->slip_id);
+		if($request->id){
+			$l_entries = $l_entries->where('cloakroom_entries.id', $request->id);
 		}
 
 		if($request->unique_id){
@@ -75,8 +74,6 @@ class CloakRoomController extends Controller {
 			$item->sh_paid_amount = $item->paid_amount + $bm_amount;
 			$item->checkin_date_show = date("d M, h:i A",strtotime($item->checkin_date));
 			$item->checkout_date_show = date("d M, h:i A",strtotime($item->checkout_date));
-
-			$item->is_exeed = strtotime(date("Y-m-d H:i:s",strtotime($item->checkout_date))) > $current_time ? false : true;
 		}
 
 		if($request->has('export') && $request->export == 1){
@@ -166,6 +163,7 @@ class CloakRoomController extends Controller {
 				$entry = new CloakRoom;
 				$message = "Stored Successfully!";
 				$entry->unique_id = strtotime('now');
+				
 				$entry->created_at = date("Y-m-d H:i:s");
 				$entry->checkin_date = date("Y-m-d H:i:s");
 				$entry->check_in = date("H:i:s");
@@ -188,7 +186,8 @@ class CloakRoomController extends Controller {
 			$entry->paid_amount = $request->paid_amount;
 			$entry->client_id = Auth::user()->client_id;
 			$entry->save();
-			$entry->slip_id = Auth::user()->client_id.$entry->id;
+
+			$entry->barcodevalue = bin2hex($entry->unique_id);
 
 			$checkout_date = date("Y-m-d H:i:s",strtotime("+".$entry->no_of_day.' day',strtotime($entry->check_in)));
 	        $entry->checkout_date = $checkout_date;
@@ -197,6 +196,7 @@ class CloakRoomController extends Controller {
 			$entry->save();
 
 			$data['id'] = $entry->id;
+			$data['print_id'] = $entry->barcodevalue;
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
@@ -232,19 +232,59 @@ class CloakRoomController extends Controller {
         }
         $rate_list = DB::table("cloakroom_rate_list")->where("client_id", Auth::user()->client_id)->first();
               
-		return view('admin.print_page_cloack',compact('print_data','total_amount','rate_list'));
-	}
-	public function printLuggage($id = 0){
-
-        $print_data = DB::table('cloakroom_entries')->where('id', $id)->first();    
-		return view('admin.print_bag_no',compact('print_data'));
+		return view('admin.cloakrooms.print_page_cloack',compact('print_data','total_amount','rate_list'));
 	}
 
-    public function checkoutInit(Request $request){
+	public function printPostUnq($type =1,$print_id = 0){
+		$print_data = DB::table('cloakroom_entries')->where('id','=',$print_id)->first();
 
-    // 	$now_time = strtotime(date("Y-m-d H:i:s",strtotime("+5 minutes")));
+		if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count > 0){
+			return "Print not allowed";
+		}
+
+		if($type == 2 && Auth::user()->priv == 3 && $print_data->print_count > 1){
+			return "Print not allowed";
+		}
+
+		$rate_list = DB::table("cloakroom_rate_list")->where("client_id", Auth::user()->client_id)->first();
+        // $print_data = DB::table('cloakroom_entries')->where('barcodevalue', $print_id)->first();
+        $print_data = DB::table('cloakroom_entries')->where('id', $print_id)->first();
+        $total_amount = $print_data->paid_amount;
+
+        $bm_amount = DB::table('cloakroom_penalities')->where('cloakroom_id','=',$print_data->id)->where('is_collected',1)->sum('paid_amount');
+
+        $total_amount = $total_amount+$bm_amount;
+       
+        $print_data->for_first_day = 0;
+        $print_data->for_other_day = 0;        
+        $total_day = $print_data->total_day - 1;
+        
+        if($print_data->total_day > 0) {
+            $print_data->for_first_day = $print_data->no_of_bag * $rate_list->first_rate;       
+        }           
+        if($total_day > 0){
+            $print_data->for_other_day = $print_data->no_of_bag * $total_day * $rate_list->second_rate;
+
+        }
+        $rate_list = DB::table("cloakroom_rate_list")->where("client_id", Auth::user()->client_id)->first();
+
+        DB::table('cloakroom_entries')->where('id',$print_data->id)->update([
+        	'print_count' => $print_data->print_count+1,
+        ]);
+
+        // return 'di';
+              
+		return view('admin.cloakrooms.print_page_cloack_unq',compact('print_data','total_amount','rate_list'));
+	}
+
+    public function checkoutInit(Request $request,$type){
     	$now_time = strtotime(date("Y-m-d H:i:s",strtotime("-15 minutes")));
-    	$l_entry = CloakRoom::where('id', $request->entry_id)->first();
+    	if($type == 1){
+    		$l_entry = CloakRoom::where('id', $request->entry_id)->first();
+    	}else{
+    		$productName =$request->productName;
+    		$l_entry = CloakRoom::where('unique_id', $productName)->first();
+    	}
     	$checkout_time = strtotime($l_entry->checkout_date);
     	$rate_list = DB::table("cloakroom_rate_list")->where("client_id", Auth::user()->client_id)->first();
 
@@ -252,12 +292,12 @@ class CloakRoomController extends Controller {
     		$data['timeOut'] = false;
     		$entry = CloakRoom::find($request->entry_id);
     		$entry->status = 1; 
-    		$entry->checkout_status = 1; 
+			$entry->checkout_status = 1;
     		$entry->checkout_by = Auth::id();
     		$entry->checkout_time = date("Y-m-d H:i:s"); 
     		$entry->save();
     		$data['success'] = true;
-    
+    		$data['message'] = "Successfully Checkout";
     	} else {
     		$str_day = ($now_time - $checkout_time)/(60 * 60 * 24);
     		$day =0;
@@ -356,9 +396,99 @@ class CloakRoomController extends Controller {
 		]);
 		$data['success'] = true;
 		$data['id'] = $request->id;
+
+		$data['print_id'] = $entry->barcodevalue;
 		return Response::json($data, 200, []);
     }
+    // public function checkoutInit1(Request $request){
+    // 	$productName =$request->productName;
+    // 	$now_time = strtotime(date("Y-m-d H:i:s",strtotime("-15 minutes")));
+    // 	// $l_entry = CloakRoom::where('barcodevalue', $productName)->first();
+    // 	$l_entry = CloakRoom::where('unique_id', $productName)->first();
+    // 	$entry_id = $l_entry->id;
 
+    // 	$checkout_time = strtotime($l_entry->checkout_date);
+    // 	$rate_list = DB::table("cloakroom_rate_list")->where("client_id", Auth::user()->client_id)->first();
+
+    // 	if($checkout_time > $now_time){
+    // 		$data['timeOut'] = false;
+    // 		$entry = CloakRoom::find($entry_id);
+    // 		$entry->status = 1; 
+    // 		$entry->checkout_status = 1; 
+    // 		$entry->checkout_by = Auth::id();
+    // 		$entry->checkout_time = date("Y-m-d H:i:s"); 
+    // 		$entry->save();
+    // 		$data['success'] = true;
+    // 		$data['message'] = "Successfully Checkout";
+    
+    // 	} else {
+    // 		$str_day = ($now_time - $checkout_time)/(60 * 60 * 24);
+    // 		$day =0;
+    // 		if($str_day > 0 && $str_day <= 1){
+    // 			$day = 1;
+    // 		}else if($str_day > 1 && $str_day <= 2){
+    // 			$day = 2;
+    // 		}if($str_day > 2 && $str_day <= 3){
+    // 			$day = 3;
+    // 		}if($str_day > 3 && $str_day <= 4){
+    // 			$day = 4;
+    // 		}if($str_day > 4 && $str_day <= 5){
+    // 			$day = 5;
+    // 		}if($str_day > 5 && $str_day <= 6){
+    // 			$day = 6;
+    // 		}if($str_day > 6 && $str_day <= 7){
+    // 			$day = 7;
+    // 		}if($str_day > 7 && $str_day <= 8){
+    // 			$day = 8;
+    // 		}if($str_day > 8 && $str_day <= 9){
+    // 			$day = 9;
+    // 		}if($str_day > 9 && $str_day <= 10){
+    // 			$day = 10;
+    // 		}if($str_day > 10 && $str_day <= 11){
+    // 			$day = 11;
+    // 		}if($str_day > 11 && $str_day <= 12){
+    // 			$day = 12;
+    // 		}if($str_day > 12 && $str_day <= 13){
+    // 			$day = 13;
+    // 		}if($str_day > 13 && $str_day <= 14){
+    // 			$day = 14;
+    // 		}if($str_day > 14 && $str_day <= 15){
+    // 			$day = 15;
+    // 		}if($str_day > 15 && $str_day <= 16){
+    // 			$day = 16;
+    // 		}if($str_day > 16 && $str_day <= 17){
+    // 			$day = 17;
+    // 		}if($str_day > 17 && $str_day <= 18){
+    // 			$day = 18;
+    // 		}if($str_day > 18 && $str_day <= 19){
+    // 			$day = 19;
+    // 		}if($str_day > 19 && $str_day <= 20){
+    // 			$day = 20;
+    // 		}if($str_day > 20 && $str_day <= 21){
+    // 			$day = 21;
+    // 		}if($str_day > 21 && $str_day <= 22){
+    // 			$day = 22;
+    // 		}if($str_day > 22 && $str_day <= 23){
+    // 			$day = 23;
+    // 		}if($str_day > 23 && $str_day <= 24){
+    // 			$day = 24;
+    // 		}
+	// 		$l_entry->mobile_no = $l_entry->mobile_no*1;
+	// 		$l_entry->train_no = $l_entry->train_no*1;
+	// 		$l_entry->pnr_uid = $l_entry->pnr_uid*1;
+	// 		$l_entry->paid_amount = $l_entry->paid_amount*1;
+	// 		$l_entry->balance = $day* $rate_list->second_rate *$l_entry->no_of_bag;
+	// 		$l_entry->total_balance = $l_entry->paid_amount+$l_entry->balance;
+	// 		$l_entry->day = $day;
+
+			
+	// 		$data['l_entry'] = $l_entry;
+	// 		$data['success'] = true;
+	// 		$data['timeOut'] = true;
+	// 	}
+
+	// 	return Response::json($data, 200, []);
+    // }
     function getNameFromNumber($num) {
         $numeric = ($num ) % 26;
         $letter = chr(65 + $numeric);
@@ -369,4 +499,5 @@ class CloakRoomController extends Controller {
             return $letter;
         }
     }
+	
 }

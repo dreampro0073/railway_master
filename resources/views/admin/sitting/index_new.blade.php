@@ -5,7 +5,13 @@
         @include('admin.sitting.add')
         @include('admin.sitting.checkout')
         <div class="card shadow mb-4 p-4">
+
             <div class="filters" style="margin:24px 0;">
+                <div class="form-group">
+                    <input autofocus type="text" id="productName" ng-model="productName" ng-keypress="handleKeyPress($event)"
+                   style="padding: 10px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 10px; width: 100%;"
+                   placeholder="Barcodevalue">
+                </div>
                 <form name="filterForm"  novalidate>
                     <div class="row" style="font-size: 14px">
 

@@ -87,8 +87,15 @@ class SittingController extends Controller {
 		return Response::json($data, 200, []);
 	}
 	
-	public function checkout(Request $request){
-		$sitting_entry = Sitting::where('id', $request->entry_id)->where("checkout_status", 0)->first();
+	public function checkoutInit(Request $request,$type=0){
+
+		if($type== 1){
+			$sitting_entry = Sitting::where('id', $request->entry_id)->where("checkout_status", 0)->first();
+		}else{
+			$productName =$request->productName;
+    		$sitting_entry = Sitting::where('unique_id', $productName)->where("checkout_status", 0)->first();
+
+		}
 
 		if($sitting_entry){
     		$now_time = strtotime(date("Y-m-d H:i:s",strtotime("-10 minutes")));
@@ -194,6 +201,7 @@ class SittingController extends Controller {
 					'created_at' => date("Y-m-d H:i:s"),
 					'current_time' => date("H:i:s"),
 					'client_id' => Auth::user()->client_id,
+					'type' => 1,
 				]);
 
 			} else {
@@ -204,9 +212,7 @@ class SittingController extends Controller {
 				$entry->added_by = Auth::id();
 				$entry->paid_amount = $total_amount;
 				$entry->pay_type = $request->pay_type;
-				$entry->slip_id = Sitting::getSlipId();  
-
-				
+				$entry->slip_id = Sitting::getSlipId();
 			}
 
 			$entry->name = $request->name;
@@ -237,6 +243,9 @@ class SittingController extends Controller {
 			$e_total = Db::table('e_entries')->where('entry_id',$entry->id)->sum('paid_amount');
 
 			$entry->total_amount = $e_total + $entry->paid_amount;
+
+			$entry->save();
+			$entry->barcodevalue = bin2hex($entry->unique_id);
 
 			$entry->save();
 
@@ -277,6 +286,7 @@ class SittingController extends Controller {
 				'created_at' => date("Y-m-d H:i:s"),
 				'current_time' => date("H:i:s"),
 				'client_id' => $entry->client_id,
+				'type' => 2,
 			]);
 
 			$entry->checkout_time = date("Y-m-d H:i:s");
@@ -334,6 +344,38 @@ class SittingController extends Controller {
         }
               
 		return view('admin.sitting.print_sitting',compact('print_data','total_amount'));
+	}
+
+	public function printPostUnq($type =1,$print_id = 0){
+        $print_data = DB::table('sitting_entries')->where('id', $print_id)->first();
+
+        // if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count > 0){
+		// 	return "Print not allowed";
+		// }
+		// if($type == 2 && Auth::user()->priv == 3 && $print_data->print_count > 1){
+		// 	return "Print not allowed";
+		// }
+        
+        $print_data->total_member = $print_data->no_of_adults + $print_data->no_of_children + $print_data->no_of_baby_staff;
+        $print_data->adult_amount = 0;
+        $print_data->children_amount = 0;
+        $hours = $print_data->hours_occ;
+        $rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
+
+        $e_total = DB::table('e_entries')->select('paid_amount')->where('entry_id', $print_data->id)->sum('paid_amount');
+
+        $total_amount =  $print_data->paid_amount + $e_total;
+
+        if($hours > 0) {
+            $print_data->adult_amount = $print_data->no_of_adults * $hours * $rate_list->adult_rate;
+            $print_data->children_amount = $print_data->no_of_children * $rate_list->child_rate * $hours;
+        }
+
+        DB::table('sitting_entries')->where('id',$print_data->id)->update([
+        	'print_count' => $print_data->print_count+1,
+        ]);
+              
+		return view('admin.sitting.print_sitting_unq',compact('print_data','total_amount'));
 	}
 
     public function delete($id){

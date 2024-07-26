@@ -42,6 +42,7 @@ Route::group(['middleware'=>'auth'],function(){
 
 		Route::group(['prefix'=>"sitting"], function(){
 			Route::get('/',[SittingController::class,'sitting']);
+			Route::get('/print-unq/{type}/{print_id?}', [SittingController::class,'printPostUnq']);
 			Route::get('/print/{id?}', [SittingController::class,'printPost']);
 			Route::get('/print-report', [SittingController::class,'printReports']);
 
@@ -55,10 +56,12 @@ Route::group(['middleware'=>'auth'],function(){
 		Route::group(['prefix'=>"cloak-rooms"], function(){
 			Route::get('/',[CloakRoomController::class,'index']);
 			Route::get('/all',[CloakRoomController::class,'allRooms']);
+			Route::get('/print-unq/{type}/{print_id?}', [CloakRoomController::class,'printPostUnq']);
 			Route::get('/print/{id?}', [CloakRoomController::class,'printPost']);
-			Route::get('/print-luggage/{id?}', [CloakRoomController::class,'printLuggage']);
 			Route::get('/export', [CloakRoomController::class,'export']);
 			
+			Route::get('/checkout',[AdminController::class,'checkout']);
+
 		});	
 	
 		Route::get('collect-cloak', [CloakRoomCollectController::class,'collectCloak']);
@@ -106,16 +109,17 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/store',[SittingController::class,'store']);
 		Route::post('/cal-check',[SittingController::class,'calCheck']);
 		Route::get('/delete/{id}',[SittingController::class,'delete']);
-		Route::post('/checkout',[SittingController::class,'checkout']);	
+		Route::post('/checkout-init/{type}',[SittingController::class,'checkoutInit']);	
 		Route::post('/checkout-store',[SittingController::class,'checkoutStore']);	
 	});
-	Route::group(['prefix'=>"cloak-rooms"], function(){
+	 Route::group(['prefix'=>"cloak-rooms"], function(){
 		Route::post('/init/{type}',[CloakRoomController::class,'initRoom']);
 		Route::post('/edit-init',[CloakRoomController::class,'editRoom']);
 		Route::post('/store',[CloakRoomController::class,'store']);
 		Route::post('/cal-check',[CloakRoomController::class,'calCheck']);
-		Route::post('/checkout-init',[CloakRoomController::class,'checkoutInit']);
+		Route::post('/checkout-init/{type}',[CloakRoomController::class,'checkoutInit']);
 		Route::post('/checkout-store',[CloakRoomController::class,'checkoutStore']);
+		// Route::post('/checkout-init1',[CloakRoomController::class,'checkoutInit1']);
 		Route::get('/delete/{id}',[CloakRoomController::class,'delete']);
 	});
 

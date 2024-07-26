@@ -23,6 +23,14 @@ class AdminController extends Controller {
             "sidebar" => "dashboard",
             "subsidebar" => "dashboard",
         ]);
+	}
+
+	public function checkout(Request $request){
+		    
+		return view('admin.cloakrooms.checkout_page', [
+            "sidebar" => "checkout-cloak",
+            "subsidebar" => "checkout-cloak",
+        ]);
 	}	
 
 	public function sitting(Request $request){

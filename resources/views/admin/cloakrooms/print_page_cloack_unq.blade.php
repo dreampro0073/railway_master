@@ -53,18 +53,18 @@
 		<h4>
 			{{Session::get('client_name')}}
 			<span style="display: block;text-align: center;font-size: 14px;">
-				{{Session::get('gst_no')}}
+				GST No. 10AABAK5354K1ZU
 			</span>
 		</h4>
 		<h5>
-			<span class="text">Slip No: <b style="font-size:18px;">{{ $print_data->slip_id }}</b></span>
+			<span class="text">Sl. No: <b style="font-size:18px;">{{ $print_data->id }}</b></span>
 		</h5>
+		<div style="text-align:center;">
+			<svg id="barcode"></svg>
+		</div>
 		<h5>
 			<span class="text"><span class="text">Bill No: <b style="font-size:18px;">{{ $print_data->unique_id }}</b></span></b></span>
 		</h5>
-
-		
-	
 		<div class="table-div">
 			<div class="w-50">
 
@@ -85,6 +85,7 @@
 				<span class="text">Paid Amount: <b>{{ $print_data->paid_amount }}</b></span>
 			</div>
 		</div>
+
 		<div style="margin-bottom:10px;">
 			<div>
 				<span class="text">In Time: <b style="font-size: 18px;">{{date("h:i a, d M y",strtotime($print_data->checkin_date))}}</b></span>
@@ -97,6 +98,7 @@
 				@endif
 			</div>
 		</div>
+
 		<table style="width:100%;margin: -1;" border="1" cellpadding="4" cellspacing="0" >
 			<tbody>
 				<tr>
@@ -114,15 +116,19 @@
 				<tr>
 					<td class="w-46">For each subsequent 24 hours or part thereof</td>
 					<td class="w-20">{{$rate_list->second_rate}}/- Per Package</td>
-					<td class="w-16">{{$print_data->for_other_day}}</td>
+					<td class="w-16">{{ ($print_data->collected_pen == 0) ? $print_data->for_other_day :0 }} </td>
 				</tr>
-				
 				<tr>
-					<td colspan="1">Day: <b>{{$print_data->total_day}}</b></td>
-
+					<td colspan="1">Day: <b>{{($print_data->collected_pen == 1 ) ? $print_data->no_of_day :$print_data->total_day  }}</b></td>
 					<td colspan="2"><b>Total</b></td>
-					<td class="w-20">{{$print_data->for_first_day+$print_data->for_other_day}}</td>
 					
+					<td class="w-20">
+						@if($print_data->collected_pen == 0)
+							{{$print_data->for_first_day+$print_data->for_other_day}}
+						@else
+							{{$print_data->paid_amount}}
+						@endif
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -139,9 +145,21 @@
 				<strong>Thanks Visit Again</strong>
 			</p>
 		</div>
-		
 	</div>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 	<script type="text/javascript">
+		var bill_no = "{{$print_data->unique_id}}";
+		console.log(bill_no);
+		JsBarcode("#barcode", bill_no, {
+			// format: "pharmacode",
+			lineColor: "#000",
+			width: 1,
+			height: 40,
+			displayValue: false
+		});
+	</script>
+	<script type="text/javascript">
+		
 		window.onload = function(e){ 
 		    var printContents = document.getElementById("printableArea").innerHTML;
 			var originalContents = document.body.innerHTML;
