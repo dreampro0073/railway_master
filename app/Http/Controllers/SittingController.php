@@ -69,9 +69,7 @@ class SittingController extends Controller {
 			$sitting_entry->mobile_no = $sitting_entry->mobile_no*1;
 			$sitting_entry->train_no = $sitting_entry->train_no*1;
 			$sitting_entry->pnr_uid = $sitting_entry->pnr_uid;
-			// $sitting_entry->paid_amount = $sitting_entry->paid_amount*1;
-			// $sitting_entry->total_amount = $sitting_entry->paid_amount*1;
-
+			
 			$e_total = DB::table('e_entries')->where('entry_id',$sitting_entry->id)->sum('paid_amount');
 
 			$sitting_entry->paid_amount = $sitting_entry->paid_amount*1 + $e_total;
@@ -80,6 +78,8 @@ class SittingController extends Controller {
 
 			$sitting_entry->check_in = date("h:i A",strtotime($sitting_entry->check_in));
 			$sitting_entry->check_out = date("h:i A",strtotime($sitting_entry->check_out));
+
+			$sitting_entry->show_valid_up = $this->getValTime($sitting_entry->hours_occ,$sitting_entry->date,$sitting_entry->check_in);
 		}
 
 		$data['success'] = true;
@@ -143,17 +143,38 @@ class SittingController extends Controller {
 	}
 
 	public function calCheck(Request $request){
-		
-		$check_in = $request->check_in;
-		$hours_occ = $request->hours_occ;
 
-		$ss_time = strtotime(date("h:i A",strtotime($check_in)));
+		$entry = Sitting::find($request->entry_id);
 
-		$new_time = date("h:i A", strtotime('+'.$hours_occ.' hours', $ss_time));
+		if($entry){
+			$show_checkout_date = $this->getValTime($request->hours_occ,$entry->date,$entry->check_in);
+		}else{
+			$show_checkout_date = $this->getValTime($request->hours_occ,'','');
+
+		}
+
 
 		$data['success'] = true;
-		$data['check_out'] = $new_time;
+		$data['show_valid_up'] = date("h:i A d-m-Y",strtotime($show_checkout_date));
 		return Response::json($data, 200, []);
+	}
+
+
+	function getValTime($hours_occ=0,$date='',$check_in=''){
+
+		if($check_in !=''){
+			$check_in_date = $date." ".$check_in;
+			$no_of_min = $hours_occ*60;
+			$show_valid_up = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
+		}else{
+			$date = Entry::getPDate();
+			$check_in_time = date("H:i:s");
+			$check_in_date = $date.' '.$check_in_time;
+			$no_of_min = $hours_occ*60;
+			$show_valid_up = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
+		}
+
+		return  date("h:i A d-m-Y",strtotime($show_valid_up));
 	}
 
 	public function store(Request $request){
@@ -250,10 +271,13 @@ class SittingController extends Controller {
 
 			$entry->save();
 			$entry->barcodevalue = bin2hex($entry->unique_id);
+			$entry->max_print = $entry->max_print+1;
 
 			$entry->save();
 
 			$data['id'] = $entry->id;
+			$data['print_id'] = urlencode(base64_encode($entry->id));
+
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
@@ -358,14 +382,17 @@ class SittingController extends Controller {
 	}
 
 	public function printPostUnq($type =1,$print_id = 0){
+		$print_id = base64_decode($print_id);
+
         $print_data = DB::table('sitting_entries')->where('id', $print_id)->first();
 
-        // if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count > 0){
-		// 	return "Print not allowed";
-		// }
-		// if($type == 2 && Auth::user()->priv == 3 && $print_data->print_count > 1){
-		// 	return "Print not allowed";
-		// }
+
+        if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
+			return "Print not allowed";
+		}
+		if($type == 2 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
+			return "Print not allowed";
+		}
         
         $print_data->total_member = $print_data->no_of_adults + $print_data->no_of_children + $print_data->no_of_baby_staff;
         $print_data->adult_amount = 0;

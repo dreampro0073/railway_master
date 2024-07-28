@@ -69,6 +69,17 @@
                             </select>
                         </div>
 
+
+                        <div class="col-md-4 form-group">
+                            <label>Checkout</label>
+                            <input type="text" class="form-control" ng-model="formData.check_out" readonly>
+                        </div>
+
+                        <div class="col-md-4 form-group">
+                            <label>Valid Upto</label>
+                            <input type="text" class="form-control" ng-model="formData.show_valid_up" readonly>
+                        </div>
+
                         <div class="col-md-3 form-group">
                             <label ng-if="entry_id !=0">Total Amount</label>
                             <label ng-if="entry_id ==0">Paid Amount</label>
@@ -83,10 +94,7 @@
                             <label style="color: red;">Balance Amount</label>
                             <input type="number" ng-model="formData.balance_amount" class="form-control" style="color: red;" readonly />
                         </div>
-                        <div class="col-md-4 form-group" ng-if="formData.id > 0">
-                            <label>Check Out</label>
-                            <input type="text" class="form-control" ng-model="formData.check_out" readonly>
-                        </div>
+                       
                         <div class="col-md-12 form-group">
                             <label>Remarks</label>
                             <textarea ng-model="formData.remarks" class="form-control"></textarea>

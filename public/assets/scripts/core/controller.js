@@ -562,7 +562,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.last_hour = 1;
                 $scope.init();
                 setTimeout(function(){
-                    window.open(base_url+'/admin/sitting/print-unq/1/'+data.id, '_blank');
+                    window.open(base_url+'/admin/sitting/print-unq/1/'+data.print_id, '_blank');
 
                 }, 800);
                 $scope.checkout_process = false;
@@ -576,7 +576,6 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
 
     $scope.onSubmitCheckout = function () {
         $scope.loading = true;
-        // console.log($scope.formData);return;
         DBService.postCall($scope.formData, '/api/sitting/checkout-store').then((data) => {
             if (data.success) {
                 $("#exampleModalCenter").modal("hide");
@@ -602,23 +601,34 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         $scope.formData.total_amount = 0;
 
         if($scope.formData.hours_occ > 0){
-            
             var hours = $scope.formData.hours_occ - $scope.last_hour; 
-
             if($scope.formData.no_of_adults > 0){
                 $scope.formData.total_amount += $scope.rate_list.adult_rate * $scope.formData.no_of_adults;
                 $scope.formData.total_amount += hours * $scope.rate_list.adult_rate * $scope.formData.no_of_adults;
             }
-
             if($scope.formData.no_of_children > 0){
                 $scope.formData.total_amount += $scope.rate_list.child_rate * $scope.formData.no_of_children;
                 $scope.formData.total_amount +=  hours * $scope.rate_list.child_rate * $scope.formData.no_of_children;
             }
-
         }
         $scope.formData.balance_amount = $scope.formData.total_amount;
         $scope.formData.total_amount += $scope.formData.paid_amount;
 
+        $scope.geValTime();
+
+
+
+    }
+
+    $scope.geValTime = function(){
+          DBService.postCall({entry_id:$scope.entry_id,hours_occ:$scope.formData.hours_occ}, '/api/sitting/cal-check').then((data) => {
+            if (data.success) { 
+                $scope.formData.show_valid_up = data.show_valid_up;
+                
+            }else{
+
+            }
+        });  
     }
 
     $scope.delete = function (id) {

@@ -42,6 +42,7 @@ ALTER TABLE `sitting_entries` ADD `checkout_enabled` TINYINT NOT NULL DEFAULT '0
 
 ALTER TABLE `sitting_entries` ADD `print_count` INT NOT NULL DEFAULT '0' AFTER `is_collected`;
 ALTER TABLE `sitting_entries` ADD `barcodevalue` VARCHAR(255) NULL DEFAULT NULL AFTER `slip_id`;
+ALTER TABLE `sitting_entries` ADD `max_print` INT NOT NULL DEFAULT '0' AFTER `is_collected`;
 
 
 
