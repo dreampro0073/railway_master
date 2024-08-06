@@ -70,7 +70,7 @@
                         </div>
 
 
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-4 form-group" ng-if="formData.id > 0">
                             <label>Checkout</label>
                             <input type="text" class="form-control" ng-model="formData.check_out" readonly>
                         </div>

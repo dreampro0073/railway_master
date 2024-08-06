@@ -60,9 +60,7 @@
 			<span class="text">Sl. No: <b style="font-size:18px;">{{ $print_data->id }}</b></span>
 		</h5>
 
-		<h5>
-			<span class="text"><span class="text">Bill No: <b style="font-size:18px;">{{ $print_data->unique_id }}</b></span></b></span>
-		</h5>
+		
 		<div class="table-div">
 			<div class="w-50">
 

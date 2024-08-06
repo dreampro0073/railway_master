@@ -21,10 +21,7 @@
                                     <label class="label-control">Slip ID</label>
                                     <input type="text" class="form-control" ng-model="filter.slip_id" />
                                 </div>                    
-                                <div class="col-md-2 form-group">
-                                    <label class="label-control">Bill Number</label>
-                                    <input type="text" class="form-control" ng-model="filter.unique_id" />
-                                </div>                    
+                                               
                                 <div class="col-md-3 form-group">
                                     <label class="label-control">Name</label>
                                     <input type="text" class="form-control" ng-model="filter.name" />
@@ -54,8 +51,7 @@
                     <thead style="background-color: rgba(0,0,0,.075);">
                         <tr class="table-primary">
                             <th>S.no</th>
-                            <th>Slip ID</th>
-                            <th>Bill no</th>
+                            <th>Slip ID</th>   
                             <th>Name</th>
                             <th>Mobile No</th>
                             <th>PNR</th>
@@ -72,7 +68,7 @@
                         <tr ng-repeat="item in entries">
                             <td>@{{ $index+1 }}</td>
                             <td>@{{ item.slip_id }}</td>
-                            <td>@{{ item.unique_id }}</td>
+                            
                             <td>@{{ item.name }}</td>
                             <td>@{{ item.mobile_no }}</td>
 
@@ -97,7 +93,7 @@
                                 <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
                                 <a ng-if="item.checkout_status != 1" href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
                                 
-                                <!-- <a href="{{url('/admin/sitting/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a> -->
+                                <a href="{{url('/admin/sitting/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a>
                             </td>
                         </tr>
                     </tbody>

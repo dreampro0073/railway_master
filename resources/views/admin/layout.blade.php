@@ -36,10 +36,10 @@
                             </li>
                         @endif
 
-                        @if(in_array(1, $service_ids) && Auth::user()->priv == 2)
-                           <!--  <li class="@if(isset($sidebar)) @if($sidebar == 'csitting') active @endif @endif">
+                        @if(in_array(1, $service_ids) && Auth::user()->priv == 4)
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'csitting') active @endif @endif">
                                 <a href="{{url('/admin/collect-sitting')}}"><i class="fa fa-sitemap"></i>Collect Sit</a>
-                            </li> -->
+                            </li>
                         @endif
 
                         @if(in_array(2, $service_ids) || Auth::user()->priv == 1)

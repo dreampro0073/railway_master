@@ -196,7 +196,7 @@ class ApiController extends Controller {
 
         $user = User::AuthenticateUser($request->header("apiToken"));
         $canteen_id = $request->canteen_id;
-        $users = DB::table('users')->select('id','name','email','mobile','priv');
+        $users = DB::table('users')->select('id','name','email','mobile','priv')->where("priv", '!=', '4');
 
         if($request->name){
             $users = $users->where('name','LIKE','%'.$request->name.'%');

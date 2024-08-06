@@ -9,6 +9,14 @@ use DB;
 class Entry extends Model
 {
 
+    public static function setCheckStatus(){
+        DB::table("cloakroom_penalities")->where('client_id',Auth::user()->client_id)->where('is_checked', 0)->update(['is_checked'=>1]);
+        DB::table("cloakroom_entries")->where('client_id',Auth::user()->client_id)->where('is_checked', 0)->update(['is_checked'=>1]);
+
+        DB::table("sitting_entries")->where('client_id',Auth::user()->client_id)->where('is_checked', 0)->update(['is_checked'=>1]);
+        DB::table("e_entries")->where('client_id',Auth::user()->client_id)->where('is_checked', 0)->update(['is_checked'=>1]);
+    }
+
     public static function payTypes(){
         $ar = [];
         $ar[] = ['value'=>1,'label'=>'Cash'];
@@ -41,34 +49,45 @@ class Entry extends Model
         return $ar;
     }
 
+    // public static function checkShift($type = 1){
+    //     $a_shift = strtotime("06:00:00");
+    //     $b_shift =strtotime("14:00:00");
+    //     $c_shift =strtotime("22:00:00");
+
+    //     $current_time = strtotime(date("H:i:s"));
+    //     // $current_time = "03:09:00";
+
+    //     if($current_time > $a_shift && $current_time < $b_shift){
+
+    //         if($type == 1){
+    //             return "A";
+    //         } else {
+    //             return "C";
+    //         }
+
+    //     }else if($current_time > $b_shift && $current_time < $c_shift){
+    //         if($type == 1){
+    //             return "B";
+    //         } else {
+    //             return "A";
+    //         }
+    //     }else{
+    //         if($type == 1){
+    //             return "C";
+    //         } else {
+    //             return "B";
+    //         }
+    //     }
+
+    // }
     public static function checkShift($type = 1){
-        $a_shift = strtotime("06:00:00");
-        $b_shift =strtotime("14:00:00");
-        $c_shift =strtotime("22:00:00");
-
+        $a_shift = strtotime("10:00:00");
+        $b_shift =strtotime("22:00:00");
         $current_time = strtotime(date("H:i:s"));
-        // $current_time = "03:09:00";
-
-        if($current_time > $a_shift && $current_time < $b_shift){
-
-            if($type == 1){
-                return "A";
-            } else {
-                return "C";
-            }
-
-        }else if($current_time > $b_shift && $current_time < $c_shift){
-            if($type == 1){
-                return "B";
-            } else {
-                return "A";
-            }
+        if($current_time >= $a_shift && $current_time <= $b_shift){
+            return "A";
         }else{
-            if($type == 1){
-                return "C";
-            } else {
-                return "B";
-            }
+            return "B";
         }
 
     }

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Railway Master</title>
+    <title>Shri Tech</title>
     <link rel="stylesheet" type="text/css" href="{{url('bootstrap3/css/bootstrap.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{url('assets/css/custom.css')}}">
 </head>

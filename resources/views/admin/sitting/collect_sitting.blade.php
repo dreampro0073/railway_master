@@ -62,7 +62,7 @@
                                 <span>@{{ item.show_time }}</span>
                                 
                             </td>
-                            <td>@{{ item.no_of_adults }}</td>                            
+                            <td>@{{ item.hours_occ }}</td>                            
                             <td>
                                 <span ng-if="item.pay_type == 1">Cash</span>
                                 <span ng-if="item.pay_type == 2">UPI</span>
@@ -71,7 +71,7 @@
                             
                             <td>
                                 
-                                <button type="button" class="btn btn-sm" ng-click="collectCloak(item);">
+                                <button type="button" class="btn btn-sm" ng-click="collectSit(item);">
                                     Collect
                                 </button>
                             </td>
@@ -83,20 +83,20 @@
             </div> 
             <hr>
             <div>
-                <h3>Today Sitting Penality (@{{penalty_sum}})</h3>
+                <h3>Today Sitting Penality (@{{e_ent_sum}})</h3>
                 <table class="table table-bordered table-striped" >
                     <thead style="background-color: rgba(0,0,0,.075);">
                         <tr class="table-primary">
-                            <th>Cloakroom Id</th>
+                            <th>Sitting Id</th>
                             <th>Amount</th>
                             <th>
                                 #
                             </th>
                         </tr>
                     </thead>
-                    <tbody ng-if="penlty_list.length > 0" >
-                        <tr ng-repeat="item in penlty_list">
-                            <td>@{{ item.cloakroom_id }}</td>
+                    <tbody ng-if="e_entries_list.length > 0" >
+                        <tr ng-repeat="item in e_entries_list">
+                            <td>@{{ item.entry_id }}</td>
                             <td>@{{ item.paid_amount }}</td>
                             <td>
                                 <button type="button" class="btn btn-sm" ng-click="onPSubmit(item);">
@@ -131,13 +131,39 @@
 
                             <div class="row">
                                 <div class="col-md-4 form-group">
-                                    <label>Total Bag</label>
-                                    <input type="number" disabled ng-model="formData.total_bag" class="form-control" required />
+                                    <label>Total Hours</label>
+                                    <input type="number" disabled ng-model="formData.total_hours" class="form-control" required />
                                 </div>
                                 
                                 <div class="col-md-4 form-group">
-                                    <label>Bag To Be Update</label>
-                                    <input type="number" min="1" ng-model="formData.no_of_bag" class="form-control" required />
+                                    <label>Hours to be updated</label>
+                                    <input type="number" min="1" ng-model="formData.hours_occ" class="form-control" required />
+                                </div>    
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label>Total no of adults</label>
+                                    <input type="number" disabled ng-model="formData.total_no_of_adults" class="form-control" required />
+                                </div>
+                                
+                                <div class="col-md-4 form-group">
+                                    <label>No of adults to be Update</label>
+                                    <input type="number" min="1" ng-model="formData.no_of_adults" class="form-control" required />
+                                </div>    
+
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label>Total no of children</label>
+                                    <input type="number" disabled ng-model="formData.total_no_of_children" class="form-control" required />
+                                </div>
+                                
+                                <div class="col-md-4 form-group">
+                                    <label>No of children to be Update</label>
+                                    <input type="number" min="1" ng-model="formData.no_of_children" class="form-control" required />
                                 </div>    
 
                             </div>

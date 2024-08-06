@@ -43,6 +43,8 @@ app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
                 }
             }
         });
+
+        $("#productName").focus();
     }
     $scope.getData = (page) => {
         $scope.filter.page_no = $scope.filter.page_no + page;
@@ -85,9 +87,10 @@ app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
                     $scope.formData = data.l_entry;      
                     $("#checkoutCloakModel").modal("show");
                 }else{
-                     
+                    $scope.init(); 
                     alert(data.message);
-                    $scope.filterClear();
+                    $scope.filter.id = '';
+
                 }
                 
             });
@@ -95,25 +98,23 @@ app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
     }
 
     $scope.checkoutCloak1 = function(){
-        $checkout_loading = true;
         DBService.postCall({productName : $scope.productName}, '/api/cloak-rooms/checkout-init/2').then((data) => {
             $scope.productName = '';
-            $checkout_loading = false;
             if (data.timeOut) {
                 $scope.formData = data.l_entry;
                 $scope.entry_id = data.l_entry.id;
                 $("#checkoutCloakModel").modal("show");
             }else{
-                alert(data.message);
-                $scope.filterClear();
+                $scope.init(); 
+
+                $scope.filter.id = '';
+                
             }
+            
         });
     }
 
     $scope.handleKeyPress = function(event) {
-        if($scope.checkout_loading){
-            return;
-        }
         if (event.which === 13) {
             $scope.checkoutCloak1();
             if ($scope.scannedValue.trim()) {
@@ -172,7 +173,7 @@ app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
                 };
                 $scope.init();
                 setTimeout(function(){
-                    window.open(base_url+'/admin/cloak-rooms/print-unq/1/'+data.id,'_blank');
+                    window.open(base_url+'/admin/cloak-rooms/print-unq/1/'+data.print_id,'_blank');
                 }, 800);
 
             }
@@ -199,7 +200,6 @@ app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
                 };
                 $scope.init();
                 setTimeout(function(){
-                    // window.open(base_url+'/admin/cloak-rooms/print-unq/2/'+data.id,'_blank');
                     window.open(base_url+'/admin/cloak-rooms/print/'+data.id,'_blank');
                 }, 800);
             }
@@ -457,6 +457,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.rate_list = data.rate_list;
             }
             $scope.setNullFormData();
+            $("#productName").focus();
 
         });
     }
@@ -507,13 +508,13 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             $scope.productName = '';
             $checkout_loading = false;
             if (data.success) {
-                alert("Successfully checkout!");
+                alert(data.message);
                 $scope.filterClear();
             }else{
                 $scope.last_hour += data.sitting_entry.hours_occ;
                 $scope.formData = data.sitting_entry;
                 $scope.entry_id = data.id;
-                $scope.checkout_process = true;
+                $scope.checkout_process = false;
                 $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
                 $("#checkoutModal").modal("show");
                 $scope.changeAmount();
@@ -528,13 +529,27 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         }
         if (event.which === 13) {
             $scope.editCheckout1();
-            if ($scope.scannedValue.trim()) {
-                $scope.scannedValue = '';
+            if ($scope.productName.trim()) {
+                $scope.productName = '';
             }
         } else {
-            $scope.scannedValue = ($scope.scannedValue || '') + event.key;
+            $scope.productName = ($scope.productName || '') + event.key;
         }
     };
+
+    // $scope.handleKeyPress = function(event) {
+    //     if($scope.checkout_loading){
+    //         return;
+    //     }
+    //     if (event.which === 13) {
+    //         $scope.editCheckout1();
+    //         if ($scope.scannedValue.trim()) {
+    //             $scope.scannedValue = '';
+    //         }
+    //     } else {
+    //         $scope.scannedValue = ($scope.scannedValue || '') + event.key;
+    //     }
+    // };
     $scope.add = function(){
         $scope.setNullFormData();
         $scope.checkout_process = false;
@@ -1174,7 +1189,9 @@ app.controller('sittingCollectCtrl', function($scope , $http, $timeout , DBServi
         DBService.postCall($scope.filter, '/api/collect-sitting/init').then((data) => {
             if (data.success) {
                 $scope.entries = data.entries;
+                $scope.e_entries_list = data.e_entries_list;
                 $scope.c_sum = data.c_sum;
+                $scope.e_ent_sum = data.e_ent_sum;
             }
         });
     }
@@ -1187,17 +1204,23 @@ app.controller('sittingCollectCtrl', function($scope , $http, $timeout , DBServi
        $("#exampleModalCenter").modal("hide");
     }
 
-    $scope.collectCloak = function(item){
+    $scope.collectSit = function(item){
+        // console.log(item);
         $scope.formData.id = item.id;
-        $scope.formData.total_bag = item.total_bag;
-        $scope.formData.no_of_bag = item.no_of_bag;
+        $scope.formData.total_no_of_adults = item.no_of_adults;
+        $scope.formData.no_of_adults = item.no_of_adults;
+
+        $scope.formData.total_no_of_children = item.no_of_children;
+        $scope.formData.no_of_children = item.no_of_children;
+        $scope.formData.hours_occ = item.hours_occ;
+        $scope.formData.total_hours = item.total_hours;
         $("#exampleModalCenter").modal("show");
     }
 
     $scope.onSubmit = function () {
         $scope.loading = true;
         // console.log($scope.formData);return;
-        DBService.postCall($scope.formData, '/api/collect-cloak/store').then((data) => {
+        DBService.postCall($scope.formData, '/api/collect-sitting/store').then((data) => {
             if (data.success) {
                 alert(data.message);
                 $("#exampleModalCenter").modal("hide");
@@ -1217,7 +1240,7 @@ app.controller('sittingCollectCtrl', function($scope , $http, $timeout , DBServi
     $scope.onPSubmit = function (pData) {
         $scope.ploading = true;
         $scope.pData = pData;
-        DBService.postCall($scope.pData, '/api/collect-cloak/store-pen').then((data) => {
+        DBService.postCall($scope.pData, '/api/collect-sitting/store-pen').then((data) => {
             if (data.success) {
                 alert(data.message);
                 $scope.pData = {

@@ -68,21 +68,22 @@
 		</div>
 		<div class="table-div">
 			<div class="w-50">
-				<span class="text">Bill No: {{ $print_data->unique_id }}</span><br>	
-				
+				<span class="name">Name : {{$print_data->name}}</span>		
+
 			</div>
-			<div class="w-50 text-right">
-				<span class="text">Date: <?php echo date("d-m-Y"); ?></span>
+			<div class="w-50">
+				<span class="text text-right">Date: <?php echo date("d-m-Y"); ?></span>	
+
 			</div>
 		</div>
 
-		<span class="name">Name : {{$print_data->name}}</span>
+		
 		<div class="table-div">
 			<div class="w-50">
 				<span class="text">PNR/ID No.: {{$print_data->pnr_uid}}</span>
 			</div>
 			<div class="w-50">
-				<span class="text text-right">Mobile: {{$print_data->mobile_no}}</span>
+				<span class="text">Mobile: {{$print_data->mobile_no}}</span>
 			</div>
 		</div>
 		<div style="margin-bottom: 20px;">

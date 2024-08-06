@@ -101,7 +101,7 @@ class UserController extends Controller {
 
 
     public function initUsers(Request $request){
-        $users = DB::table('users')->select('id','name','email','mobile')->where("client_id", Auth::user()->client_id);
+        $users = DB::table('users')->select('id','name','email','mobile')->where("priv", '!=', '4')->where("client_id", Auth::user()->client_id);
 
         if($request->name){
             $users = $users->where('name','LIKE','%'.$request->name.'%');
@@ -121,7 +121,7 @@ class UserController extends Controller {
     }
 
     public function editUser(Request $request){
-        $user = User::where('id', $request->user_id)->where("client_id", Auth::user()->client_id)->first();
+        $user = User::where('id', $request->user_id)->where("client_id", Auth::user()->where("priv", '!=', '4')->client_id)->first();
         if($user){
             $user->mobile = $user->mobile*1;
         }

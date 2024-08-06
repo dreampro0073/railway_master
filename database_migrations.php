@@ -46,4 +46,17 @@ ALTER TABLE `sitting_entries` ADD `max_print` INT NOT NULL DEFAULT '0' AFTER `is
 
 
 
+ALTER TABLE `e_entries` ADD `is_checked` TINYINT NOT NULL DEFAULT '0' AFTER `type`;
+ALTER TABLE `e_entries` ADD `is_collected` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_checked`;
+ALTER TABLE `sitting_entries` ADD `is_late` INT NOT NULL DEFAULT '0' AFTER `pay_type`;
+
+ALTER TABLE `collected_sitting` ADD `no_of_children` INT NOT NULL DEFAULT '0' AFTER `total_adult`, ADD `erase_children` INT NOT NULL DEFAULT '0' AFTER `no_of_children`, ADD `total_children` INT NOT NULL DEFAULT '0' AFTER `erase_children`;
+
+ALTER TABLE `collected_sitting` ADD `hours_occ` INT NOT NULL DEFAULT '0' AFTER `date`, ADD `total_hours` INT NOT NULL DEFAULT '0' AFTER `hours_occ`, ADD `erase_hours` INT NOT NULL DEFAULT '0' AFTER `total_hours`;
+
+ALTER TABLE `collected_sitting` CHANGE `erase_adult` `erase_adults` INT(11) NULL DEFAULT NULL, CHANGE `total_adult` `total_adults` INT(11) NULL DEFAULT NULL;
+
+ALTER TABLE `collected_sitting` CHANGE `no_of_adult` `no_of_adults` INT(11) NULL DEFAULT NULL;
+
+
 ?>

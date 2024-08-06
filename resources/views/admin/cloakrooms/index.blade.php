@@ -120,7 +120,7 @@
                                 <div style="margin-top:4px;"></div>
                                 <a href="{{url('/admin/cloak-rooms/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a>
                                 <div style="margin-top:4px;"></div>
-                                 <a ng-if="item.barcodevalue" href="{{url('/admin/cloak-rooms/print-unq/1')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print Slip</a>
+                                 <a ng-if="item.barcodevalue" href="{{url('/admin/cloak-rooms/print-unq/1')}}/@{{item.barcodevalue}}" class="btn btn-success btn-sm" target="_blank">Print Slip</a>
                             </td>
                         </tr>
                     </tbody>

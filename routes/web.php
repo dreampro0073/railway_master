@@ -13,6 +13,7 @@ use App\Http\Controllers\CloakRoomCollectController;
 use App\Http\Controllers\SittingCollectController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -59,9 +60,6 @@ Route::group(['middleware'=>'auth'],function(){
 			Route::get('/print-unq/{type}/{print_id?}', [CloakRoomController::class,'printPostUnq']);
 			Route::get('/print/{id?}', [CloakRoomController::class,'printPost']);
 			Route::get('/export', [CloakRoomController::class,'export']);
-			
-			Route::get('/checkout',[AdminController::class,'checkout']);
-
 		});	
 	
 		Route::get('collect-cloak', [CloakRoomCollectController::class,'collectCloak']);
@@ -98,6 +96,8 @@ Route::group(['middleware'=>'auth'],function(){
 	});
 });
 
+Route::get('set-slip-id',[SittingController::class,'setSlipId']);
+
 Route::group(['prefix'=>"api"], function(){	
 	Route::group(['prefix'=>"shift"], function(){
 		Route::post('/init',[ShiftController::class,'init']);
@@ -112,14 +112,13 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/checkout-init/{type}',[SittingController::class,'checkoutInit']);	
 		Route::post('/checkout-store',[SittingController::class,'checkoutStore']);	
 	});
-	 Route::group(['prefix'=>"cloak-rooms"], function(){
+	Route::group(['prefix'=>"cloak-rooms"], function(){
 		Route::post('/init/{type}',[CloakRoomController::class,'initRoom']);
 		Route::post('/edit-init',[CloakRoomController::class,'editRoom']);
 		Route::post('/store',[CloakRoomController::class,'store']);
 		Route::post('/cal-check',[CloakRoomController::class,'calCheck']);
 		Route::post('/checkout-init/{type}',[CloakRoomController::class,'checkoutInit']);
 		Route::post('/checkout-store',[CloakRoomController::class,'checkoutStore']);
-		// Route::post('/checkout-init1',[CloakRoomController::class,'checkoutInit1']);
 		Route::get('/delete/{id}',[CloakRoomController::class,'delete']);
 	});
 
@@ -177,8 +176,8 @@ Route::group(['prefix'=>"api"], function(){
 
 	Route::group(['prefix'=>"collect-sitting"], function(){
 		Route::post('/init',[SittingCollectController::class,'init']);
-		Route::post('/store',[SittingCollectController::class,'storeCollect']);
-		Route::post('/store-pen',[SittingCollectController::class,'store']);
+		Route::post('/store',[SittingCollectController::class,'storeCollectSit']);
+		Route::post('/store-pen',[SittingCollectController::class,'storePen']);
 	});
 });
 

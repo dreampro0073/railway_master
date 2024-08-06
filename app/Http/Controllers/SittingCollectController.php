@@ -12,7 +12,7 @@ use Redirect, Validator, Hash, Response, Session, DB;
 use App\Models\Massage, App\Models\User;
 use App\Models\Entry;
 use App\Models\Sitting;
-use App\Models\CollectedPenalities;
+use App\Models\CollectedSitting;
 
 class SittingCollectController extends Controller {	
 	
@@ -21,7 +21,7 @@ class SittingCollectController extends Controller {
 		$check_shift = Entry::checkShift();
         $date = Entry::getPDate();
 
-		$entries = Sitting::select('sitting_entries.*')->where("sitting_entries.client_id", Auth::user()->client_id)->where('checkout_status',1)->where('is_collected',0)->where('is_checked',0);
+		$entries = Sitting::select('sitting_entries.*')->where("sitting_entries.client_id", Auth::user()->client_id)->where('checkout_status',1)->where('is_collected',0)->where('hours_occ','>',1)->where('no_of_adults','>',1)->where('shift',$check_shift)->where("added_by", Auth::user()->parent_user_id)->where('date',$date)->where('is_checked',0)->where('is_late',0);
 		if($request->slip_id){
 			$entries = $entries->where('sitting_entries.slip_id', $request->slip_id);
 		}		
@@ -44,25 +44,29 @@ class SittingCollectController extends Controller {
 		$entries = $entries->get();
 		foreach ($entries as $item) {
 			$item->show_time = date("h:i A",strtotime($item->check_in)).' - '.date("h:i A",strtotime($item->check_out));
-
-			$e_total = DB::table('e_entries')->where('entry_id',$item->id)->sum('paid_amount');
+			$e_total = DB::table('e_entries')->where('entry_id',$item->id)->where('is_collected',0)->where('is_checked',0)->sum('paid_amount');
 
 			$item->paid_amount = $item->paid_amount + $e_total;
 		}
 		$c_sum = DB::table("collected_sitting")->where('date', date("Y-m-d",strtotime($date)))->sum("collected_amount");
+		
 
+		$e_entries_list = DB::table("e_entries")->where("is_checked", "=", 0)->where("added_by", Auth::user()->parent_user_id)->where('type',2)->where("is_collected",0)->where('pay_type',1)->get();
+
+
+		$e_ent_sum = DB::table("collected_e_entries")->where('date', date("Y-m-d",strtotime($date)))->where("shift", $check_shift)->where('pay_type',1)->sum("paid_amount");
 
 		$data['success'] = true;
 		$data['entries'] = $entries;
+		$data['e_entries_list'] = $e_entries_list;
 		$data['c_sum'] = $c_sum;
+		$data['e_ent_sum'] = $e_ent_sum;
 		return Response::json($data, 200, []);
 	}
 
-	public function storeCollectCloak(Request $request){
-		$id = $request->id;
-		$no_of_bag = $request->no_of_bag;
-
-		CollectedPenalities::cloakroomCollection($id,$no_of_bag);
+	public function storeCollectSit(Request $request){
+		
+		CollectedSitting::sittingCollection($request);
 
 		$data['success'] = true;
 		$data['message'] = "Done";
@@ -72,7 +76,8 @@ class SittingCollectController extends Controller {
 
 	public function storePen(Request $request){
 		$id = $request->id;
-		CollectedPenalities::penltyCollection($id);
+
+		CollectedSitting::penltyCollection($id);
 		$data['success'] = true;
 		$data['message'] = "Done";
 		return Response::json($data, 200, []);

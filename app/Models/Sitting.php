@@ -115,42 +115,42 @@ class Sitting extends Model
 
 
 
-            $total_shift_upi += DB::table('e_entries')->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
+            $total_shift_upi += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
 
 
 
             $total_shift_cash = Sitting::where('client_id', $client_id)->where('date',$input_date)->where('pay_type',1)->sum("paid_amount");
 
-            $total_shift_cash += DB::table('e_entries')->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',1)->sum("paid_amount");
+            $total_shift_cash += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',1)->sum("paid_amount");
 
             $last_hour_upi_total = Sitting::where('client_id', $client_id)->where('date',$input_date)->where('pay_type',2)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
 
-            $last_hour_upi_total += DB::table('e_entries')->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',2)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
+            $last_hour_upi_total += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',2)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
 
             $last_hour_cash_total = Sitting::where('client_id', $client_id)->where('date',$input_date)->where('pay_type',1)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount");
 
-            $last_hour_cash_total += DB::table('e_entries')->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',1)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
+            $last_hour_cash_total += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',1)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
 
         }else{
             $total_shift_upi = Sitting::where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
 
 
-            $total_shift_upi += DB::table('e_entries')->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
+            $total_shift_upi += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
             // dd($total_shift_upi);
             
 
             $total_shift_cash = Sitting::where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',1)->sum("paid_amount");
 
-            $total_shift_cash += DB::table('e_entries')->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',1)->sum("paid_amount");
+            $total_shift_cash += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',1)->sum("paid_amount");
 
 
             $last_hour_upi_total = Sitting::where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
 
-            $last_hour_upi_total += DB::table('e_entries')->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
+            $last_hour_upi_total += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
 
             $last_hour_cash_total = Sitting::where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',1)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount");
 
-            $last_hour_cash_total += DB::table('e_entries')->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',1)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
+            $last_hour_cash_total += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',1)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
 
         }
     
