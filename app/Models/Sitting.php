@@ -19,6 +19,14 @@ class Sitting extends Model
         return $ar;
     }
 
+    public static function eSum($entry_id=0){
+        return DB::table('e_entries')->where('is_collected',0)->where('is_checked',0)->where('entry_id',$entry_id)->sum('paid_amount');
+    }
+
+    public static function rateList(){
+        return DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
+    }
+
     public static function getAvailLockers(){
         return DB::table('lockers')->where('status',0)->get();
     }
@@ -106,9 +114,6 @@ class Sitting extends Model
 
         $input_date = date("Y-m-d",strtotime($input_date));
 
-        if(Auth::user()->priv != 2){
-            $user_id = Auth::id();
-        }
         
         if($user_id == 0 ){
             $total_shift_upi = Sitting::where('client_id', $client_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
@@ -132,6 +137,7 @@ class Sitting extends Model
             $last_hour_cash_total += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('date',$input_date)->where('pay_type',1)->whereBetween('created_at', [date('Y-m-d H:00:00'), date("Y-m-d H:i:s")])->sum("paid_amount"); 
 
         }else{
+
             $total_shift_upi = Sitting::where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
 
 

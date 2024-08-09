@@ -28,7 +28,7 @@ class ShiftController extends Controller {
 
 		$input_date = $request->input_date;
 		$user_id = $request->has('user_id')?$request->user_id:0;
-		$users = DB::table('users')->select('id','name')->where("client_id", Auth::user()->client_id)->get();
+		$users = DB::table('users')->select('id','name')->where('priv','!=',4)->where("client_id", Auth::user()->client_id)->get();
 		$service_ids = Session::get('service_ids');
 
 		$current_shift = Entry::checkShift();
@@ -38,6 +38,14 @@ class ShiftController extends Controller {
 		$last_hour_upi_total = 0;
 		$last_hour_cash_total = 0;
 		$last_hour_total = 0;
+
+		if(Auth::user()->priv != 2){
+            $user_id = Auth::id();
+        }
+
+        if(Auth::user()->priv ==4 && Auth::id() == 23){
+        	$user_id = 19;
+        }
 
 		if(in_array(1, $service_ids)){
 			$sitting_data = Sitting::totalShiftData($input_date,$user_id);

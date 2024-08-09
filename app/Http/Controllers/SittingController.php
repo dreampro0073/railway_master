@@ -58,9 +58,6 @@ class SittingController extends Controller {
 		if($request->slip_id){
 			$entries = $entries->where('sitting_entries.slip_id', $request->slip_id);
 		}		
-		// if($request->unique_id){
-		// 	$entries = $entries->where('sitting_entries.unique_id', 'LIKE', '%'.$request->unique_id.'%');
-		// }		
 		if($request->name){
 			$entries = $entries->where('sitting_entries.name', 'LIKE', '%'.$request->name.'%');
 		}		
@@ -82,7 +79,7 @@ class SittingController extends Controller {
 
 			$item->paid_amount = $item->paid_amount + $e_total;
 		}
-		$rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
+		$rate_list = Sitting::rateList();
 
 		$pay_types = Entry::payTypes();
 		$hours = Entry::hours();
@@ -102,16 +99,16 @@ class SittingController extends Controller {
 			$sitting_entry->train_no = $sitting_entry->train_no*1;
 			$sitting_entry->pnr_uid = $sitting_entry->pnr_uid;
 			
-			$e_total = DB::table('e_entries')->where('is_collected',0)->where('is_checked',0)->where('entry_id',$sitting_entry->id)->sum('paid_amount');
 
+			$e_total = Sitting::eSum($sitting_entry->id);
 			$sitting_entry->paid_amount = $sitting_entry->paid_amount*1 + $e_total;
-
 			$sitting_entry->total_amount = $sitting_entry->paid_amount;
 
 			$sitting_entry->check_in = date("h:i A",strtotime($sitting_entry->check_in));
 			$sitting_entry->check_out = date("h:i A",strtotime($sitting_entry->check_out));
 
-			$sitting_entry->show_valid_up = $this->getValTime($sitting_entry->hours_occ,$sitting_entry->date,$sitting_entry->check_in);
+			// $sitting_entry->show_valid_up = $this->getValTime($sitting_entry->hours_occ,$sitting_entry->date,$sitting_entry->check_in);
+			$sitting_entry->show_valid_up = date("h:i A d-m-Y",strtotime($sitting_entry->checkout_date));
 		}
 
 		$data['success'] = true;
@@ -129,7 +126,6 @@ class SittingController extends Controller {
 
 		if($sitting_entry){
     		$now_time = strtotime(date("Y-m-d H:i:s",strtotime("-10 minutes")));
-
 			$current_time = strtotime(date("Y-m-d H:i:s"));
     		$checkout_time = strtotime($sitting_entry->checkout_date);
 
@@ -138,6 +134,15 @@ class SittingController extends Controller {
 				$sitting_entry->checkout_time = date("Y-m-d H:i:s"); 
 				$sitting_entry->checkout_by = Auth::id();
 				$sitting_entry->save();
+
+				DB::table('checks')->insert([
+					'entry_id' => $sitting_entry->id,
+					'slip_id' => $sitting_entry->slip_id,
+					'added_by' => Auth::id(),
+					'time' => date("Y-m-d H:i:s"),
+					'type' => 1
+				]);
+
 				$data['success'] = true;
 				$data["message"] = "Successfully Checkout";
 
@@ -153,10 +158,9 @@ class SittingController extends Controller {
 				$sitting_entry->train_no = $sitting_entry->train_no*1;
 				$sitting_entry->pnr_uid = $sitting_entry->pnr_uid;
 				
-				$e_total = DB::table('e_entries')->where('is_collected',0)->where('is_checked',0)->where('entry_id',$sitting_entry->id)->sum('paid_amount');
+				$e_total = Sitting::eSum($sitting_entry->id);
 
 				$sitting_entry->paid_amount = $sitting_entry->paid_amount*1 + $e_total;
-
 				$sitting_entry->total_amount = $sitting_entry->paid_amount;
 
 				$sitting_entry->check_in = date("h:i A",strtotime($sitting_entry->check_in));
@@ -164,6 +168,7 @@ class SittingController extends Controller {
 				$sitting_entry->checkout_date = date("d-m-Y h:i A",strtotime($sitting_entry->checkout_date));
 				$data['success'] = false;
 				$data['ex_hours'] = $ex_hours;
+
 				$data['sitting_entry'] = $sitting_entry;
 			}
 		} else {
@@ -174,16 +179,13 @@ class SittingController extends Controller {
 	}
 
 	public function calCheck(Request $request){
-
 		$entry = Sitting::find($request->entry_id);
-
 		if($entry){
 			$show_checkout_date = $this->getValTime($request->hours_occ,$entry->date,$entry->check_in);
 		}else{
 			$show_checkout_date = $this->getValTime($request->hours_occ,'','');
 
 		}
-
 		$data['success'] = true;
 		$data['show_valid_up'] = date("h:i A d-m-Y",strtotime($show_checkout_date));
 		return Response::json($data, 200, []);
@@ -191,7 +193,6 @@ class SittingController extends Controller {
 
 
 	function getValTime($hours_occ=0,$date='',$check_in=''){
-
 		if($check_in !=''){
 			$check_in_date = $date." ".$check_in;
 			$no_of_min = $hours_occ*60;
@@ -203,7 +204,6 @@ class SittingController extends Controller {
 			$no_of_min = $hours_occ*60;
 			$show_valid_up = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
 		}
-
 		return  date("h:i A d-m-Y",strtotime($show_valid_up));
 	}
 
@@ -228,19 +228,21 @@ class SittingController extends Controller {
 			$total_amount = $request->total_amount;
 			if($request->id){
 				$entry = Sitting::find($request->id);
-
 				if($request->hours_occ <= $entry->hours_occ){
 					$data['success'] = false;
 					$data['message'] = "Please select valid hours";
-
 					return Response::json($data, 200, []);
 
 				}
 
-				$message = "Updated Successfully!";
-				$e_total = Db::table('e_entries')->where('is_collected',0)->where('is_checked',0)->where('entry_id',$entry->id)->sum('paid_amount');
+				if($request->balance_amount <= 0){
+					$data['success'] = false;
+					$data['message'] = "Please Referesh your screen and edit Again";
 
-				$total_amount = $total_amount - ($entry->paid_amount + $e_total);
+					return Response::json($data, 200, []);
+				}
+
+				$message = "Updated Successfully!";
 
 				DB::table('e_entries')->insert([
 					'entry_id' => $entry->id,
@@ -248,7 +250,7 @@ class SittingController extends Controller {
 					'date' => $date,
 					'pay_type' => $request->pay_type,
 					'shift' => $check_shift,
-					'paid_amount' => $total_amount,
+					'paid_amount' => $request->balance_amount,
 					'created_at' => date("Y-m-d H:i:s"),
 					'current_time' => date("H:i:s"),
 					'client_id' => Auth::user()->client_id,
@@ -258,12 +260,16 @@ class SittingController extends Controller {
 			} else {
 				$entry = new Sitting;
 				$message = "Stored Successfully!";
-				$entry->unique_id = strtotime('now');
+				
 				$entry->date = $date;
 				$entry->added_by = Auth::id();
 				$entry->paid_amount = $total_amount;
 				$entry->pay_type = $request->pay_type;
 				$entry->slip_id = Sitting::getSlipId();
+				$entry->check_in = date("H:i:s");
+				$entry->checkin_date = date("Y-m-d H:i:s");
+				$entry->client_id = Auth::user()->client_id;
+				$entry->shift = $check_shift;
 			}
 
 			$entry->name = $request->name;
@@ -273,50 +279,34 @@ class SittingController extends Controller {
 			$entry->no_of_children = $request->no_of_children ? $request->no_of_children : 0;
 			$entry->no_of_baby_staff = $request->no_of_baby_staff ? $request->no_of_baby_staff : 0;
 			$entry->hours_occ = $request->hours_occ ? $request->hours_occ : 0;
-
-			if($request->id){
-				$entry->check_in = date("H:i:s",strtotime($request->check_in));
-			}else{
-				$entry->check_in = date("H:i:s");
-			}
-
 			$entry->remarks = $request->remarks;
-			$entry->shift = $check_shift;
+			$entry->unique_id = strtotime('now');
 			$entry->save();
+
 			$entry->total_hours = $entry->hours_occ;
 			$no_of_min = $request->hours_occ*60;
 
-
-			$check_in_date = $entry->date." ".$entry->check_in;
-
-
 			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
-			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
+			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->checkin_date)));
 
-			$entry->client_id = Auth::user()->client_id;
 
-			$e_total = Db::table('e_entries')->where('is_collected',0)->where('is_checked',0)->where('entry_id',$entry->id)->sum('paid_amount');
+			$e_total = Sitting::eSum($entry->id);
 
 			$entry->total_amount = $e_total + $entry->paid_amount;
-
-			$entry->save();
-
 			$barcodevalue = bin2hex($entry->unique_id);
 			$entry->barcodevalue = $barcodevalue;
 			$entry->max_print = $entry->max_print+1;
-			$entry->save();
 
+
+			$entry->save();
 			$data['id'] = $entry->id;
 			$data['print_id'] = $entry->barcodevalue;
-
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
 			$message = $validator->errors()->first();
 		}
-
 		return Response::json($data, 200, []);
-
 	}
 
 	public function checkoutStore(Request $request){
@@ -365,9 +355,20 @@ class SittingController extends Controller {
 			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
 			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
 
+			$e_total = Sitting::eSum($entry->id);
+			$entry->total_amount = $e_total + $entry->paid_amount;
 			$entry->is_late = 1;
 
 			$entry->save();
+
+			DB::table('checks')->insert([
+				'entry_id' => $entry->id,
+				'slip_id' => $entry->slip_id,
+				'time' => date("Y-m-d H:i:s"),
+				'added_by' => Auth::id(),
+				'type' =>2,
+
+			]);
 			
 			$data['id'] = $entry->id;
 			$data['success'] = true;
@@ -378,20 +379,7 @@ class SittingController extends Controller {
 		}
 		return Response::json($data, 200, []);
 	}
-	public function printReports(){
-		$print_data = new \stdClass;
-		$data = Sitting::totalShiftData();
-		$print_data->type = "shift";
-		$print_data->total_shift_cash = $data['total_shift_cash']; 
-		$print_data->total_shift_upi = $data['total_shift_upi'];
-		$print_data->total_collection = $data['total_collection'];
-		$print_data->last_hour_upi_total = $data['last_hour_upi_total'];
-		$print_data->last_hour_cash_total = $data['last_hour_cash_total'];
-		$print_data->last_hour_total = $data['last_hour_total'];
-		$print_data->check_shift = $data['check_shift'];
-		$print_data->shift_date = $data['shift_date'];
-		$this->printFinal($print_data);
-	}
+	
 	
 	public function printPost($id = 0){
 
@@ -402,7 +390,7 @@ class SittingController extends Controller {
         $print_data->adult_amount = 0;
         $print_data->children_amount = 0;
         $hours = $print_data->hours_occ;
-        $rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
+        $rate_list = Sitting::rateList();
 
         $e_total = DB::table('e_entries')->select('paid_amount')->where('is_collected',0)->where('is_checked',0)->where('entry_id', $print_data->id)->sum('paid_amount');
 
@@ -417,8 +405,6 @@ class SittingController extends Controller {
 	}
 
 	public function printPostUnq($type =1,$print_id = ''){
-		// $print_id = base64_decode($print_id);
-
         $print_data = DB::table('sitting_entries')->where('barcodevalue', $print_id)->first();
 
         if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
@@ -432,9 +418,9 @@ class SittingController extends Controller {
         $print_data->adult_amount = 0;
         $print_data->children_amount = 0;
         $hours = $print_data->hours_occ;
-        $rate_list = DB::table("sitting_rate_list")->where("client_id", Auth::user()->client_id)->first();
+        $rate_list = Sitting::rateList();
 
-        $e_total = DB::table('e_entries')->select('paid_amount')->where('is_collected',0)->where('is_checked',0)->where('entry_id', $print_data->id)->sum('paid_amount');
+        $e_total = Sitting::eSum($print_data->id);
 
         $total_amount =  $print_data->paid_amount + $e_total;
 
@@ -450,19 +436,18 @@ class SittingController extends Controller {
 		return view('admin.sitting.print_sitting_unq',compact('print_data','total_amount'));
 	}
 
-    public function delete($id){
-    	DB::table('sitting_entries')->where('client_id', Auth::user()->client_id)->where('id',$id)->update([
-    		'deleted' => 1,
-    		'delete_by' => Auth::id(),
-    		'delete_time' => date("Y-m-d H:i:s"),
+    // public function delete($id){
+    // 	DB::table('sitting_entries')->where('client_id', Auth::user()->client_id)->where('id',$id)->update([
+    // 		'deleted' => 1,
+    // 		'delete_by' => Auth::id(),
+    // 		'delete_time' => date("Y-m-d H:i:s"),
 
-    	]);
+    // 	]);
 
-    	$data['success'] = true;
-    	$data['message'] = "Successfully";
+    // 	$data['success'] = true;
+    // 	$data['message'] = "Successfully";
 		
-		return Response::json($data, 200, []);
-    }
-
+	// 	return Response::json($data, 200, []);
+    // }
 
 }

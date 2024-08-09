@@ -128,7 +128,13 @@ class CollectedSitting extends Model{
                 $c_no_min = $no_of_min-4;
                 $entry->checkout_time = date("Y-m-d H:i:s",strtotime("+".$c_no_min." minutes",strtotime($check_in_date)));
 
+                
+
                 $entry->save();
+
+                DB::table("e_entries")->where('entry_id',$entry->id)->update([
+                    'is_collected' => 1,
+                ]);
 
             }
 

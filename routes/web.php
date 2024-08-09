@@ -45,7 +45,7 @@ Route::group(['middleware'=>'auth'],function(){
 			Route::get('/',[SittingController::class,'sitting']);
 			Route::get('/print-unq/{type}/{print_id?}', [SittingController::class,'printPostUnq']);
 			Route::get('/print/{id?}', [SittingController::class,'printPost']);
-			Route::get('/print-report', [SittingController::class,'printReports']);
+			// Route::get('/print-report', [SittingController::class,'printReports']);
 
 		});
 		
@@ -108,9 +108,10 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/edit-init',[SittingController::class,'editEntry']);
 		Route::post('/store',[SittingController::class,'store']);
 		Route::post('/cal-check',[SittingController::class,'calCheck']);
-		Route::get('/delete/{id}',[SittingController::class,'delete']);
 		Route::post('/checkout-init/{type}',[SittingController::class,'checkoutInit']);	
-		Route::post('/checkout-store',[SittingController::class,'checkoutStore']);	
+		Route::post('/checkout-store',[SittingController::class,'checkoutStore']);
+		// Route::get('/delete/{id}',[SittingController::class,'delete']);
+			
 	});
 	Route::group(['prefix'=>"cloak-rooms"], function(){
 		Route::post('/init/{type}',[CloakRoomController::class,'initRoom']);

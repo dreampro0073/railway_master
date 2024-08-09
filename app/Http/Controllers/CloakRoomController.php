@@ -302,57 +302,14 @@ class CloakRoomController extends Controller {
     		$data['success'] = true;
     		$data['message'] = "Successfully Checkout";
     	} else {
-    		$str_day = ($now_time - $checkout_time)/(60 * 60 * 24);
-    		$day =0;
-    		if($str_day > 0 && $str_day <= 1){
-    			$day = 1;
-    		}else if($str_day > 1 && $str_day <= 2){
-    			$day = 2;
-    		}if($str_day > 2 && $str_day <= 3){
-    			$day = 3;
-    		}if($str_day > 3 && $str_day <= 4){
-    			$day = 4;
-    		}if($str_day > 4 && $str_day <= 5){
-    			$day = 5;
-    		}if($str_day > 5 && $str_day <= 6){
-    			$day = 6;
-    		}if($str_day > 6 && $str_day <= 7){
-    			$day = 7;
-    		}if($str_day > 7 && $str_day <= 8){
-    			$day = 8;
-    		}if($str_day > 8 && $str_day <= 9){
-    			$day = 9;
-    		}if($str_day > 9 && $str_day <= 10){
-    			$day = 10;
-    		}if($str_day > 10 && $str_day <= 11){
-    			$day = 11;
-    		}if($str_day > 11 && $str_day <= 12){
-    			$day = 12;
-    		}if($str_day > 12 && $str_day <= 13){
-    			$day = 13;
-    		}if($str_day > 13 && $str_day <= 14){
-    			$day = 14;
-    		}if($str_day > 14 && $str_day <= 15){
-    			$day = 15;
-    		}if($str_day > 15 && $str_day <= 16){
-    			$day = 16;
-    		}if($str_day > 16 && $str_day <= 17){
-    			$day = 17;
-    		}if($str_day > 17 && $str_day <= 18){
-    			$day = 18;
-    		}if($str_day > 18 && $str_day <= 19){
-    			$day = 19;
-    		}if($str_day > 19 && $str_day <= 20){
-    			$day = 20;
-    		}if($str_day > 20 && $str_day <= 21){
-    			$day = 21;
-    		}if($str_day > 21 && $str_day <= 22){
-    			$day = 22;
-    		}if($str_day > 22 && $str_day <= 23){
-    			$day = 23;
-    		}if($str_day > 23 && $str_day <= 24){
-    			$day = 24;
-    		}
+    		$extra_time = round($now_time - $checkout_time)/(60 * 60 * 24);
+			$extra_days = explode(".",$extra_time);
+			$day = 0;
+			$day = $extra_days[0]*1;
+			if($extra_days[1] > 10){
+				$day += 1;
+			}
+			
 			$l_entry->mobile_no = $l_entry->mobile_no*1;
 			$l_entry->train_no = $l_entry->train_no*1;
 			$l_entry->pnr_uid = $l_entry->pnr_uid*1;

@@ -40,7 +40,9 @@
                         <div class="col-md-3 text-right" style="margin-top: 25px;" class="mb-2">
                             <button type="button" ng-click="init()" class="btn  btn-primary" style="width: 70px;">Search</button>
                             <button type="button" ng-click="filterClear()" class="btn  btn-warning" style="width: 70px;">Clear</button>
+                            @if(Auth::user()->priv !=4)
                             <button type="button" ng-click="add()" class="btn  btn-primary" style="width: 70px;">Add</button>
+                            @endif
                         </div>
                     </div>
                 </form>
@@ -65,7 +67,7 @@
                         </tr>
                     </thead>
                     <tbody ng-if="entries.length > 0">
-                        <tr ng-repeat="item in entries">
+                        <tr ng-repeat="item in entries" ng-class="{'not_checkout' : item.checkout_status == 0 }">
                             <td>@{{ $index+1 }}</td>
                             <td>@{{ item.slip_id }}</td>
                             
@@ -90,11 +92,10 @@
                             @endif
                             
                             <td>
-                                <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
+                                <!-- <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a> -->
                                 <a ng-if="item.checkout_status != 1" href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
                                 
-                                <a href="{{url('/admin/sitting/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a>
-                            </td>
+                                <a ng-if="item.checkout_status != 1" href="{{url('/admin/sitting/print-unq/1/')}}/@{{item.barcodevalue}}" class="btn btn-success btn-sm" target="_blank">Print</a>
                         </tr>
                     </tbody>
                 </table>

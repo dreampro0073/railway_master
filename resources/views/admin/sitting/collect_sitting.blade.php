@@ -142,7 +142,7 @@
 
                             </div>
 
-                            <div class="row">
+                          <!--   <div class="row">
                                 <div class="col-md-4 form-group">
                                     <label>Total no of adults</label>
                                     <input type="number" disabled ng-model="formData.total_no_of_adults" class="form-control" required />
@@ -166,7 +166,7 @@
                                     <input type="number" min="1" ng-model="formData.no_of_children" class="form-control" required />
                                 </div>    
 
-                            </div>
+                            </div> -->
                             
                             <div class="pt-4">
                                 <button type="submit" class="btn btn-primary" ng-disabled="loading">

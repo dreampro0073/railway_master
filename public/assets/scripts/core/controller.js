@@ -248,8 +248,6 @@ app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
     $scope.avail_lockers = [];
     $scope.days = [];
     $scope.type = 0;
-
-    // $scope.sl_lockers = [];
     
     $scope.init = function () {
         
@@ -257,7 +255,6 @@ app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
             if (data.success) {
                 $scope.pay_types = data.pay_types;
                 $scope.l_entries = data.l_entries;
-                // $scope.avail_lockers = data.avail_lockers;
                 $scope.days = data.days;
             }
         });
@@ -401,6 +398,7 @@ app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
 app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading = false;
     $scope.formData = {
+        id:'',
         no_of_adults:0,
         no_of_baby_staff:0,
         no_of_children:0,
@@ -412,20 +410,10 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         hours_occ:'',
     }; 
     $scope.last_hour = 1;
-
     $scope.filter = {};
     $scope.checkout_number = '';
 
     $scope.entry_id = 0;
-    $scope.total_upi_collection = 0;
-    $scope.total_cash_collection = 0;
-    $scope.total_collection = 0;
-
-    $scope.last_hour_upi_total = 0;
-    $scope.last_hour_cash_total = 0;
-    $scope.last_hour_total = 0;
-
-    $scope.check_shift = "";
     $scope.pay_types = [];
     $scope.hours = [];
     $scope.rate_list = {};
@@ -434,6 +422,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
 
     $scope.setNullFormData = function(){
         $scope.formData = {
+            id:'',
             no_of_adults:0,
             no_of_baby_staff:0,
             no_of_children:0,
@@ -448,17 +437,15 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     }
 
     $scope.init = function () {
+        $scope.setNullFormData();
         DBService.postCall($scope.filter, '/api/sitting/init').then((data) => {
-
             if (data.success) {
                 $scope.pay_types = data.pay_types;
                 $scope.hours = data.hours;
                 $scope.entries = data.entries;
                 $scope.rate_list = data.rate_list;
             }
-            $scope.setNullFormData();
             $("#productName").focus();
-
         });
     }
     $scope.filterClear = function(){
@@ -480,26 +467,26 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         });
     }    
 
-    $scope.editCheckout = function(entry_id){
-        $scope.entry_id = entry_id;
-        if(confirm("Are you sure?") == true){
-            $scope.setNullFormData();
-            DBService.postCall({entry_id : $scope.entry_id}, '/api/sitting/checkout-init/1').then((data) => {
-                if (data.success) {
-                    alert("Successfully checkout!");
-                    $scope.init();
-                }else{
-                    $scope.last_hour += data.sitting_entry.hours_occ;
-                    $scope.formData = data.sitting_entry;
-                    $scope.checkout_process = true;
-                    $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
-                    $("#checkoutModal").modal("show");
-                    $scope.changeAmount();
-                }
+    // $scope.editCheckout = function(entry_id){
+    //     $scope.entry_id = entry_id;
+    //     if(confirm("Are you sure?") == true){
+    //         $scope.setNullFormData();
+    //         DBService.postCall({entry_id : $scope.entry_id}, '/api/sitting/checkout-init/1').then((data) => {
+    //             if (data.success) {
+    //                 alert("Successfully checkout!");
+    //                 $scope.init();
+    //             }else{
+    //                 $scope.last_hour += data.sitting_entry.hours_occ;
+    //                 $scope.formData = data.sitting_entry;
+    //                 $scope.checkout_process = true;
+    //                 $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
+    //                 $("#checkoutModal").modal("show");
+    //                 $scope.changeAmount();
+    //             }
                 
-            });
-        }
-    }
+    //         });
+    //     }
+    // }
 
     $scope.editCheckout1 = function(){
         $checkout_loading = true;
@@ -523,34 +510,35 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         });
     }
 
-    $scope.handleKeyPress = function(event) {
-        if($scope.checkout_loading){
-            return;
-        }
-        if (event.which === 13) {
-            $scope.editCheckout1();
-            if ($scope.productName.trim()) {
-                $scope.productName = '';
-            }
-        } else {
-            $scope.productName = ($scope.productName || '') + event.key;
-        }
-    };
-
     // $scope.handleKeyPress = function(event) {
     //     if($scope.checkout_loading){
     //         return;
     //     }
     //     if (event.which === 13) {
     //         $scope.editCheckout1();
-    //         if ($scope.scannedValue.trim()) {
-    //             $scope.scannedValue = '';
+    //         if ($scope.productName.trim()) {
+    //             $scope.productName = '';
     //         }
     //     } else {
-    //         $scope.scannedValue = ($scope.scannedValue || '') + event.key;
+    //         $scope.productName = ($scope.productName || '') + event.key;
     //     }
     // };
+
+    $scope.handleKeyPress = function(event) {
+        // if($scope.checkout_loading){
+        //     return;
+        // }
+        if (event.which === 13) {
+            $scope.editCheckout1();
+            if ($scope.scannedValue.trim()) {
+                $scope.scannedValue = '';
+            }
+        } else {
+            $scope.scannedValue = ($scope.scannedValue || '') + event.key;
+        }
+    };
     $scope.add = function(){
+        $scope.entry_id = 0;
         $scope.setNullFormData();
         $scope.checkout_process = false;
         $("#exampleModalCenter").modal("show");    
@@ -558,10 +546,10 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
 
     $scope.hideModal = () => {
         $scope.entry_id = 0;
+        $scope.checkout_process = false;
         $scope.setNullFormData();
         $("#exampleModalCenter").modal("hide");
         $("#checkoutModal").modal("hide");
-        $scope.checkout_process = false;
     }
 
 
@@ -610,7 +598,6 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             $scope.loading = false;
         });
     }
-
    
     $scope.changeAmount = function () {
         $scope.formData.total_amount = 0;
@@ -628,10 +615,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         }
         $scope.formData.balance_amount = $scope.formData.total_amount;
         $scope.formData.total_amount += $scope.formData.paid_amount;
-
         $scope.geValTime();
-
-
 
     }
 
@@ -646,16 +630,17 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         });  
     }
 
-    $scope.delete = function (id) {
-        if(confirm("Are you sure?") == true){
-            DBService.getCall('/api/sitting/delete/'+id).then((data) => {
-                alert(data.message);
-                $scope.init();
-            });
-        }
+    // $scope.delete = function (id) {
+    //     if(confirm("Are you sure?") == true){
+    //         DBService.getCall('/api/sitting/delete/'+id).then((data) => {
+    //             alert(data.message);
+    //             $scope.init();
+    //         });
+    //     }
        
-    }
+    // }
 });
+
 app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading= false;
     $scope.sitting_data = [];
@@ -708,6 +693,7 @@ app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
 
     
 });
+
 app.controller('userCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading = false;
     $scope.formData = {

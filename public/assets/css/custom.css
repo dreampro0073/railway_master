@@ -176,4 +176,7 @@ label.error {
   .input-group-append button {
     height: 42px !important; }
 
+tr.not_checkout {
+  background-color: #e08080 !important; }
+
 /*# sourceMappingURL=custom.css.map */
