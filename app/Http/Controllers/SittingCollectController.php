@@ -21,7 +21,7 @@ class SittingCollectController extends Controller {
 		$check_shift = Entry::checkShift();
         $date = Entry::getPDate();
 
-		$entries = Sitting::select('sitting_entries.*')->where("sitting_entries.client_id", Auth::user()->client_id)->where('checkout_status',1)->where('is_collected',0)->where('hours_occ','>',1)->where('no_of_adults','>',1)->where('shift',$check_shift)->where("added_by", Auth::user()->parent_user_id)->where('date',$date)->where('is_checked',0)->where('is_late',0);
+		$entries = Sitting::select('sitting_entries.*')->where("sitting_entries.client_id", Auth::user()->client_id)->where('checkout_status',1)->where('is_collected',0)->where('hours_occ','>',1)->where('shift',$check_shift)->where("added_by", Auth::user()->parent_user_id)->where('date',$date)->where('is_checked',0)->where('is_late',0);
 		if($request->slip_id){
 			$entries = $entries->where('sitting_entries.slip_id', $request->slip_id);
 		}		
