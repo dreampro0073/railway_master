@@ -132,9 +132,14 @@ class CollectedSitting extends Model{
 
                 $entry->save();
 
-                DB::table("e_entries")->where('entry_id',$entry->id)->update([
-                    'is_collected' => 1,
-                ]);
+                if($entry->hours_occ == 1){
+                   DB::table("e_entries")->where('entry_id',$entry->id)->update([
+                        'is_collected' => 1,
+                    ]);
+                }
+                // DB::table("e_entries")->where('entry_id',$entry->id)->update([
+                //     'is_collected' => 1,
+                // ]);
 
             }
 

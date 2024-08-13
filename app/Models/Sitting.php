@@ -142,7 +142,6 @@ class Sitting extends Model
 
 
             $total_shift_upi += DB::table('e_entries')->where('is_collected', '!=', 1)->where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
-            // dd($total_shift_upi);
             
 
             $total_shift_cash = Sitting::where('client_id', $client_id)->where('added_by',$user_id)->where('date',$input_date)->where('pay_type',1)->sum("paid_amount");

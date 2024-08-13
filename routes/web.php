@@ -43,6 +43,7 @@ Route::group(['middleware'=>'auth'],function(){
 
 		Route::group(['prefix'=>"sitting"], function(){
 			Route::get('/',[SittingController::class,'sitting']);
+			Route::get('/update-print/{slip_id}',[SittingController::class,'updatePrint']);
 			Route::get('/print-unq/{type}/{print_id?}', [SittingController::class,'printPostUnq']);
 			Route::get('/print/{id?}', [SittingController::class,'printPost']);
 			// Route::get('/print-report', [SittingController::class,'printReports']);

@@ -419,6 +419,8 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     $scope.rate_list = {};
     $scope.checkout_process = false;
     $scope.productName= '';
+    $scope.old_hr = 0;
+
 
     $scope.setNullFormData = function(){
         $scope.formData = {
@@ -434,6 +436,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             hours_occ:'',
         }; 
         $scope.last_hour = 1;
+        $scope.old_hr = 0;
     }
 
     $scope.init = function () {
@@ -461,6 +464,8 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             if (data.success) {
                 $scope.last_hour += data.sitting_entry.hours_occ;
                 $scope.formData = data.sitting_entry;
+                $scope.old_hr = data.sitting_entry.hours_occ;
+                
                 $("#exampleModalCenter").modal("show");
             }
             

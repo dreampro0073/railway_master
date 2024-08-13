@@ -287,7 +287,13 @@ class SittingController extends Controller {
 			$no_of_min = $request->hours_occ*60;
 
 			$entry->check_out = date("H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->check_in)));
-			$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->checkin_date)));
+			if($entry->checkin_date){
+				$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($entry->checkin_date)));
+			}else{
+				$check_in_date = $entry->date." ".$entry->check_in;
+				$entry->checkout_date = date("Y-m-d H:i:s",strtotime("+".$no_of_min." minutes",strtotime($check_in_date)));
+			}
+			
 
 
 			$e_total = Sitting::eSum($entry->id);
@@ -449,5 +455,30 @@ class SittingController extends Controller {
 		
 	// 	return Response::json($data, 200, []);
     // }
+
+    public function updatePrint($slip_id =0){
+
+    	if(in_array(Auth::user()->priv,[1,2,4]) ){
+    		$check = DB::table('sitting_entries')->where('slip_id',$slip_id)->where('client_id',Auth::user()->client_id)->first();
+
+    		if($check){
+    			if($check->max_print == $check->print_count){
+	    			DB::table('sitting_entries')->where('slip_id',$slip_id)->where('client_id',Auth::user()->client_id)->update([
+		    			'max_print' => $check->max_print+1,
+		    		]);
+	    		}
+
+	    		$check = DB::table('sitting_entries')->where('slip_id',$slip_id)->where('client_id',Auth::user()->client_id)->first();
+
+	    		return $check->max_print." The Max Print Count".$check->print_count." The Print Count";
+    		}else{
+    			return "Entry Not found";
+    		}
+
+
+    	}else{
+    		return "You have not access to print change print";
+    	}
+    }
 
 }
