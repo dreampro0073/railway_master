@@ -36,6 +36,21 @@
                             </li>
                         @endif
 
+                        @if(in_array(4, $service_ids) || Auth::user()->priv == 1)
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'massage') active @endif @endif">
+                                <a href="{{url('/admin/massage')}}"><i class="fa fa-medkit" aria-hidden="true"></i>Massage</a>
+                            </li>
+
+                        @endif
+                        @if(in_array(4, $service_ids) || Auth::user()->priv == 1)
+                            
+                            <li class="@if(isset($sidebar)) @if($sidebar == 'locker') active @endif @endif">
+                            <a href="{{url('/admin/locker')}}"><i class="fa fa-lock"></i>Locker</a>
+                        </li>
+                        @endif
+
+
+
                         @if(in_array(1, $service_ids) && Auth::user()->priv == 4)
                             <li class="@if(isset($sidebar)) @if($sidebar == 'csitting') active @endif @endif">
                                 <a href="{{url('/admin/collect-sitting')}}"><i class="fa fa-sitemap"></i>Collect Sit</a>

@@ -37,6 +37,7 @@
 		}
 		td,span,p{
 			font-size: 12px;
+			font-weight:bold;
 		}
 		.text-right{
 			text-align: right;
@@ -51,8 +52,8 @@
 		<h4>
 			M/s New Nabaratna Hospitality Pvt. Ltd.
 		</h4>
-		<p class="m-space">
-			Cloakroom, KyqInd Guwahati Railway Station, PF No. 1
+		<p style="padding:0 15px;text-align: center;">
+			AC Executive Lounge, Haridwar Railway Station<br>PF No. 1
 		</p>
 		<h5>
 			GSTIN: 18AAICN4763E1ZA
@@ -78,9 +79,9 @@
 
 		</div>
 		<div class="table-div">
-			<!-- <div class="w-50">
+			<div class="w-50">
 				<span class="text">Locker No: <b>{{ $print_data->locker_ids }}</b></span>
-			</div> -->
+			</div>
 
 			<div class="w-50">
 				<span class="text">NOS: <b>{{ $print_data->nos }}</b></span>
@@ -102,45 +103,20 @@
 				<span class="text">Out Time: <b>{{date("h:i a, d M y",strtotime($print_data->checkout_date))}}</b></span>
 			</div>
 		</div>
-		<table style="width:100%;margin: -1;" border="1" cellpadding="4" cellspacing="0" >
-			<tbody>
-				<tr>
-					<td class="w-46">Description</td>
-					<td class="w-20">Fee Type</td>
-					<td class="w-16">No of luggage</td>
-					<td class="w-16">Amount</td>
-				</tr>
-				<tr>
-					<td class="w-46">For first 24 hours or part there of</td>
-					<td class="w-20">70/- Per Package</td>
-					<td class="w-16" rowspan="2">{{$print_data->no_of_bag}}</td>
-					<td class="w-16">{{$print_data->for_first_day}}</td>
-				</tr>
-				<tr>
-					<td class="w-46">For each subsequent 24 hours or part thereof</td>
-					<td class="w-20">105/- Per Package</td>
-					<td class="w-16">{{$print_data->for_other_day}}</td>
-				</tr>
-	
-				<tr>
-					<td colspan="1">Day: <b>{{$print_data->no_of_day}}</b></td>
-
-					<td colspan="2"><b>Total</b></td>
-					<td class="w-20">{{$print_data->for_first_day+$print_data->for_other_day}}</td>
-					
-				</tr>
-			</tbody>
-		</table>
 		<div style="margin-top:10px;text-align: right;">
-			<span style="text-align:right;font-weight: bold;">Note: We are not responsible for keeping eatable items inside your bag. Rats can be destroy your food and bags</span>
+			<!-- <span style="text-align:right;font-weight: bold;">E.&.O.E</span> -->
+			<span style="text-align:right;font-weight: bold;">** Non Refundable **</span>
 		</div>
 		<div style="margin-top:10px;text-align:center;">
 
-			
+			<p>
+				<b>*Note : Passengers must protect their own Mobile and luggage.</b>
+			</p>
 			<p style="margin-top:10px;font-size: 16px;">
 				<strong>Thanks Visit Again</strong>
 			</p>
 		</div>
+		
 	</div>
 	<script type="text/javascript">
 		window.onload = function(e){ 

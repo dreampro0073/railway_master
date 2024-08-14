@@ -22,7 +22,7 @@ class LockerController extends Controller {
 	}
 	
 	public function initLocker(Request $request){
-		$l_entries = DB::table('locker_entries')->select('locker_entries.*','users.name as username')->leftJoin('users','users.id','=','locker_entries.delete_by');
+		$l_entries = DB::table('locker_entries')->select('locker_entries.*');
 		if($request->unique_id){
 			$l_entries = $l_entries->where('locker_entries.unique_id', 'LIKE', '%'.$request->unique_id.'%');
 		}
@@ -36,9 +36,7 @@ class LockerController extends Controller {
 			$l_entries = $l_entries->where('locker_entries.pnr_uid', 'LIKE', '%'.$request->pnr_uid.'%');
 		}		
 		
-		if(Auth::user()->priv != 1){
-			$l_entries = $l_entries->where('deleted',0);
-		}
+		
 		$l_entries = $l_entries->where('checkout_status', 0);
 		$l_entries = $l_entries->orderBy('id', "DESC")->get();
 
@@ -216,55 +214,13 @@ class LockerController extends Controller {
     		DB::table('lockers')->whereIn('id',$locker_ids)->update(['status'=>0]);
     
     	} else {
-    		$str_day = ($now_time - $checkout_time)/(60 * 60 * 24);
-    		$day =0;
-    		if($str_day > 0 && $str_day <= 1){
-    			$day = 1;
-    		}else if($str_day > 1 && $str_day <= 2){
-    			$day = 2;
-    		}if($str_day > 2 && $str_day <= 3){
-    			$day = 3;
-    		}if($str_day > 3 && $str_day <= 4){
-    			$day = 4;
-    		}if($str_day > 4 && $str_day <= 5){
-    			$day = 5;
-    		}if($str_day > 5 && $str_day <= 6){
-    			$day = 6;
-    		}if($str_day > 6 && $str_day <= 7){
-    			$day = 7;
-    		}if($str_day > 7 && $str_day <= 8){
-    			$day = 8;
-    		}if($str_day > 8 && $str_day <= 9){
-    			$day = 9;
-    		}if($str_day > 9 && $str_day <= 10){
-    			$day = 10;
-    		}if($str_day > 10 && $str_day <= 11){
-    			$day = 11;
-    		}if($str_day > 11 && $str_day <= 12){
-    			$day = 12;
-    		}if($str_day > 12 && $str_day <= 13){
-    			$day = 13;
-    		}if($str_day > 13 && $str_day <= 14){
-    			$day = 14;
-    		}if($str_day > 14 && $str_day <= 15){
-    			$day = 15;
-    		}if($str_day > 15 && $str_day <= 16){
-    			$day = 16;
-    		}if($str_day > 16 && $str_day <= 17){
-    			$day = 17;
-    		}if($str_day > 17 && $str_day <= 18){
-    			$day = 18;
-    		}if($str_day > 18 && $str_day <= 19){
-    			$day = 19;
-    		}if($str_day > 19 && $str_day <= 20){
-    			$day = 20;
-    		}if($str_day > 20 && $str_day <= 21){
-    			$day = 21;
-    		}if($str_day > 21 && $str_day <= 22){
-    			$day = 22;
-    		}if($str_day > 22 && $str_day <= 23){
-    			$day = 23;
-    		}
+    		$extra_time = round($now_time - $checkout_time)/(60 * 60 * 24);
+			$extra_days = explode(".",$extra_time);
+			$day = 0;
+			$day = $extra_days[0]*1;
+			if($extra_days[1] > 10){
+				$day += 1;
+			}
 
     		$locker_ids = explode(',', $request->locker_ids);
 

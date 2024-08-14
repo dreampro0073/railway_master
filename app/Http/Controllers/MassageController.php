@@ -21,14 +21,11 @@ class MassageController extends Controller {
 	}
 
 	public function initMassage(Request $request){
-		$m_entries = DB::table('massage_entries')->select('massage_entries.*','users.name as username')->leftJoin('users','users.id','=','massage_entries.deleted_by');
+		$m_entries = DB::table('massage_entries')->select('massage_entries.*');
 		if($request->unique_id){
 			$m_entries = $m_entries->where('massage_entries.unique_id', 'LIKE', '%'.$request->unique_id.'%');
 		}	
 
-		if(Auth::user()->priv != 1){
-			$m_entries = $m_entries->where('deleted',0);
-		}
 		$m_entries = $m_entries->orderBy('id','DESC');
 		if(Auth::user()->priv != 1){
 		}

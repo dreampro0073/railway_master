@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Redirect, Validator, Hash, Response, Session, DB;
-use App\Models\Entry, App\Models\User, App\Models\Sitting;
+use App\Models\Entry, App\Models\User, App\Models\Sitting,App\Models\Massage,App\Models\Locker,App\Models\LockerPen;
 
 class SittingController extends Controller {
 
@@ -33,6 +33,94 @@ class SittingController extends Controller {
 		}else{
 			return "All OK";
 		}
+	}
+
+	public function dumpSittingData(Request $request){
+		// $old_entry_ids = DB::table('users_backup')->pluck('id')->toArray();
+		// foreach ($old_entry_ids as $key => $old_id) {
+		// 	$newTask = (new User)
+		// 	->setTable('users_backup')
+		// 	->find($old_id)
+		// 	->replicate()
+		// 	->setTable('users')
+		// 	->save();
+		// }
+
+		// $old_entry_ids = DB::table('massage_entries_backup')->where('is_backup',0)->take(1000)->pluck('id')->toArray();
+		// foreach ($old_entry_ids as $key => $old_id) {
+		// 	$newTask = (new Massage)
+		// 	->setTable('massage_entries_backup')
+		// 	->find($old_id)
+		// 	->replicate()
+		// 	->setTable('massage_entries')
+		// 	->save();
+
+		// 	DB::table('massage_entries_backup')->where('is_backup',0)->where('id','$old_id')->update([
+		// 		'is_backup' => 1,
+		// 	]);
+		// }
+
+		// $old_entry_ids = DB::table('locker_entries_backup')->where('is_backup',0)->take(1000)->pluck('id')->toArray();
+		// if(sizeof($old_entry_ids) > 0){
+		// 	foreach ($old_entry_ids as $key => $old_id) {
+		// 		$newTask = (new Locker)
+		// 		->setTable('locker_entries_backup')
+		// 		->find($old_id)
+		// 		->replicate()
+		// 		->setTable('locker_entries')
+		// 		->save();
+
+		// 		DB::table('locker_entries_backup')->where('is_backup',0)->where('id',$old_id)->update([
+		// 			'is_backup' => 1,
+		// 		]);
+		// 	}
+		// 	echo 'done';
+
+		// }else{
+		// 	echo 'all done';
+		// }
+
+		// $old_entry_ids = DB::table('locker_penalty_backup')->where('is_backup',0)->take(1000)->pluck('id')->toArray();
+		// if(sizeof($old_entry_ids) > 0){
+		// 	foreach ($old_entry_ids as $key => $old_id) {
+		// 		$newTask = (new LockerPen)
+		// 		->setTable('locker_penalty_backup')
+		// 		->find($old_id)
+		// 		->replicate()
+		// 		->setTable('locker_penalty')
+		// 		->save();
+
+		// 		DB::table('locker_penalty_backup')->where('is_backup',0)->where('id',$old_id)->update([
+		// 			'is_backup' => 1,
+		// 		]);
+		// 	}
+		// 	echo 'done';
+
+		// }else{
+		// 	echo 'all done';
+		// }
+
+		// $old_entry_ids = DB::table('sitting_entries_backup')->where('is_backup',0)->take(10000)->pluck('id')->toArray();
+		// if(sizeof($old_entry_ids) > 0){
+		// 	foreach ($old_entry_ids as $key => $old_id) {
+		// 		$newTask = (new Sitting)
+		// 		->setTable('sitting_entries_backup')
+		// 		->find($old_id)
+		// 		->replicate()
+		// 		->setTable('sitting_entries')
+		// 		->save();
+
+		// 		DB::table('sitting_entries_backup')->where('is_backup',0)->where('id',$old_id)->update([
+		// 			'is_backup' => 1,
+		// 		]);
+		// 	}
+		// 	echo 'done';
+
+		// }else{
+		// 	echo 'all done';
+		// }
+		
+		
 	}
 
 	

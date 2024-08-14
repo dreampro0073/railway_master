@@ -26,7 +26,7 @@ class Entry extends Model
     }
 
     public static function getAvailLockers(){
-        return DB::table('lockers')->where('status',0)->get();
+        return DB::table('lockers')->where('client_id',Auth::user()->client_id)->where('status',0)->get();
     }
 
     public static function showPayTypes(){

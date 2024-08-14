@@ -28,6 +28,7 @@ use App\Http\Controllers\SittingCollectController;
 
 Route::get('/', [UserController::class,'login'])->name("login");
 Route::post('/login', [UserController::class,'postLogin']);
+Route::get('/backup-data', [SittingController::class,'dumpSittingData']);
 
 
 Route::get('/logout',function(){

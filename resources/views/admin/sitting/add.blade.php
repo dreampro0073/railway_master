@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Sitting</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Sitting Add</h5>
                     </div>
                     <div class="col-md-6" style="text-align:right;">
                         <button type="button" class="close" ng-click="hideModal();" aria-label="Close">
@@ -65,7 +65,7 @@
                             <label>Hour Occ</label>
                             <select ng-model="formData.hours_occ" class="form-control" ng-change="changeAmount()" ng-disabled="checkout_process" required >
                                 <option value="">--select--</option>
-                                <option ng-repeat="item in hours" ng-value=@{{item.value}}>@{{ item.label}}</option>
+                                <option ng-disabled="entry_id > 0 && old_hr > item.value" ng-repeat="item in hours" ng-value=@{{item.value}}>@{{ item.label}}</option>
                             </select>
                         </div>
 

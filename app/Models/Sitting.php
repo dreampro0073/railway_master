@@ -20,7 +20,7 @@ class Sitting extends Model
     }
 
     public static function eSum($entry_id=0){
-        return DB::table('e_entries')->where('is_collected',0)->where('is_checked',0)->where('entry_id',$entry_id)->sum('paid_amount');
+        return DB::table('e_entries')->where('is_checked',0)->where('entry_id',$entry_id)->sum('paid_amount');
     }
 
     public static function rateList(){

@@ -37,9 +37,7 @@
 
                             <th>Pay Type</th>
                             <th>Total Amount</th>
-                            @if(Auth::user()->priv == 1)
-                                <th>#</th>
-                            @endif
+                           
                             <th>#</th>
                         </tr>
                     </thead>
@@ -54,20 +52,10 @@
                                 <span ng-if="item.pay_type == 2">UPI</span>
                             </td>
                             <td>@{{ item.paid_amount }}</td>
-                            @if(Auth::user()->priv == 1)
-                                <td>
-                                    <div ng-if="item.deleted == 1">
-                                        <span >@{{item.username}},</span>
-                                        <span >@{{item.delete_time}}</span>
-                                    </div>
-                                </td>
-                            @endif
+                            
                             <td>
                                 <a href="{{url('/admin/massage/print')}}/@{{item.id}}" class="btn btn-success btn-sm" target="_blank">Print</a>
-                               <!--  @if(Auth::id() !=1)
-                                <button type="button" ng-click="delete(item.id)" class="btn btn-danger btn-sm">Delete</button>
-                                @endif -->
-
+                              
                             </td>
                         </tr>
                     </tbody>
