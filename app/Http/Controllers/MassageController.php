@@ -76,7 +76,6 @@ class MassageController extends Controller {
 				$entry = new Massage;
 				$message = "Stored Successfully!";
 				$entry->unique_id = strtotime('now');
-				
 			}
 
 			$entry->name = $request->name;
@@ -87,6 +86,7 @@ class MassageController extends Controller {
 			$entry->shift = $check_shift;
 			$entry->no_of_person = $request->has('no_of_person')?$request->no_of_person:0;
 			$entry->added_by = Auth::id();
+			$entry->client_id = Auth::user()->client_id;
 
 			$date = Entry::getPDate();
 	        $entry->date = $date;
