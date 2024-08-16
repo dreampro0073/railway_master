@@ -78,6 +78,28 @@ class ShiftController extends Controller {
 			$last_hour_cash_total += $canteen_data['last_hour_cash_total'];
 			$last_hour_total += $canteen_data['last_hour_total'];
 			$data['canteen_data'] = $canteen_data;
+		}		
+
+		if(in_array(4, $service_ids)){
+			$canteen_data = Massage::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $canteen_data['total_shift_upi'];
+			$total_shift_cash += $canteen_data['total_shift_cash'];
+			$total_collection += $canteen_data['total_collection'];
+			$last_hour_upi_total += $canteen_data['last_hour_upi_total'];
+			$last_hour_cash_total += $canteen_data['last_hour_cash_total'];
+			$last_hour_total += $canteen_data['last_hour_total'];
+			$data['canteen_data'] = $canteen_data;
+		}		
+
+		if(in_array(5, $service_ids)){
+			$canteen_data = Locker::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $canteen_data['total_shift_upi'];
+			$total_shift_cash += $canteen_data['total_shift_cash'];
+			$total_collection += $canteen_data['total_collection'];
+			$last_hour_upi_total += $canteen_data['last_hour_upi_total'];
+			$last_hour_cash_total += $canteen_data['last_hour_cash_total'];
+			$last_hour_total += $canteen_data['last_hour_total'];
+			$data['canteen_data'] = $canteen_data;
 		}
 	
         $data['total_shift_upi'] = $total_shift_upi;
