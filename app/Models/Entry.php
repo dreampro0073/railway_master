@@ -15,6 +15,11 @@ class Entry extends Model
 
         DB::table("sitting_entries")->where('client_id',Auth::user()->client_id)->where('is_checked', 0)->update(['is_checked'=>1]);
         DB::table("e_entries")->where('client_id',Auth::user()->client_id)->where('is_checked', 0)->update(['is_checked'=>1]);
+        
+        DB::table('check_status')->insert([
+            'check_date_time' => date("Y-m-d H:i:s"),
+            'checked_by' => Auth::id(),
+        ]);
     }
 
     public static function payTypes(){
@@ -26,7 +31,7 @@ class Entry extends Model
     }
 
     public static function getAvailLockers(){
-        return DB::table('lockers')->where('client_id',Auth::user()->client_id)->where('status',0)->get();
+        return DB::table('lockers')->where('status',0)->get();
     }
 
     public static function showPayTypes(){

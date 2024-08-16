@@ -34,6 +34,9 @@
                 </form>
             </div>
             <hr>
+            <hr>
+                <h4 >Checked By - @{{checked.name}} (@{{checked.check_date_time}})</h4>
+            </hr>
             <div>
                 <h3>Today Sitting (@{{c_sum}})</h3>
                 <table class="table table-bordered table-striped" >
@@ -142,31 +145,31 @@
 
                             </div>
 
-                          <!--   <div class="row">
-                                <div class="col-md-4 form-group">
-                                    <label>Total no of adults</label>
-                                    <input type="number" disabled ng-model="formData.total_no_of_adults" class="form-control" required />
-                                </div>
+                          <!--<div class="row">-->
+                          <!--      <div class="col-md-4 form-group">-->
+                          <!--          <label>Total no of adults</label>-->
+                          <!--          <input type="number" disabled ng-model="formData.total_no_of_adults" class="form-control" required />-->
+                          <!--      </div>-->
                                 
-                                <div class="col-md-4 form-group">
-                                    <label>No of adults to be Update</label>
-                                    <input type="number" min="1" ng-model="formData.no_of_adults" class="form-control" required />
-                                </div>    
+                          <!--      <div class="col-md-4 form-group">-->
+                          <!--          <label>No of adults to be Update</label>-->
+                          <!--          <input type="number" min="1" ng-model="formData.no_of_adults" class="form-control" required />-->
+                          <!--      </div>    -->
 
-                            </div>
+                          <!--  </div>-->
                             
-                            <div class="row">
-                                <div class="col-md-4 form-group">
-                                    <label>Total no of children</label>
-                                    <input type="number" disabled ng-model="formData.total_no_of_children" class="form-control" required />
-                                </div>
+                          <!--  <div class="row">-->
+                          <!--      <div class="col-md-4 form-group">-->
+                          <!--          <label>Total no of children</label>-->
+                          <!--          <input type="number" disabled ng-model="formData.total_no_of_children" class="form-control" required />-->
+                          <!--      </div>-->
                                 
-                                <div class="col-md-4 form-group">
-                                    <label>No of children to be Update</label>
-                                    <input type="number" min="1" ng-model="formData.no_of_children" class="form-control" required />
-                                </div>    
+                          <!--      <div class="col-md-4 form-group">-->
+                          <!--          <label>No of children to be Update</label>-->
+                          <!--          <input type="number"  ng-model="formData.no_of_children" class="form-control" required />-->
+                          <!--      </div>    -->
 
-                            </div> -->
+                          <!--  </div>-->
                             
                             <div class="pt-4">
                                 <button type="submit" class="btn btn-primary" ng-disabled="loading">

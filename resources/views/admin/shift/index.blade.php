@@ -94,6 +94,29 @@
                         <td>@{{canteen_data.total_collection}}</td>
                     </tr>
                     @endif
+                    @if(in_array(4, $service_ids))
+                    <tr>
+                        <td>Massage</td> 
+                        <td>@{massage_data.last_hour_upi_total}}</td>
+                        <td>@{massage_data.last_hour_cash_total}}</td>
+                        <td>@{massage_data.last_hour_total}}</td>
+                        <td>@{massage_data.total_shift_upi}}</td>
+                        <td>@{massage_data.total_shift_cash}}</td>
+                        <td>@{massage_data.total_collection}}</td>
+                    </tr>
+                    @endif
+
+                     @if(in_array(5, $service_ids))
+                    <tr>
+                        <td>Lcoker</td> 
+                        <td>@{{locker_data.last_hour_upi_total}}</td>
+                        <td>@{{locker_data.last_hour_cash_total}}</td>
+                        <td>@{{locker_data.last_hour_total}}</td>
+                        <td>@{{locker_data.total_shift_upi}}</td>
+                        <td>@{{locker_data.total_shift_cash}}</td>
+                        <td>@{{locker_data.total_collection}}</td>
+                    </tr>
+                    @endif
                     
                     <tr>
                         <td><b>Grand Total</b></td> 

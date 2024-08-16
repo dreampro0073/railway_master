@@ -229,7 +229,273 @@ app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
     }
 });
 
+app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
+    $scope.loading = false;
+    $scope.formData = {
+        name:'',
+        mobile:"",
+        paid_amount:0,
+        no_of_day:'',
+        locker_id:'',
+    };
 
+    $scope.filter = {};
+
+    $scope.entry_id = 0;
+
+    $scope.check_shift = "";
+    $scope.pay_types = [];
+    $scope.avail_lockers = [];
+    $scope.days = [];
+
+    $scope.sl_lockers = [];
+    
+    $scope.init = function () {
+        
+        DBService.postCall($scope.filter, '/api/locker/init').then((data) => {
+            if (data.success) {
+                $scope.pay_types = data.pay_types;
+                $scope.l_entries = data.l_entries;
+                $scope.avail_lockers = data.avail_lockers;
+                $scope.days = data.days;
+            }
+        });
+    }
+    $scope.filterClear = function(){
+        $scope.filter = {};
+        $scope.init();
+    }
+
+    $scope.edit = function(entry_id){
+        $scope.entry_id = entry_id;
+        $scope.sl_lockers = [];
+        DBService.postCall({entry_id : $scope.entry_id}, '/api/locker/edit-init').then((data) => {
+            if (data.success) {
+                $scope.formData = data.l_entry;
+                $scope.sl_lockers = data.sl_lockers;
+                $("#exampleModalCenter").modal("show");
+            }
+            
+        });
+    }    
+
+    $scope.checkoutLoker = function(entry_id){
+        $scope.entry_id = entry_id;
+
+        if(confirm("Are you sure?") == true){
+             DBService.postCall({entry_id : $scope.entry_id}, '/api/locker/checkout-init').then((data) => {
+                if (data.timeOut) {
+                    $scope.formData = data.l_entry;
+                    
+                    $("#checkoutLokerModel").modal("show");
+                }else{
+                    $scope.init(); 
+                }
+                
+            });
+        }
+    }
+
+    $scope.add = function(){
+        $scope.entry_id = 0;
+        $scope.sl_lockers = [];
+        $("#exampleModalCenter").modal("show");    
+    }
+
+    $scope.hideModal = () => {
+        $("#exampleModalCenter").modal("hide");
+        $("#checkoutLokerModel").modal("hide");
+        $scope.entry_id = 0;
+        $scope.formData = {
+            name:'',
+            mobile:"",
+            total_amount:0,
+            paid_amount:0,
+            balance_amount:0,
+        };
+    }
+
+    $scope.onSubmit = function () {
+        $scope.loading = true;
+        if($scope.sl_lockers.length == 0){
+            alert('Please select at least one locker');
+            return;
+        }
+
+        $scope.formData.sl_lockers = $scope.sl_lockers;
+        DBService.postCall($scope.formData, '/api/locker/store').then((data) => {
+            if (data.success) {
+                $scope.loading = false;
+
+                $("#exampleModalCenter").modal("hide");
+                $scope.entry_id = 0;
+                $scope.formData = {
+                    name:'',
+                    mobile:"",
+                    paid_amount:0,
+                    no_of_day:'',
+                    locker_id:'',
+                };
+                $scope.init();
+                setTimeout(function(){
+                    window.open(base_url+'/admin/locker/print/'+data.id,'_blank');
+                }, 800);
+
+            }
+            $scope.loading = false;
+        });
+    }
+    $scope.onCheckOut = function () {
+        $scope.loading = true;
+        DBService.postCall($scope.formData, '/api/locker/checkout-store').then((data) => {
+            if (data.success) {
+                $("#checkoutLokerModel").modal("hide");
+                $scope.entry_id = 0;
+                $scope.formData = {
+                    name:'',
+                    mobile:"",
+                    total_amount:0,
+                    paid_amount:0,
+                    balance_amount:0,
+                    hours_occ:0,
+                    check_in:'',
+                    check_out:'',
+                };
+                $scope.init();
+            }
+            $scope.loading = false;
+        });
+    }
+
+    $scope.changeAmount = function(){
+        var total_amount = 0;
+        var amount = 50;
+        if($scope.formData.no_of_day > 1){
+            amount  = (amount + (($scope.formData.no_of_day-1)*70));
+        }
+        amount = $scope.sl_lockers.length*amount;
+        if($scope.entry_id == 0){
+            $scope.formData.paid_amount = amount;
+               
+        }else{
+            $scope.formData.balance_amount = amount - $scope.formData.paid_amount;
+        }
+    }
+
+    $scope.delete = function (id) {
+        if(confirm("Are you sure?") == true){
+            DBService.getCall('/api/locker/delete/'+id).then((data) => {
+                alert(data.message);
+                $scope.init();
+            });
+        }
+    }
+
+    $scope.insLocker = (locker_id) => {
+        let idx = $scope.sl_lockers.indexOf(locker_id);
+        if(idx == -1){
+            $scope.sl_lockers.push(locker_id);
+        }else{
+            $scope.sl_lockers.splice(idx,1);
+        }
+        $scope.changeAmount();
+    }
+});
+app.controller('massageCtrl', function($scope , $http, $timeout , DBService) {
+    $scope.loading = false;
+    $scope.formData = {
+        paid_amount:0,
+        time_period:'',
+        no_of_person:1,
+
+    };
+
+    $scope.filter = {};
+    $scope.m_id = 0;
+    $scope.m_entries = [];
+ 
+    $scope.init = function () {
+        
+        DBService.postCall($scope.filter, '/api/massage/init').then((data) => {
+            $scope.pay_types = data.pay_types;
+            $scope.m_entries = data.m_entries;
+        });
+    }
+    $scope.filterClear = function(){
+        $scope.filter = {};
+        $scope.init();
+    }
+
+    $scope.edit = function(m_id){
+        $scope.m_id = m_id;
+        DBService.postCall({m_id : $scope.m_id}, '/api/massage/edit-init').then((data) => {
+            if (data.success) {
+                $scope.formData = data.m_entry;
+                $("#massageModal").modal("show");
+            }
+        });
+    }
+    $scope.add = function(){
+        $("#massageModal").modal("show");
+    }
+
+    $scope.hideModal = () => {
+        $("#massageModal").modal("hide");
+        $scope.entry_id = 0;
+        $scope.formData = {
+            paid_amount:0,
+            time_period:0,
+            no_of_person:1,
+
+        };
+        $scope.init();
+    }
+
+    $scope.changeTime = function(){
+        
+        $scope.formData.paid_amount = 0;
+        if($scope.formData.time_period == 10){
+            $scope.formData.paid_amount = 50*$scope.formData.no_of_person;
+        }
+        if($scope.formData.time_period == 20){
+            $scope.formData.paid_amount = 80*$scope.formData.no_of_person;
+        }
+    }
+
+    $scope.onSubmit = function () {
+        $scope.loading = true;
+        DBService.postCall($scope.formData, '/api/massage/store').then((data) => {
+            if (data.success) {
+
+
+                $("#massageModal").modal("hide");
+                $scope.entry_id = 0;
+                $scope.formData = {
+                    paid_amount:0,
+                    time_period:0,
+                    no_of_person:1,
+
+                };
+                $scope.init();
+                setTimeout(function(){
+                    window.open(base_url+'/admin/massage/print/'+data.id, '_blank')
+                }, 800);
+            }
+            $scope.loading = false;
+        });
+    }
+
+    $scope.delete = function (id) {
+        if(confirm("Are you sure") == true){
+            DBService.getCall('/api/massage/delete/'+id).then((data) => {
+                alert(data.message);
+                $scope.init();
+            });
+        }
+       
+    }
+
+});
 app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading = false;
     $scope.formData = {
@@ -470,275 +736,153 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             }
         });  
     }
-});
 
-app.controller('massageCtrl', function($scope , $http, $timeout , DBService) {
-    $scope.loading = false;
-    $scope.formData = {
-        paid_amount:0,
-        time_period:'',
-        no_of_person:1,
-
-    };
-
-    $scope.filter = {};
-    $scope.m_id = 0;
-    $scope.m_entries = [];
- 
-    $scope.init = function () {
-        
-        DBService.postCall($scope.filter, '/api/massage/init').then((data) => {
-            $scope.pay_types = data.pay_types;
-            $scope.m_entries = data.m_entries;
-        });
-    }
-    $scope.filterClear = function(){
-        $scope.filter = {};
-        $scope.init();
-    }
-
-    $scope.edit = function(m_id){
-        $scope.m_id = m_id;
-        DBService.postCall({m_id : $scope.m_id}, '/api/massage/edit-init').then((data) => {
-            if (data.success) {
-                $scope.formData = data.m_entry;
-                $("#massageModal").modal("show");
-            }
-        });
-    }
-    $scope.add = function(){
-        $("#massageModal").modal("show");
-    }
-
-    $scope.hideModal = () => {
-        $("#massageModal").modal("hide");
-        $scope.entry_id = 0;
-        $scope.formData = {
-            paid_amount:0,
-            time_period:0,
-            no_of_person:1,
-
-        };
-        $scope.init();
-    }
-
-    $scope.changeTime = function(){
-        
-        $scope.formData.paid_amount = 0;
-        if($scope.formData.time_period == 10){
-            $scope.formData.paid_amount = 50*$scope.formData.no_of_person;
-        }
-        if($scope.formData.time_period == 20){
-            $scope.formData.paid_amount = 80*$scope.formData.no_of_person;
-        }
-    }
-
-    $scope.onSubmit = function () {
-        $scope.loading = true;
-        DBService.postCall($scope.formData, '/api/massage/store').then((data) => {
-            if (data.success) {
-
-
-                $("#massageModal").modal("hide");
-                $scope.entry_id = 0;
-                $scope.formData = {
-                    paid_amount:0,
-                    time_period:0,
-                    no_of_person:1,
-
-                };
-                $scope.init();
-                setTimeout(function(){
-                    window.open(base_url+'/admin/massage/print/'+data.id, '_blank')
-                }, 800);
-            }
-            $scope.loading = false;
-        });
-    }
-
-    $scope.delete = function (id) {
-        if(confirm("Are you sure") == true){
-            DBService.getCall('/api/massage/delete/'+id).then((data) => {
-                alert(data.message);
-                $scope.init();
-            });
-        }
+    // $scope.delete = function (id) {
+    //     if(confirm("Are you sure?") == true){
+    //         DBService.getCall('/api/sitting/delete/'+id).then((data) => {
+    //             alert(data.message);
+    //             $scope.init();
+    //         });
+    //     }
        
-    }
-
+    // }
 });
-app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
-    $scope.loading = false;
-    $scope.formData = {
-        name:'',
-        mobile:"",
-        paid_amount:0,
-        no_of_day:'',
-        locker_id:'',
-    };
 
-    $scope.filter = {};
-
-    $scope.entry_id = 0;
-
-    $scope.check_shift = "";
-    $scope.pay_types = [];
-    $scope.avail_lockers = [];
-    $scope.days = [];
-
-    $scope.sl_lockers = [];
-    
-    $scope.init = function () {
-        
-        DBService.postCall($scope.filter, '/api/locker/init').then((data) => {
-            if (data.success) {
-                $scope.pay_types = data.pay_types;
-                $scope.l_entries = data.l_entries;
-                $scope.avail_lockers = data.avail_lockers;
-                $scope.days = data.days;
-            }
-        });
+app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
+    $scope.loading= false;
+    $scope.sitting_data = [];
+    $scope.cloak_data = [];
+    $scope.canteen_data = [];
+    $scope.massage_data = [];
+    $scope.filter = {
+        input_date:'',
+        user_id:'',
     }
-    $scope.filterClear = function(){
-        $scope.filter = {};
+
+    $scope.clear = function(){
+        $scope.filter = {
+            input_date:'',
+            user_id:'',
+        }
+        $scope.init();
+    }
+    $scope.serach = function(){
         $scope.init();
     }
 
-    $scope.edit = function(entry_id){
-        $scope.entry_id = entry_id;
-        $scope.sl_lockers = [];
-        DBService.postCall({entry_id : $scope.entry_id}, '/api/locker/edit-init').then((data) => {
-            if (data.success) {
-                $scope.formData = data.l_entry;
-                $scope.sl_lockers = data.sl_lockers;
-                $("#exampleModalCenter").modal("show");
+    $scope.users  = [];
+
+    $scope.init = function () {
+        $scope.loading = false;
+
+        DBService.postCall($scope.filter, '/api/shift/init').then((data) => {
+            if (data.success) { 
+
+                $scope.users = data.users;                 
+                
+                $scope.sitting_data = data.sitting_data; 
+                $scope.cloak_data = data.cloak_data; 
+                $scope.canteen_data = data.canteen_data; 
+                $scope.massage_data = data.massage_data;
+               
+                $scope.total_shift_upi = data.total_shift_upi ; 
+                $scope.total_shift_cash = data.total_shift_cash ; 
+                $scope.total_collection = data.total_collection ; 
+
+                $scope.last_hour_upi_total = data.last_hour_upi_total ; 
+                $scope.last_hour_cash_total = data.last_hour_cash_total ; 
+                $scope.last_hour_total = data.last_hour_total ;
+
+                $scope.check_shift = data.check_shift ; 
+                $scope.shift_date = data.shift_date ; 
             }
-            
+            $scope.loading = true;
         });
     }    
 
-    $scope.checkoutLoker = function(entry_id){
-        $scope.entry_id = entry_id;
+    
+});
 
-        if(confirm("Are you sure?") == true){
-             DBService.postCall({entry_id : $scope.entry_id}, '/api/locker/checkout-init').then((data) => {
-                if (data.timeOut) {
-                    $scope.formData = data.l_entry;
-                    
-                    $("#checkoutLokerModel").modal("show");
-                }else{
-                    $scope.init(); 
-                }
-                
-            });
-        }
+app.controller('userCtrl', function($scope , $http, $timeout , DBService) {
+    $scope.loading = false;
+    $scope.formData = {
+        name:'',
+        email:'',
+        mobile:'',
+        password:'',
+        confirm_password:'',
+    };
+    $scope.filter = {};
+    $scope.user_id = 0;
+    $scope.users = [];
+ 
+    $scope.init = function () {
+        DBService.postCall($scope.filter, '/api/users/init').then((data) => {
+            $scope.users = data.users;
+        });
+    }
+    $scope.filterClear = function(){
+        $scope.filter = {};
+        $scope.init();
     }
 
-    $scope.add = function(){
-        $scope.entry_id = 0;
-        $scope.sl_lockers = [];
-        $("#exampleModalCenter").modal("show");    
+    $scope.edit = function(user_id){
+        $scope.user_id = user_id;
+        DBService.postCall({user_id : $scope.user_id}, '/api/users/edit-init').then((data) => {
+            if (data.success) {
+                $scope.formData = data.user;
+                $("#userModal").modal("show");
+            }
+        });
     }
 
     $scope.hideModal = () => {
-        $("#exampleModalCenter").modal("hide");
-        $("#checkoutLokerModel").modal("hide");
-        $scope.entry_id = 0;
+        $("#userModal").modal("hide");
+        $scope.user_id = 0;
         $scope.formData = {
             name:'',
-            mobile:"",
-            total_amount:0,
-            paid_amount:0,
-            balance_amount:0,
+            email:'',
+            mobile:'',
+            password:'',
+            confirm_password:'',
+        };
+        $scope.init();
+    }
+
+    $scope.add = () => {
+        $("#userModal").modal("show");
+        $scope.user_id = 0;
+        $scope.formData = {
+            name:'',
+            email:'',
+            mobile:'',
+            password:'',
+            confirm_password:'',
         };
     }
 
     $scope.onSubmit = function () {
         $scope.loading = true;
-        if($scope.sl_lockers.length == 0){
-            alert('Please select at least one locker');
-            return;
-        }
-
-        $scope.formData.sl_lockers = $scope.sl_lockers;
-        DBService.postCall($scope.formData, '/api/locker/store').then((data) => {
+        DBService.postCall($scope.formData, '/api/users/store').then((data) => {
             if (data.success) {
-                $scope.loading = false;
-
-                $("#exampleModalCenter").modal("hide");
-                $scope.entry_id = 0;
-                $scope.formData = {
-                    name:'',
-                    mobile:"",
-                    paid_amount:0,
-                    no_of_day:'',
-                    locker_id:'',
-                };
-                $scope.init();
-                setTimeout(function(){
-                    window.open(base_url+'/admin/locker/print/'+data.id,'_blank');
-                }, 800);
-
-            }
-            $scope.loading = false;
-        });
-    }
-    $scope.onCheckOut = function () {
-        $scope.loading = true;
-        DBService.postCall($scope.formData, '/api/locker/checkout-store').then((data) => {
-            if (data.success) {
-                $("#checkoutLokerModel").modal("hide");
-                $scope.entry_id = 0;
-                $scope.formData = {
-                    name:'',
-                    mobile:"",
-                    total_amount:0,
-                    paid_amount:0,
-                    balance_amount:0,
-                    hours_occ:0,
-                    check_in:'',
-                    check_out:'',
-                };
-                $scope.init();
-            }
-            $scope.loading = false;
-        });
-    }
-
-    $scope.changeAmount = function(){
-        var total_amount = 0;
-        var amount = 50;
-        if($scope.formData.no_of_day > 1){
-            amount  = (amount + (($scope.formData.no_of_day-1)*70));
-        }
-        amount = $scope.sl_lockers.length*amount;
-        if($scope.entry_id == 0){
-            $scope.formData.paid_amount = amount;
-               
-        }else{
-            $scope.formData.balance_amount = amount - $scope.formData.paid_amount;
-        }
-    }
-
-    $scope.delete = function (id) {
-        if(confirm("Are you sure?") == true){
-            DBService.getCall('/api/locker/delete/'+id).then((data) => {
                 alert(data.message);
+                $("#userModal").modal("hide");
+                $scope.formData = {
+                    name:'',
+                    email:'',
+                    mobile:'',
+                    password:'',
+                    confirm_password:'',
+                };
                 $scope.init();
-            });
-        }
-    }
-
-    $scope.insLocker = (locker_id) => {
-        let idx = $scope.sl_lockers.indexOf(locker_id);
-        if(idx == -1){
-            $scope.sl_lockers.push(locker_id);
-        }else{
-            $scope.sl_lockers.splice(idx,1);
-        }
-        $scope.changeAmount();
+            }else{
+                alert(data.message);
+            }
+            $scope.loading = false;
+        });
     }
 });
+
 app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading = false;
     $scope.formData = {
@@ -868,141 +1012,6 @@ app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService
         });
     }
 });
-
-app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
-    $scope.loading= false;
-    $scope.sitting_data = [];
-    $scope.cloak_data = [];
-    $scope.canteen_data = [];
-    $scope.filter = {
-        input_date:'',
-        user_id:'',
-    }
-
-    $scope.clear = function(){
-        $scope.filter = {
-            input_date:'',
-            user_id:'',
-        }
-        $scope.init();
-    }
-    $scope.serach = function(){
-        $scope.init();
-    }
-
-    $scope.users  = [];
-
-    $scope.init = function () {
-        $scope.loading = false;
-
-        DBService.postCall($scope.filter, '/api/shift/init').then((data) => {
-            if (data.success) { 
-
-                $scope.users = data.users;                 
-                
-                $scope.sitting_data = data.sitting_data; 
-                $scope.cloak_data = data.cloak_data; 
-                $scope.canteen_data = data.canteen_data; 
-               
-                $scope.total_shift_upi = data.total_shift_upi ; 
-                $scope.total_shift_cash = data.total_shift_cash ; 
-                $scope.total_collection = data.total_collection ; 
-
-                $scope.last_hour_upi_total = data.last_hour_upi_total ; 
-                $scope.last_hour_cash_total = data.last_hour_cash_total ; 
-                $scope.last_hour_total = data.last_hour_total ;
-
-                $scope.check_shift = data.check_shift ; 
-                $scope.shift_date = data.shift_date ; 
-            }
-            $scope.loading = true;
-        });
-    }    
-
-    
-});
-
-app.controller('userCtrl', function($scope , $http, $timeout , DBService) {
-    $scope.loading = false;
-    $scope.formData = {
-        name:'',
-        email:'',
-        mobile:'',
-        password:'',
-        confirm_password:'',
-    };
-    $scope.filter = {};
-    $scope.user_id = 0;
-    $scope.users = [];
- 
-    $scope.init = function () {
-        DBService.postCall($scope.filter, '/api/users/init').then((data) => {
-            $scope.users = data.users;
-        });
-    }
-    $scope.filterClear = function(){
-        $scope.filter = {};
-        $scope.init();
-    }
-
-    $scope.edit = function(user_id){
-        $scope.user_id = user_id;
-        DBService.postCall({user_id : $scope.user_id}, '/api/users/edit-init').then((data) => {
-            if (data.success) {
-                $scope.formData = data.user;
-                $("#userModal").modal("show");
-            }
-        });
-    }
-
-    $scope.hideModal = () => {
-        $("#userModal").modal("hide");
-        $scope.user_id = 0;
-        $scope.formData = {
-            name:'',
-            email:'',
-            mobile:'',
-            password:'',
-            confirm_password:'',
-        };
-        $scope.init();
-    }
-
-    $scope.add = () => {
-        $("#userModal").modal("show");
-        $scope.user_id = 0;
-        $scope.formData = {
-            name:'',
-            email:'',
-            mobile:'',
-            password:'',
-            confirm_password:'',
-        };
-    }
-
-    $scope.onSubmit = function () {
-        $scope.loading = true;
-        DBService.postCall($scope.formData, '/api/users/store').then((data) => {
-            if (data.success) {
-                alert(data.message);
-                $("#userModal").modal("hide");
-                $scope.formData = {
-                    name:'',
-                    email:'',
-                    mobile:'',
-                    password:'',
-                    confirm_password:'',
-                };
-                $scope.init();
-            }else{
-                alert(data.message);
-            }
-            $scope.loading = false;
-        });
-    }
-});
-
-
 
 app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) {
     $scope.loading = false;
@@ -1264,6 +1273,10 @@ app.controller('sittingCollectCtrl', function($scope , $http, $timeout , DBServi
         no_of_bag:0,
         total_bag:0,
     };
+    
+    $scope.checked = {
+       
+    };
 
     $scope.pData = {
 
@@ -1278,6 +1291,7 @@ app.controller('sittingCollectCtrl', function($scope , $http, $timeout , DBServi
                 $scope.e_entries_list = data.e_entries_list;
                 $scope.c_sum = data.c_sum;
                 $scope.e_ent_sum = data.e_ent_sum;
+                $scope.checked = data.checked;
             }
         });
     }
@@ -1341,3 +1355,167 @@ app.controller('sittingCollectCtrl', function($scope , $http, $timeout , DBServi
     }
     
 });
+
+// app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) {
+//     $scope.loading = false;
+//     $scope.formData = {
+//         name:'',
+//         mobile:'',
+//         pay_type: 1,
+//         total_amount: 0,
+//         total_item:0,
+//         products: [{demo:''}],
+
+//     };
+
+//     $scope.products = [];
+
+
+//     // $scope.total_amount= 0;
+//     $scope.filter = {};
+//     $scope.entry_id = 0;
+//     $scope.daily_entries = [];
+//     $scope.canteen_items = [];
+
+//     $scope.selectConfig = {
+//         valueField: 'canteen_item_id',
+//         labelField: 'item_name',
+//         maxItems:1,
+//         searchField: 'item_name',
+//         create: false,
+//         onInitialize: function(selectize){
+              
+//         }
+//     }
+//     $scope.init = function () {
+//         DBService.postCall($scope.filter, '/api/daily-entries/init').then((data) => {
+//             $scope.daily_entries = data.daily_entries;
+//             $scope.canteen_items = data.canteen_items;
+//         });
+//     }
+
+//     $scope.filterClear = function(){
+//         $scope.filter = {};
+//         $scope.init();
+//     }
+
+//     $scope.edit = function(entry_id){
+//         $scope.entry_id = entry_id;
+//         DBService.postCall({entry_id : $scope.entry_id}, '/api/daily-entries/edit-init').then((data) => {
+//             if (data.success) {
+//                 $scope.formData = data.s_entry;
+//                 $("#exampleModalCenter").modal("show");
+//             }
+//         });
+//     }
+
+//     $scope.hideModal = () => {
+//         $("#exampleModalCenter").modal("hide");
+//         $scope.entry_id = 0;
+//         $scope.formData = {
+//             name:'',
+//             mobile:'',
+//             items:[],
+//         };
+//         $scope.init();
+//     }
+
+//     $scope.add = () => {
+//         $("#exampleModalCenter").modal("show");
+//         $scope.entry_id = 0;
+//         $scope.formData = {
+//             name:'',
+//             mobile:'',
+//             items:[],
+//         };
+//     }
+
+//     $scope.onSubmit = function () {
+//         $scope.loading = true;
+//         $scope.formData.products = $scope.products;
+//         if($scope.products.length == 0){
+//             alert("Plese select at least one item.");
+//             $scope.loading = false;
+//             return;
+//         }
+//         DBService.postCall($scope.formData, '/api/daily-entries/store').then((data) => {
+//             if (data.success) {
+//                 alert(data.message);
+//                 $("#exampleModalCenter").modal("hide");
+
+//                 $scope.formData = {
+//                     name:'',
+//                     mobile:'',
+//                     items:[],
+//                 };
+//                 $scope.products = [];
+//                 $scope.init();
+//                 setTimeout(function(){
+//                     window.open(base_url+'/admin/daily-entries/print/'+data.entry_id,'_blank');
+//                 }, 800);
+//             }else{
+//                 alert(data.message);
+//             }
+//             $scope.loading = false;
+//         });
+//     }
+
+//     $scope.onAddProdcut = () => {
+//         // console.log($scope.product);
+
+//         // var total_amount = $scope.total_amount;
+//         let products = $scope.products;
+
+//         var my_item = null;
+//         for (let i = 0; i < $scope.canteen_items.length; i++) {
+//             let c_item = $scope.canteen_items[i];
+//             if (c_item.canteen_item_id == $scope.product.canteen_item_id) {
+//                 my_item = c_item;
+//             }
+//         }
+//         let index = -1;
+
+//         for (var i = 0; i < products.length; i++) {
+//             let c_product = products[i];
+//             if(c_product.canteen_item_id == $scope.product.canteen_item_id){
+//                 index = i;
+//             }
+//         }
+
+//         if (index == -1) {
+//             my_item.paid_amount = my_item.price*$scope.product.quantity;
+//             my_item.quantity = $scope.product.quantity;
+//             products.push(my_item);
+//         } else {
+//             // total_amount += my_item.price*$scope.product.quantity;
+//             $scope.products[index].quantity += $scope.product.quantity;
+//             $scope.products[index].paid_amount = my_item.price*$scope.products[index].quantity;
+//         }
+
+//         $scope.product = {
+//             canteen_item_id:0,
+//             item_name:'',
+//             quantity:'',
+//         }; 
+
+//         $scope.products = products;
+
+//         var total_amount = 0;
+//         var total_item = 0;
+//         for (var i = 0; i < $scope.products.length; i++) {
+//             var el = $scope.products[i];
+//             total_amount = total_amount+el.paid_amount;
+//             total_item = total_item+el.quantity;
+//         }
+
+//         $scope.formData.total_amount = total_amount;
+//         $scope.formData.total_item = total_item;
+
+//     }
+
+//     $scope.editItem = (index) => {
+//         $scope.product = $scope.products[index];
+//         $scope.products.splice(index,1);
+//     }
+
+// });
