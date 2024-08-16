@@ -754,6 +754,7 @@ app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
     $scope.cloak_data = [];
     $scope.canteen_data = [];
     $scope.massage_data = [];
+    $scope.locker_data = [];
     $scope.filter = {
         input_date:'',
         user_id:'',
@@ -784,6 +785,7 @@ app.controller('shiftCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.cloak_data = data.cloak_data; 
                 $scope.canteen_data = data.canteen_data; 
                 $scope.massage_data = data.massage_data;
+                $scope.locker_data = data.locker_data;
                
                 $scope.total_shift_upi = data.total_shift_upi ; 
                 $scope.total_shift_cash = data.total_shift_cash ; 

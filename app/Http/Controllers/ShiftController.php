@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Redirect, Validator, Hash, Response, Session, DB;
 use App\Models\User;
 use App\Models\Entry;
-use App\Models\CloakRoom, App\Models\Sitting, App\Models\Canteen;
+use App\Models\CloakRoom, App\Models\Sitting, App\Models\Canteen, App\Models\Massage, App\Models\Locker;
 
 
 class ShiftController extends Controller {
@@ -81,25 +81,25 @@ class ShiftController extends Controller {
 		}		
 
 		if(in_array(4, $service_ids)){
-			$canteen_data = Massage::totalShiftData($input_date,$user_id);
-			$total_shift_upi += $canteen_data['total_shift_upi'];
-			$total_shift_cash += $canteen_data['total_shift_cash'];
-			$total_collection += $canteen_data['total_collection'];
-			$last_hour_upi_total += $canteen_data['last_hour_upi_total'];
-			$last_hour_cash_total += $canteen_data['last_hour_cash_total'];
-			$last_hour_total += $canteen_data['last_hour_total'];
-			$data['canteen_data'] = $canteen_data;
+			$massage_data = Massage::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $massage_data['total_shift_upi'];
+			$total_shift_cash += $massage_data['total_shift_cash'];
+			$total_collection += $massage_data['total_collection'];
+			$last_hour_upi_total += $massage_data['last_hour_upi_total'];
+			$last_hour_cash_total += $massage_data['last_hour_cash_total'];
+			$last_hour_total += $massage_data['last_hour_total'];
+			$data['massage_data'] = $massage_data;
 		}		
 
 		if(in_array(5, $service_ids)){
-			$canteen_data = Locker::totalShiftData($input_date,$user_id);
-			$total_shift_upi += $canteen_data['total_shift_upi'];
-			$total_shift_cash += $canteen_data['total_shift_cash'];
-			$total_collection += $canteen_data['total_collection'];
-			$last_hour_upi_total += $canteen_data['last_hour_upi_total'];
-			$last_hour_cash_total += $canteen_data['last_hour_cash_total'];
-			$last_hour_total += $canteen_data['last_hour_total'];
-			$data['canteen_data'] = $canteen_data;
+			$locker_data = Locker::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $locker_data['total_shift_upi'];
+			$total_shift_cash += $locker_data['total_shift_cash'];
+			$total_collection += $locker_data['total_collection'];
+			$last_hour_upi_total += $locker_data['last_hour_upi_total'];
+			$last_hour_cash_total += $locker_data['last_hour_cash_total'];
+			$last_hour_total += $locker_data['last_hour_total'];
+			$data['locker_data'] = $locker_data;
 		}
 	
         $data['total_shift_upi'] = $total_shift_upi;
