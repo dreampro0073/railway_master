@@ -465,6 +465,8 @@ class SittingController extends Controller {
 			]);
 			
 			$data['id'] = $entry->id;
+			$data['print_id'] = $entry->barcodevalue;
+			
 			$data['success'] = true;
 			$data['message'] = "Checkout Successfully";
 		} else {

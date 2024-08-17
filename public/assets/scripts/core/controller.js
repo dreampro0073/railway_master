@@ -695,7 +695,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.last_hour = 1;
                 $scope.init();
                 setTimeout(function(){
-                    window.open(base_url+'/admin/sitting/print/'+data.id, '_blank');
+                    window.open(base_url+'/admin/sitting/print-unq/2/'+data.print_id, '_blank');
                 }, 800);
                 $scope.checkout_process = false;
 
