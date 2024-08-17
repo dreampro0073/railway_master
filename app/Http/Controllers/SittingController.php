@@ -163,7 +163,7 @@ class SittingController extends Controller {
 		foreach ($entries as $item) {
 			$item->show_time = date("h:i A",strtotime($item->check_in)).' - '.date("h:i A",strtotime($item->check_out));
 
-			$e_total = DB::table('e_entries')->where('entry_id',$item->id)->where('is_collected',0)->where('is_checked',0)->sum('paid_amount');
+			$e_total = Sitting::eSum($item->id);
 
 			$item->paid_amount = $item->paid_amount + $e_total;
 		}
@@ -501,16 +501,19 @@ class SittingController extends Controller {
 	public function printPostUnq($type =1,$print_id = ''){
         $print_data = DB::table('sitting_entries')->where('barcodevalue', $print_id)->first();
 
-        if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
-			return "Print not allowed";
-		}
-		if($type == 2 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
-			return "Print not allowed";
-		}
+        // if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
+		// 	return "Print not allowed";
+		// }
+		// if($type == 2 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
+		// 	return "Print not allowed";
+		// }
         
         $print_data->total_member = $print_data->no_of_adults + $print_data->no_of_children + $print_data->no_of_baby_staff;
         $print_data->adult_amount = 0;
         $print_data->children_amount = 0;
+        $print_data->adult_s_amount = 0;
+        $print_data->children_s_amount = 0;
+
         $hours = $print_data->hours_occ;
         $rate_list = Sitting::rateList();
 
@@ -518,55 +521,35 @@ class SittingController extends Controller {
 
         $total_amount =  $print_data->paid_amount + $e_total;
 
+        $sec_hours = 0;
+        $is_sec_rate = false;
+
+        if($rate_list->adult_rate != $rate_list->adult_rate_sec){
+        	$is_sec_rate = true;
+        }
+        $print_data->is_sec_rate = $is_sec_rate;
+
         if($hours > 0) {
-            $print_data->adult_amount = $print_data->no_of_adults * $hours * $rate_list->adult_rate;
-            $print_data->children_amount = $print_data->no_of_children * $rate_list->child_rate * $hours;
+            $print_data->adult_f_amount = $print_data->no_of_adults * 1 * $rate_list->adult_rate;
+            $print_data->children_f_amount = $print_data->no_of_children * $rate_list->child_rate * 1;
+        }
+        
+        $sec_hours = $hours - 1;
+        if($hours > 1 && $print_data->is_sec_rate) {
+        	
+            $print_data->adult_s_amount = $print_data->no_of_adults * $sec_hours * $rate_list->adult_rate_sec;
+            $print_data->children_s_amount = $print_data->no_of_children * $rate_list->child_rate_sec * $sec_hours;
+        }else if($hours > 1){
+        	
+        	$print_data->adult_f_amount += $print_data->no_of_adults * $sec_hours * $rate_list->adult_rate_sec;
+            $print_data->children_f_amount += $print_data->no_of_children * $rate_list->child_rate_sec * $sec_hours;
         }
 
         DB::table('sitting_entries')->where('id',$print_data->id)->update([
         	'print_count' => $print_data->print_count+1,
         ]);
               
-		return view('admin.sitting.print_sitting_unq',compact('print_data','total_amount'));
+		return view('admin.sitting.print_sitting_unq',compact('print_data','total_amount','rate_list','type'));
 	}
-
-    // public function delete($id){
-    // 	DB::table('sitting_entries')->where('client_id', Auth::user()->client_id)->where('id',$id)->update([
-    // 		'deleted' => 1,
-    // 		'delete_by' => Auth::id(),
-    // 		'delete_time' => date("Y-m-d H:i:s"),
-
-    // 	]);
-
-    // 	$data['success'] = true;
-    // 	$data['message'] = "Successfully";
-		
-	// 	return Response::json($data, 200, []);
-    // }
-
-    public function updatePrint($slip_id =0){
-
-    	if(in_array(Auth::user()->priv,[1,2,4]) ){
-    		$check = DB::table('sitting_entries')->where('slip_id',$slip_id)->where('client_id',Auth::user()->client_id)->first();
-
-    		if($check){
-    			if($check->max_print == $check->print_count){
-	    			DB::table('sitting_entries')->where('slip_id',$slip_id)->where('client_id',Auth::user()->client_id)->update([
-		    			'max_print' => $check->max_print+1,
-		    		]);
-	    		}
-
-	    		$check = DB::table('sitting_entries')->where('slip_id',$slip_id)->where('client_id',Auth::user()->client_id)->first();
-
-	    		return $check->max_print." The Max Print Count".$check->print_count." The Print Count";
-    		}else{
-    			return "Entry Not found";
-    		}
-
-
-    	}else{
-    		return "You have not access to print change print";
-    	}
-    }
 
 }

@@ -95,7 +95,7 @@
                                 <!-- <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a> -->
                                 <a ng-if="item.checkout_status != 1" href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
                                 
-                                <a ng-if="item.checkout_status != 1" href="{{url('/admin/sitting/print-unq/1/')}}/@{{item.barcodevalue}}" class="btn btn-success btn-sm" target="_blank">Print</a>
+                                <a ng-if="item.checkout_status != 1" href="{{url('/admin/sitting/print-unq/2/')}}/@{{item.barcodevalue}}" class="btn btn-success btn-sm" target="_blank">Print</a>
                         </tr>
                     </tbody>
                 </table>

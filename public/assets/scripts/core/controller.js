@@ -564,7 +564,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         $scope.setNullFormData();
         DBService.postCall({entry_id : $scope.entry_id}, '/api/sitting/edit-init').then((data) => {
             if (data.success) {
-                $scope.last_hour += data.sitting_entry.hours_occ;
+                $scope.last_hour = data.sitting_entry.hours_occ;
                 $scope.formData = data.sitting_entry;
                 $scope.old_hr = data.sitting_entry.hours_occ;
 
@@ -708,20 +708,27 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
    
     $scope.changeAmount = function () {
         $scope.formData.total_amount = 0;
-
         if($scope.formData.hours_occ > 0){
-            var hours = $scope.formData.hours_occ - $scope.last_hour; 
+            // var hours = $scope.formData.hours_occ - $scope.last_hour; 
+            var hours = $scope.formData.hours_occ - 1; 
+           
             if($scope.formData.no_of_adults > 0){
                 $scope.formData.total_amount += $scope.rate_list.adult_rate * $scope.formData.no_of_adults;
-                $scope.formData.total_amount += hours * $scope.rate_list.adult_rate * $scope.formData.no_of_adults;
+                
+                $scope.formData.total_amount += hours * $scope.rate_list.adult_rate_sec * $scope.formData.no_of_adults;
+                console.log($scope.formData.total_amount);
             }
             if($scope.formData.no_of_children > 0){
                 $scope.formData.total_amount += $scope.rate_list.child_rate * $scope.formData.no_of_children;
-                $scope.formData.total_amount +=  hours * $scope.rate_list.child_rate * $scope.formData.no_of_children;
+                
+                $scope.formData.total_amount +=  hours * $scope.rate_list.child_rate_sec * $scope.formData.no_of_children;
+                 console.log($scope.formData.total_amount);
             }
         }
-        $scope.formData.balance_amount = $scope.formData.total_amount;
-        $scope.formData.total_amount += $scope.formData.paid_amount;
+
+     
+        $scope.formData.balance_amount = $scope.formData.total_amount - $scope.formData.paid_amount;
+
         $scope.geValTime();
 
     }

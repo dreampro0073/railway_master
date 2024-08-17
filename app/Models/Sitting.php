@@ -20,7 +20,7 @@ class Sitting extends Model
     }
 
     public static function eSum($entry_id=0){
-        return DB::table('e_entries')->where('is_checked',0)->where('entry_id',$entry_id)->sum('paid_amount');
+        return DB::table('e_entries')->where('is_collected',0)->where('entry_id',$entry_id)->sum('paid_amount');
     }
 
     public static function rateList(){
@@ -57,7 +57,6 @@ class Sitting extends Model
         $c_shift =strtotime("22:00:00");
 
         $current_time = strtotime(date("H:i:s"));
-        // $current_time = "03:09:00";
 
         if($current_time > $a_shift && $current_time < $b_shift){
 

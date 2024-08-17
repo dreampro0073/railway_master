@@ -63,7 +63,7 @@
 		</h5>
 		<div class="table-div" style="margin-bottom:2px;">
 			<div class="w-50">
-				<span class="text">Sl. No: <b>{{ $print_data->id }}</b></span>
+				<span class="text">Sl. No: <b>{{ $print_data->slip_id }}</b></span>
 			</div>
 			
 		</div>

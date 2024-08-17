@@ -42,7 +42,7 @@
                             </li>
 
                         @endif
-                        @if(in_array(4, $service_ids) || Auth::user()->priv == 1)
+                        @if(in_array(5, $service_ids) || Auth::user()->priv == 1)
                             
                             <li class="@if(isset($sidebar)) @if($sidebar == 'locker') active @endif @endif">
                             <a href="{{url('/admin/locker')}}"><i class="fa fa-lock"></i>Locker</a>

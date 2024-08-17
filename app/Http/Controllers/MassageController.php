@@ -75,6 +75,7 @@ class MassageController extends Controller {
 			} else {
 				$entry = new Massage;
 				$message = "Stored Successfully!";
+				$entry->slip_id = Massage::getSlipId();
 				$entry->unique_id = strtotime('now');
 			}
 
@@ -102,7 +103,7 @@ class MassageController extends Controller {
 	}
 	public function printPost($id = 0){
         $print_data = DB::table('massage_entries')->where('id', $id)->first();
-        return view('admin.print_page_massage', compact('print_data'));
+        return view('admin.massage.print_massage', compact('print_data'));
 
 	}
 	public function delete($id){

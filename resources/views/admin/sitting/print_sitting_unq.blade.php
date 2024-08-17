@@ -63,9 +63,11 @@
 				Slip ID : {{ $print_data->slip_id }}
 			</b>
 		</div>
+		@if($type == 1)
 		<div style="text-align:center;">
 			<svg id="barcode"></svg>
 		</div>
+		@endif
 		<div class="table-div">
 			<div class="w-50">
 				<span class="name">Name : {{$print_data->name}}</span>		
@@ -97,29 +99,46 @@
 		<table style="width:100%;margin: -1;" border="1" cellpadding="4" cellspacing="0" >
 			<tr>
 				<td class="w-46">Description</td>
+				<td class="w-20">Fee Type</td>
 				<td class="w-16">Quantity</td>
-				<td class="w-16">Hr</td>
 				<td class="w-16">Amount</td>
 			</tr>
 			<tr>
-				<td class="w-46">For Adult 30/- Person</td>
-				<td class="w-16">{{$print_data->no_of_adults}}</td>
-				<td class="w-16" rowspan="4">{{$print_data->hours_occ}}</td>
-
-				<td class="w-16">{{$print_data->adult_amount}}</td>
+				<td class="w-46">For 1st hours or part there of</td>
+				<td class="w-20">Adult {{$rate_list->adult_rate}}/- Perpersal</td>
+				<td class="w-16" rowspan="<?php if($print_data->is_sec_rate){ echo '2'; }  ?>"> {{$print_data->no_of_adults}}</td>
+				<td class="w-16">{{$print_data->adult_f_amount}}</td>
 			</tr>
+			@if($print_data->is_sec_rate)
 			<tr>
-				<td class="w-46">For Age 5 to 12, 20/- Person</td>
-				<td class="w-16" >{{$print_data->no_of_children}}</td>
-				<td class="w-16">{{$print_data->children_amount}}</td>
+				<td class="w-46">Per Exterded hours or part there of</td>
+				<td class="w-20">Adult {{$rate_list->adult_rate_sec}}/- Perpersal</td>
+				<td class="w-16">{{$print_data->adult_s_amount}}</td>
 			</tr>
+			@endif
+			<tr>
+				<td class="w-46">1st hours of part there of</td>
+				<td class="w-20">Age 5 to 12, {{$rate_list->child_rate}}/ Perchilores</td>
+				<td class="w-16" rowspan="<?php if($print_data->is_sec_rate){ echo '2'; }  ?>">{{$print_data->no_of_children}}</td>
+				<td class="w-16">{{$print_data->children_f_amount}}</td>
+			</tr>
+			@if($print_data->is_sec_rate)
+			<tr>
+				<td class="w-46">Per Exterded hours or part there of</td>
+				<td class="w-20">Age 5 to 12, {{$rate_list->child_rate_sec}}/ Perchilores</td>
+				<td class="w-16">{{$print_data->children_s_amount}}</td>
+			</tr>
+			@endif
 			<tr>
 				<td class="w-46">Age Below 5 Years</td>
+				<td class="w-20">Free</td>
 				<td class="w-16">{{$print_data->no_of_baby_staff}}</td>
 				<td class="w-16">--</td>
 			</tr>
 			<tr>
-				<td class="w-46" ><b>Total</b></td>
+				<td colspan="1">Hour: <b>{{$print_data->hours_occ}}</b></td>
+
+				<td colspan="1"><b>Total</b></td>
 				<td class="w-20">{{$print_data->total_member}}</td>
 				<td class="w-16">{{$total_amount}}</td>
 			</tr>

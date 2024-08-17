@@ -52,6 +52,10 @@ class UserController extends Controller {
             if(Auth::attempt($cre)){
                 $client_id = Auth::user()->client_id;   
                 $client = DB::table("clients")->where("id",$client_id)->first();
+                $user = User::find(Auth::id());
+                $user->last_login = date("Y-m-d H:i:s");
+                $user->save();
+
                 if($client){
                     $service_ids = DB::table('client_services')->where("client_id", $client_id)->where('status',1)->pluck('services_id')->toArray();
                     Session::put('client_name',$client->name);

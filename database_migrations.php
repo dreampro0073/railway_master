@@ -24,4 +24,6 @@ ALTER TABLE `sitting_entries` ADD `is_backup` TINYINT NOT NULL DEFAULT '0' AFTER
 ALTER TABLE `sitting_rate_list` ADD `adult_rate_sec` INT NOT NULL DEFAULT '0' AFTER `child_rate`, ADD `child_rate_sec` INT NOT NULL DEFAULT '0' AFTER `adult_rate_sec`;
 ALTER TABLE `client_services` CHANGE `services_id` `services_id` INT(11) NOT NULL DEFAULT '0' COMMENT '1=sittinng,2=cloakroom, 3=canteen,4= Massage, 5=Locker';
 CREATE TABLE `railway_master`.`check_status` (`id` INT NOT NULL AUTO_INCREMENT , `check_date_time` TIMESTAMP NULL DEFAULT NULL , `checked_by` INT NOT NULL DEFAULT '0' , `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+ALTER TABLE `massage_entries` ADD `slip_id` INT NOT NULL DEFAULT '0' AFTER `client_id`;
 ?>
