@@ -240,13 +240,14 @@ app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
     };
 
     $scope.filter = {};
-
+    $scope.old_days = 0;
     $scope.entry_id = 0;
 
     $scope.check_shift = "";
     $scope.pay_types = [];
     $scope.avail_lockers = [];
     $scope.days = [];
+    $scope.rate_list = {};
 
     $scope.sl_lockers = [];
     
@@ -273,6 +274,8 @@ app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
             if (data.success) {
                 $scope.formData = data.l_entry;
                 $scope.sl_lockers = data.sl_lockers;
+                $scope.rate_list = data.rate_list;
+                $scope.old_days = data.l_entry.no_of_day;
                 $("#exampleModalCenter").modal("show");
             }
             
@@ -299,7 +302,10 @@ app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
     $scope.add = function(){
         $scope.entry_id = 0;
         $scope.sl_lockers = [];
-        $("#exampleModalCenter").modal("show");    
+        DBService.postCall({entry_id : 0}, '/api/locker/edit-init').then((data) => {
+            $scope.rate_list = data.rate_list;
+            $("#exampleModalCenter").modal("show");  
+        });  
     }
 
     $scope.hideModal = () => {
@@ -369,9 +375,9 @@ app.controller('lockerCtrl', function($scope , $http, $timeout , DBService) {
 
     $scope.changeAmount = function(){
         var total_amount = 0;
-        var amount = 50;
+        var amount = $scope.rate_list.first_rate;
         if($scope.formData.no_of_day > 1){
-            amount  = (amount + (($scope.formData.no_of_day-1)*70));
+            amount  = (amount + (($scope.formData.no_of_day-1)*$scope.rate_list.second_rate));
         }
         amount = $scope.sl_lockers.length*amount;
         if($scope.entry_id == 0){

@@ -46,7 +46,7 @@
                             <label>No Of Days</label>
                             <select ng-model="formData.no_of_day" class="form-control" ng-change="changeAmount()" required convert-to-number >
                                 <option value="">--select--</option>
-                                <option ng-repeat="item in days" value="@{{item.value}}">@{{ item.label}}</option>
+                                <option ng-repeat="item in days" ng-disabled="entry_id > 0 && old_days > item.value" value="@{{item.value}}">@{{ item.label}}</option>
                             </select>
                         </div>
                         <div class="col-md-3 form-group">
@@ -56,6 +56,8 @@
                                 <option ng-repeat="item in pay_types" value="@{{item.value}}">@{{ item.label}}</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-12 form-group" ng-if="entry_id == 0">
                             <label>Available Locker</label>
                             <br>
@@ -68,7 +70,6 @@
                             <input type="text" ng-model="formData.locker_ids" class="form-control" required readonly />
 
                         </div>
-                        
                         <div class="col-md-3 form-group">
                             <label>Paid Amount</label>
                             <input type="number" ng-model="formData.paid_amount" class="form-control" readonly />

@@ -42,6 +42,8 @@ class LockerController extends Controller {
 
 		foreach ($l_entries as $key => $item) {
 			$bm_amount = DB::table('locker_penalty')->where('locker_entry_id','=',$item->id)->sum('paid_amount');
+			$item->checkout_date = date("d-m-Y H:i:s", strtotime($item->checkout_date));
+			$item->checkin_date = date("d-m-Y H:i:s", strtotime($item->checkin_date));
 			$item->sh_paid_amount = $item->paid_amount + $bm_amount;
 		}
 
@@ -78,6 +80,8 @@ class LockerController extends Controller {
 
 			$l_entry->bm_amount = $bm_amount;
 		}
+
+		$data["rate_list"] = DB::table("locker_rate_list")->where("client_id", Auth::user()->client_id)->first();
 
 		$data['success'] = true;
 		$data['l_entry'] = $l_entry;

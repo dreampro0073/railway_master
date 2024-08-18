@@ -51,6 +51,7 @@
                             <th>PNR</th>
                            
                             <th>Pay Type</th>
+                            <th>Validity</th>
                             <th>Total Amount</th>
                             @if(Auth::user()->priv == 1)
                                 <th>#</th>
@@ -71,7 +72,8 @@
                             <td>
                                 <span ng-if="item.pay_type == 1">Cash</span>
                                 <span ng-if="item.pay_type == 2">UPI</span>
-                            </td>  
+                            </td>
+                            <td>@{{ item.checkin_date }} - @{{item.checkout_date}} </td>
                             
                             <td>@{{ item.sh_paid_amount }}</td>
                             @if(Auth::user()->priv == 1)

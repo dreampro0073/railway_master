@@ -26,4 +26,35 @@ ALTER TABLE `client_services` CHANGE `services_id` `services_id` INT(11) NOT NUL
 CREATE TABLE `railway_master`.`check_status` (`id` INT NOT NULL AUTO_INCREMENT , `check_date_time` TIMESTAMP NULL DEFAULT NULL , `checked_by` INT NOT NULL DEFAULT '0' , `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
 ALTER TABLE `massage_entries` ADD `slip_id` INT NOT NULL DEFAULT '0' AFTER `client_id`;
+
+
+
+
+CREATE TABLE `locker_rate_list` (
+  `id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `first_rate` int(11) NOT NULL COMMENT 'perDay',
+  `second_rate` int(11) NOT NULL COMMENT 'perDay'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `locker_rate_list`
+--
+ALTER TABLE `locker_rate_list`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `locker_rate_list`
+--
+ALTER TABLE `locker_rate_list`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
 ?>
