@@ -543,7 +543,7 @@ class ApiController extends Controller {
         $data['success'] = true;
         $data['daily_entries'] = $entries;
 
-        $canteen_items = DB::table('canteen_items')->select('id as canteen_item_id','price','item_name')->where('client_id',$client_id)->get();
+        $canteen_items = DB::table('canteen_items')->select('id as canteen_item_id','price','item_name')->where("stock", '>', 0)->where('client_id',$client_id)->get();
 
         foreach ($canteen_items as $key => $canteen_item) {
             $canteen_item->quantity  = 1;

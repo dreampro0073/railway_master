@@ -151,6 +151,7 @@ class LockerController extends Controller {
 				$entry->shift = $check_shift;
 				$entry->added_by = Auth::id();
 				$entry->paid_amount = $request->paid_amount;
+				$entry->slip_id = Locker::getSlipId();
 
 			}
 

@@ -49,14 +49,15 @@
 </head>
 <body>
 	<div class="main" id="printableArea">
+
 		<h4>
-			M/s New Nabaratna Hospitality Pvt. Ltd.
+			{{Session::get('client_name')}}
 		</h4>
 		<p style="padding:0 15px;text-align: center;">
-			AC Executive Lounge, Haridwar Railway Station<br>PF No. 1
+			{!! Session::get('address') !!}
 		</p>
 		<h5>
-			GSTIN: 18AAICN4763E1ZA 
+			{{Session::get('gst_no')}}
 		</h5>
 		<h5>
 			MASSAGE

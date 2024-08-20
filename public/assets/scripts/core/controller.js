@@ -419,12 +419,14 @@ app.controller('massageCtrl', function($scope , $http, $timeout , DBService) {
     $scope.filter = {};
     $scope.m_id = 0;
     $scope.m_entries = [];
+    $scope.rate_list ={};
  
     $scope.init = function () {
         
         DBService.postCall($scope.filter, '/api/massage/init').then((data) => {
             $scope.pay_types = data.pay_types;
             $scope.m_entries = data.m_entries;
+            $scope.rate_list = data.rate_list;
         });
     }
     $scope.filterClear = function(){
@@ -461,10 +463,10 @@ app.controller('massageCtrl', function($scope , $http, $timeout , DBService) {
         
         $scope.formData.paid_amount = 0;
         if($scope.formData.time_period == 10){
-            $scope.formData.paid_amount = 50*$scope.formData.no_of_person;
+            $scope.formData.paid_amount = $rate_list.first_rate*$scope.formData.no_of_person;
         }
         if($scope.formData.time_period == 20){
-            $scope.formData.paid_amount = 80*$scope.formData.no_of_person;
+            $scope.formData.paid_amount = $rate_list.second_rate*$scope.formData.no_of_person;
         }
     }
 
@@ -593,8 +595,11 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                     $scope.formData = data.sitting_entry;
                     $scope.checkout_process = true;
                     $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
-                    $("#checkoutModal").modal("show");
                     $scope.changeAmount();
+
+                    setTimeout(function(){
+                       $("#checkoutModal").modal("show");
+                    }, 800);
                 }
                 
             });
@@ -614,10 +619,15 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.last_hour += data.sitting_entry.hours_occ;
                 $scope.formData = data.sitting_entry;
                 $scope.entry_id = data.id;
-                $scope.checkout_process = false;
+                $scope.checkout_process = true;
                 $scope.formData.hours_occ = data.ex_hours+ $scope.formData.hours_occ;
-                $("#checkoutModal").modal("show");
                 $scope.changeAmount();
+
+                setTimeout(function(){
+                   $("#checkoutModal").modal("show");
+                }, 800);
+
+                
             }
            
         });

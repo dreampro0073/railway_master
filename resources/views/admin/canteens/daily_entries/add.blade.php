@@ -26,7 +26,7 @@
                             <input type="number" ng-model="formData.mobile" class="form-control" />
                         </div>
                         <div class="col-md-4 form-group">
-                            <label>Price</label><br>
+                            <label>Pay Type</label><br>
                             <label><input type="radio" ng-model="formData.pay_type" value="1">&nbsp;Cash</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <label><input type="radio" ng-model="formData.pay_type" value="2">&nbsp;UPI</label>
                         </div>   

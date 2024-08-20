@@ -61,7 +61,9 @@ class UserController extends Controller {
                     Session::put('client_name',$client->name);
                     Session::put('gst_no',$client->gst);
                     Session::put('service_ids',$service_ids);
-
+                    Session::put('address',$client->address);
+                    
+                    
                 }
                 return Redirect::to('/admin/dashboard');
 

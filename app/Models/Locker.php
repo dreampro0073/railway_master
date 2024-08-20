@@ -12,6 +12,16 @@ class Locker extends Model
 
     protected $table = 'locker_entries';
 
+    public static function getSlipId(){
+
+        $entry = Locker::select('slip_id')->where('client_id',Auth::user()->client_id)->orderBy('id','DESC')->first();
+        $slip_id = Auth::user()->client_id.'1';
+        if($entry){
+            $slip_id = $entry->slip_id+1;
+        }
+        return $slip_id;
+    }
+
     public static function totalShiftData($input_date='',$user_id=0){
         $check_shift = Entry::checkShift();
         

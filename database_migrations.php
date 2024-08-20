@@ -57,4 +57,11 @@ ALTER TABLE `locker_rate_list`
 ALTER TABLE `locker_rate_list`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
+
+CREATE TABLE `nnhp`.`massage_rate_list` (`id` INT NOT NULL AUTO_INCREMENT , `client_id` INT NOT NULL DEFAULT '0' , `first_rate` INT NOT NULL DEFAULT '0' , `second_rate` INT NOT NULL DEFAULT '0' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+ALTER TABLE `massage_entries_backup`
+  DROP `deleted`,
+  DROP `deleted_by`,
+  DROP `delete_time`;
 ?>

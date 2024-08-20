@@ -24,6 +24,9 @@ class Massage extends Model
         return $slip_id;
     }
 
+    public static function rateList(){
+        return DB::table("massage_rate_list")->where("client_id", Auth::user()->client_id)->first();
+    }
     public static function totalShiftData($input_date='',$user_id=0){
         $check_shift = Entry::checkShift();
         

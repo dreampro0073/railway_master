@@ -52,6 +52,9 @@
 		<h4>
 			{{Session::get('client_name')}}
 		</h4>
+		<p style="padding:0 15px;text-align: center;">
+			{!! Session::get('address') !!}
+		</p>
 		<h5>
 			{{Session::get('gst_no')}}
 		</h5>

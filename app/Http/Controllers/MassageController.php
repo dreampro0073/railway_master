@@ -39,6 +39,9 @@ class MassageController extends Controller {
 		$data['m_entries'] = $m_entries;
 		$data['pay_types'] = $pay_types;
 
+		$rate_list = Massage::rateList();
+		$data['rate_list'] =$rate_list;
+
 		return Response::json($data,200,array());
 	}
 	public function editMassage(Request $request){

@@ -36,15 +36,15 @@ class SittingController extends Controller {
 	}
 
 	public function dumpSittingData(Request $request){
-		// $old_entry_ids = DB::table('users_backup')->pluck('id')->toArray();
-		// foreach ($old_entry_ids as $key => $old_id) {
-		// 	$newTask = (new User)
-		// 	->setTable('users_backup')
-		// 	->find($old_id)
-		// 	->replicate()
-		// 	->setTable('users')
-		// 	->save();
-		// }
+		$old_entry_ids = DB::table('users_backup')->pluck('id')->toArray();
+		foreach ($old_entry_ids as $key => $old_id) {
+			$newTask = (new User)
+			->setTable('users_backup')
+			->find($old_id)
+			->replicate()
+			->setTable('users')
+			->save();
+		}
 
 		// $old_entry_ids = DB::table('massage_entries_backup')->where('is_backup',0)->take(1000)->pluck('id')->toArray();
 		// foreach ($old_entry_ids as $key => $old_id) {
@@ -55,12 +55,12 @@ class SittingController extends Controller {
 		// 	->setTable('massage_entries')
 		// 	->save();
 
-		// 	DB::table('massage_entries_backup')->where('is_backup',0)->where('id','$old_id')->update([
+		// 	DB::table('massage_entries_backup')->where('is_backup',0)->where('id',$old_id)->update([
 		// 		'is_backup' => 1,
 		// 	]);
 		// }
 
-		// $old_entry_ids = DB::table('locker_entries_backup')->where('is_backup',0)->take(1000)->pluck('id')->toArray();
+		// $old_entry_ids = DB::table('locker_entries_backup')->where('is_backup',0)->take(5000)->pluck('id')->toArray();
 		// if(sizeof($old_entry_ids) > 0){
 		// 	foreach ($old_entry_ids as $key => $old_id) {
 		// 		$newTask = (new Locker)
