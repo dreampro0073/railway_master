@@ -47,6 +47,9 @@
 	</style>
 </head>
 <body>
+	<?php  
+	    $service_ids = Session::get('service_ids');
+	?>
 	<div id="printableArea" class="main">
 		<h4>
 			{{Session::get('client_name')}}
@@ -65,8 +68,96 @@
             </thead>
 
             <tbody>
-              
-              	 
+			@if(in_array(1, $service_ids))
+			    <tr>
+                   	<td>
+                       <b>Sitting</b>
+                   	</td> 
+                   
+                    <td>
+                        {{$sitting_data['total_shift_upi']}}
+                    </td>
+                    <td>
+                        {{$sitting_data['total_shift_cash']}}
+                    </td>
+                    <td>
+                        {{$sitting_data['total_collection']}}
+                    </td>
+                   
+                </tr>
+			@endif
+			@if(in_array(2, $service_ids))
+			    <tr>
+                   	<td>
+                       <b>Cloakroom</b>
+                   	</td> 
+                   
+                    <td>
+                        {{$cloak_data['total_shift_upi']}}
+                    </td>
+                    <td>
+                        {{$cloak_data['total_shift_cash']}}
+                    </td>
+                    <td>
+                        {{$cloak_data['total_collection']}}
+                    </td>
+                   
+                </tr>
+			@endif
+			@if(in_array(3, $service_ids))
+			                <tr>
+                   	<td>
+                       <b>Canteen</b>
+                   	</td> 
+                   
+                    <td>
+                        {{$canteen_data['total_shift_upi']}}
+                    </td>
+                    <td>
+                        {{$canteen_data['total_shift_cash']}}
+                    </td>
+                    <td>
+                        {{$canteen_data['total_collection']}}
+                    </td>
+                   
+                </tr>
+			@endif
+			@if(in_array(4, $service_ids))
+			    <tr>
+                   	<td>
+                       <b>Massage</b>
+                   	</td> 
+                   
+                    <td>
+                        {{$massage_data['total_shift_upi']}}
+                    </td>
+                    <td>
+                        {{$massage_data['total_shift_cash']}}
+                    </td>
+                    <td>
+                        {{$massage_data['total_collection']}}
+                    </td>
+                   
+                </tr>
+			@endif
+			@if(in_array(5, $service_ids))
+				<tr>
+                   	<td>
+                       <b>Locker</b>
+                   	</td> 
+                   
+                    <td>
+                        {{$locker_data['total_shift_upi']}}
+                    </td>
+                    <td>
+                        {{$locker_data['total_shift_cash']}}
+                    </td>
+                    <td>
+                        {{$locker_data['total_collection']}}
+                    </td>
+                   
+                </tr>
+			@endif
 
                 <tr>
                    	<td>

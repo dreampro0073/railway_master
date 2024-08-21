@@ -43,9 +43,9 @@ class ShiftController extends Controller {
             $user_id = Auth::id();
         }
 
-        if(Auth::user()->priv ==4 && Auth::id() == 23){
-        	$user_id = 19;
-        }
+        // if(Auth::user()->priv ==4 && Auth::id() == 23){
+        // 	$user_id = 19;
+        // }
 
 		if(in_array(1, $service_ids)){
 			$sitting_data = Sitting::totalShiftData($input_date,$user_id);
@@ -115,19 +115,77 @@ class ShiftController extends Controller {
 	}
 	
 	public function print($type =1){
+		$service_ids = Session::get('service_ids');
 		$current_shift = Entry::checkShift();
-		$cloak_data = CloakRoom::totalShiftData();
+		$total_shift_upi = 0;
+		$total_shift_cash = 0;
+		$total_collection = 0;
+		$last_hour_upi_total = 0;
+		$last_hour_cash_total = 0;
+		$last_hour_total = 0;
+		$sitting_data = [];
+		$cloak_data = [];
+		$canteen_data = [];
+		$massage_data = [];
+		$locker_data = [];
 
-		$total_shift_upi = $cloak_data['total_shift_upi'];
-        $total_shift_cash = $cloak_data['total_shift_cash'];
-        $total_collection = $cloak_data['total_collection'];
+		if(Auth::user()->priv != 2){
+            $user_id = Auth::id();
+        }
+
+        // if(Auth::user()->priv ==4 && Auth::id() == 23){
+        // 	$user_id = 19;
+        // }
+
+		if(in_array(1, $service_ids)){
+			$sitting_data = Sitting::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $sitting_data['total_shift_upi'];
+			$total_shift_cash += $sitting_data['total_shift_cash'];
+			$total_collection += $sitting_data['total_collection'];
+			
+		}
+
+		if(in_array(2, $service_ids)){
+			$cloak_data = CloakRoom::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $cloak_data['total_shift_upi'];
+			$total_shift_cash += $cloak_data['total_shift_cash'];
+			$total_collection += $cloak_data['total_collection'];
+			
+		}
+		
+		if(in_array(3, $service_ids)){
+			$canteen_data = Canteen::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $canteen_data['total_shift_upi'];
+			$total_shift_cash += $canteen_data['total_shift_cash'];
+			$total_collection += $canteen_data['total_collection'];
+			
+		}		
+
+		if(in_array(4, $service_ids)){
+			$massage_data = Massage::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $massage_data['total_shift_upi'];
+			$total_shift_cash += $massage_data['total_shift_cash'];
+			$total_collection += $massage_data['total_collection'];
+			
+		}		
+
+		if(in_array(5, $service_ids)){
+			$locker_data = Locker::totalShiftData($input_date,$user_id);
+			$total_shift_upi += $locker_data['total_shift_upi'];
+			$total_shift_cash += $locker_data['total_shift_cash'];
+			$total_collection += $locker_data['total_collection'];
+		}
 		
 
         return view('admin.print_shift',[
-        	'cloak_data'=>$cloak_data,
         	'total_shift_upi'=>$total_shift_upi,
         	'total_shift_cash'=>$total_shift_cash,
-        	'total_collection'=>$total_collection
+        	'total_collection'=>$total_collection,
+        	'sitting_data'=>$sitting_data,
+			'cloak_data'=>$cloak_data,
+			'canteen_data'=>$canteen_data,
+			'massage_data'=>$massage_data,
+			'locker_data'=>$locker_data,
         ]);
 	}
 
