@@ -128,14 +128,15 @@ class ShiftController extends Controller {
 		$canteen_data = [];
 		$massage_data = [];
 		$locker_data = [];
-
+       
 		if(Auth::user()->priv != 2){
             $user_id = Auth::id();
         }
 
-        // if(Auth::user()->priv ==4 && Auth::id() == 23){
-        // 	$user_id = 19;
-        // }
+        if(Auth::user()->priv ==4 && Auth::id() == 23){
+        	$user_id = 19;
+        }
+        $input_date = date("Y-m-d");
 
 		if(in_array(1, $service_ids)){
 			$sitting_data = Sitting::totalShiftData($input_date,$user_id);

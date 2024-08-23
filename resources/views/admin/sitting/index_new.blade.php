@@ -58,7 +58,7 @@
                             <th>Mobile No</th>
                             <th>PNR</th>
                             <th>Validity</th>
-                            <th>Pay Type</th>
+                            <!--<th>Pay Type</th>-->
                             <th>Paid Amount</th>
                             @if(Auth::user()->priv == 1)
                                 <th>#</th>
@@ -76,10 +76,10 @@
 
                             <td>@{{ item.pnr_uid }}</td>
                             <td>@{{ item.show_time }} (@{{item.hours_occ}} Hr)</td>
-                            <td>
-                                <span ng-if="item.pay_type == 1">Cash</span>
-                                <span ng-if="item.pay_type == 2">UPI</span>
-                            </td>
+                            <!--<td>-->
+                            <!--    <span ng-if="item.pay_type == 1">Cash</span>-->
+                            <!--    <span ng-if="item.pay_type == 2">UPI</span>-->
+                            <!--</td>-->
                             <td>@{{ item.paid_amount }}</td>
                             @if(Auth::user()->priv == 1)
 
@@ -92,7 +92,9 @@
                             @endif
                             
                             <td>
-                                <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
+                                @if(Auth::user()->client_id != 1 && (Auth::user()->priv == 2 || Auth::user()->priv == 1))
+                                    <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
+                                @endif
                                 <a ng-if="item.checkout_status != 1" href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
                                 
                                 <a ng-if="item.checkout_status != 1" href="{{url('/admin/sitting/print-unq/2/')}}/@{{item.barcodevalue}}" class="btn btn-success btn-sm" target="_blank">Print</a>

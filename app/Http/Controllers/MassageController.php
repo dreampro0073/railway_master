@@ -29,7 +29,7 @@ class MassageController extends Controller {
 		$m_entries = $m_entries->orderBy('id','DESC');
 		if(Auth::user()->priv != 1){
 		}
-		$m_entries = $m_entries->take(200);
+		$m_entries = $m_entries->where('client_id',Auth::user()->client_id)->take(200);
 
 		$m_entries = $m_entries->get();
 		$show_pay_types = Entry::showPayTypes();

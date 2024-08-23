@@ -503,9 +503,9 @@ class SittingController extends Controller {
 	public function printPostUnq($type =1,$print_id = ''){
         $print_data = DB::table('sitting_entries')->where('barcodevalue', $print_id)->first();
 
-        // if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
-		// 	return "Print not allowed";
-		// }
+        if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
+			return "Print not allowed";
+		}
 		// if($type == 2 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
 		// 	return "Print not allowed";
 		// }
@@ -546,10 +546,12 @@ class SittingController extends Controller {
         	$print_data->adult_f_amount += $print_data->no_of_adults * $sec_hours * $rate_list->adult_rate_sec;
             $print_data->children_f_amount += $print_data->no_of_children * $rate_list->child_rate_sec * $sec_hours;
         }
-
-        DB::table('sitting_entries')->where('id',$print_data->id)->update([
-        	'print_count' => $print_data->print_count+1,
-        ]);
+        if($type == 1){
+        	DB::table('sitting_entries')->where('id',$print_data->id)->update([
+	        	'print_count' => $print_data->print_count+1,
+	        ]);
+        }
+        
               
 		return view('admin.sitting.print_sitting_unq',compact('print_data','total_amount','rate_list','type'));
 	}
