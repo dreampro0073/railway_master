@@ -95,6 +95,8 @@
                                 @if(Auth::user()->client_id != 1 && (Auth::user()->priv == 2 || Auth::user()->priv == 1))
                                     <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="editCheckout(item.id)" class="btn btn-danger btn-sm">Checkout</a>
                                 @endif
+                                <a href="javascript:;" ng-if="item.checkout_status != 1 " ng-click="newEditCheckout(item.id)" class="btn btn-danger btn-sm">Checkout By Devendra</a>
+
                                 <a ng-if="item.checkout_status != 1" href="javascript:;" ng-click="edit(item.id)" class="btn btn-warning btn-sm">Edit</a>
                                 
                                 <a ng-if="item.checkout_status != 1" href="{{url('/admin/sitting/print-unq/2/')}}/@{{item.barcodevalue}}" class="btn btn-success btn-sm" target="_blank">Print</a>

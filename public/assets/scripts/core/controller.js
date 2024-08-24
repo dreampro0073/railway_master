@@ -219,6 +219,7 @@ app.controller('cloackCtrl', function($scope , $http, $timeout , DBService) {
             $scope.formData.balance_amount = amount - $scope.formData.paid_amount;
         }
     }
+
     $scope.delete = function (id) {
         if(confirm("Are you sure?") == true){
             DBService.getCall('/api/cloak-rooms/delete/'+id).then((data) => {
@@ -530,6 +531,26 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
     $scope.productName= '';
     $scope.old_hr = 0;
 
+    $scope.newEditCheckout = function(new_checkout_id){
+        $scope.entry_id = new_checkout_id;
+        if(confirm("Are you sure?") == true){
+            $scope.setNullFormData();
+            DBService.postCall({checkout_id : new_checkout_id}, '/api/sitting/checkout-new').then((data) => {
+                if (data.success) {
+                    alert(data.message);
+                    $scope.init();
+                }else{
+                    $scope.formData = data.entry;
+                    $scope.checkout_process = true;
+
+                    setTimeout(function(){
+                       $("#checkoutModal").modal("show");
+                    }, 800);
+                }
+            });
+        };
+
+    }
 
     $scope.setNullFormData = function(){
         $scope.formData = {
@@ -633,24 +654,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         });
     }
 
-    // $scope.handleKeyPress = function(event) {
-    //     if($scope.checkout_loading){
-    //         return;
-    //     }
-    //     if (event.which === 13) {
-    //         $scope.editCheckout1();
-    //         if ($scope.productName.trim()) {
-    //             $scope.productName = '';
-    //         }
-    //     } else {
-    //         $scope.productName = ($scope.productName || '') + event.key;
-    //     }
-    // };
-
     $scope.handleKeyPress = function(event) {
-        // if($scope.checkout_loading){
-        //     return;
-        // }
         if (event.which === 13) {
             $scope.editCheckout1();
             if ($scope.scannedValue.trim()) {
@@ -660,6 +664,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             $scope.scannedValue = ($scope.scannedValue || '') + event.key;
         }
     };
+
     $scope.add = function(){
         $scope.entry_id = 0;
         $scope.setNullFormData();
