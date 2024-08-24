@@ -67,7 +67,8 @@
                         </tr>
                     </thead>
                     <tbody ng-if="entries.length > 0">
-                        <tr ng-repeat="item in entries" ng-class="{'not_checkout' : item.checkout_status == 0 }">
+                        <tr ng-repeat="item in entries" ng-class="item.check_class">
+
                             <td>@{{ $index+1 }}</td>
                             <td>@{{ item.slip_id }}</td>
                             

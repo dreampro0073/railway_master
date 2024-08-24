@@ -162,6 +162,7 @@ class SittingController extends Controller {
 			$e_total = Sitting::eSum($item->id);
 
 			$item->paid_amount = $item->paid_amount + $e_total;
+			$item->str_checkout_time = strtotime($item->checkout_date);
 		}
 		$rate_list = Sitting::rateList();
 

@@ -505,7 +505,7 @@ app.controller('massageCtrl', function($scope , $http, $timeout , DBService) {
     }
 
 });
-app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
+app.controller('sittingCtrl', function($scope , $http, $timeout , DBService, $interval) {
     $scope.loading = false;
     $scope.formData = {
         id:'',
@@ -578,6 +578,7 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
                 $scope.hours = data.hours;
                 $scope.entries = data.entries;
                 $scope.rate_list = data.rate_list;
+                $scope.updateCheckoutClass();
             }
             $("#productName").focus();
         });
@@ -680,8 +681,6 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
         $("#checkoutModal").modal("hide");
     }
 
-
-
     $scope.onSubmit = function () {
         $scope.loading = true;
         DBService.postCall($scope.formData, '/api/sitting/store').then((data) => {
@@ -764,6 +763,33 @@ app.controller('sittingCtrl', function($scope , $http, $timeout , DBService) {
             }
         });  
     }
+
+    $scope.updateCheckoutClass = function(){
+        const milliseconds = new Date().getTime();
+        const unixTimestamp = Math.floor(milliseconds / 1000);
+        for (var i = 0; i < $scope.entries.length; i++) {
+            $scope.entries[i].check_class = "";
+            if($scope.entries[i].checkout_status == 0){
+                if(unixTimestamp > $scope.entries[i].str_checkout_time){
+                    $scope.entries[i].check_class = "danger";
+                } else {
+                    if((unixTimestamp+600) > $scope.entries[i].str_checkout_time){
+                        $scope.entries[i].check_class = "warning";
+                    } else {
+                        $scope.entries[i].check_class = "info";
+                    }
+                }
+            }
+
+        }
+    }
+
+    var intervalPromise = $interval($scope.updateCheckoutClass, 12000);
+    $scope.$on('$destroy', function() {
+        if (intervalPromise) {
+            $interval.cancel(intervalPromise);
+        }
+    });
 
     // $scope.delete = function (id) {
     //     if(confirm("Are you sure?") == true){

@@ -112,9 +112,6 @@ class Sitting extends Model
         }
 
         $input_date = date("Y-m-d",strtotime($input_date));
-
-        dd($input_date);
-
         
         if($user_id == 0 ){
             $total_shift_upi = Sitting::where('client_id', $client_id)->where('date',$input_date)->where('pay_type',2)->sum("paid_amount");
