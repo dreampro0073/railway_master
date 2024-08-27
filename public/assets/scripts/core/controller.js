@@ -996,6 +996,7 @@ app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService
         item_name:'',
         item_short_name:'',
         price:'',
+        barcodevalue:'',
     };
     $scope.stockData = {
         stock:'',
@@ -1008,6 +1009,7 @@ app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService
     $scope.init = function () {
         DBService.postCall($scope.filter, '/api/canteen-items/init').then((data) => {
             $scope.canteen_items = data.canteen_items;
+            $("#barcodevalue").focus();
         });
     }
     $scope.filterClear = function(){
@@ -1032,18 +1034,25 @@ app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService
             item_name:'',
             item_short_name:'',
             price:'',
+            barcodevalue:'',
         };
         $scope.init();
     }
 
     $scope.add = () => {
-        $("#exampleModalCenter").modal("show");
         $scope.canteen_item_id = 0;
         $scope.formData = {
             item_name:'',
             item_short_name:'',
             price:'',
         };
+        $("#barcodevalue").focus();
+        setTimeout(function() {
+            $("#exampleModalCenter").modal("show");
+        }, 300); 
+
+        
+        
     }
 
     $scope.onSubmit = function () {
@@ -1051,13 +1060,14 @@ app.controller('canteenItemsCtrl', function($scope , $http, $timeout , DBService
         $scope.loading = true;
         DBService.postCall($scope.formData, '/api/canteen-items/store').then((data) => {
             if (data.success) {
-                alert(data.message);
+                // alert(data.message);
                 $("#exampleModalCenter").modal("hide");
 
                 $scope.formData = {
                     item_name:'',
                     item_short_name:'',
                     price:'',
+                    barcodevalue:'',
                 };
                 $scope.init();
             }else{
@@ -1125,7 +1135,7 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     $scope.formData = {
         name:'',
         mobile:'',
-        pay_type: 1,
+        pay_type: '',
         total_amount: 0,
         total_item:0,
         products: [{demo:''}],
@@ -1145,7 +1155,6 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     $scope.entry_id = 0;
     $scope.daily_entries = [];
     $scope.canteen_items = [];
-    $scope.productName = '';
 
     $scope.selectConfig = {
         valueField: 'canteen_item_id',
@@ -1157,10 +1166,32 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
               
         }
     }
+    $scope.setNull = () => {
+        $scope.entry_id = 0;
+        $scope.formData = {
+            name:'',
+            mobile:'',
+            pay_type:'',
+            total_amount: 0,
+            total_item:0,
+            products: [{demo:''}],
+
+        };
+        $scope.products = [];
+        $scope.product = {
+            canteen_item_id:0,
+            item_name:'',
+            quantity:1,
+        }; 
+        $scope.productname = '';
+
+    }
     $scope.init = function () {
         DBService.postCall($scope.filter, '/api/daily-entries/init').then((data) => {
             $scope.daily_entries = data.daily_entries;
             $scope.canteen_items = data.canteen_items;
+            $("#productname").focus();
+            $scope.setNull();
         });
     }
 
@@ -1170,6 +1201,7 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     }
 
     $scope.edit = function(entry_id){
+        $scope.setNull();
         $scope.entry_id = entry_id;
         DBService.postCall({entry_id : $scope.entry_id}, '/api/daily-entries/edit-init').then((data) => {
             if (data.success) {
@@ -1182,23 +1214,12 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     $scope.hideModal = () => {
         $("#exampleModalCenter").modal("hide");
         $scope.entry_id = 0;
-        $scope.formData = {
-            name:'',
-            mobile:'',
-            items:[],
-        };
         $scope.init();
     }
 
     $scope.add = () => {
-        $("#productName").focus();
-        $scope.entry_id = 0;
-
-        $scope.formData = {
-            name:'',
-            mobile:'',
-            items:[],
-        };
+        $("#productname").focus();
+        $scope.setNull();
         setTimeout(function() {
             $("#exampleModalCenter").modal("show");
         }, 300); 
@@ -1206,23 +1227,34 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     }
 
     $scope.onSubmit = function () {
-        $scope.loading = true;
         $scope.formData.products = $scope.products;
         if($scope.products.length == 0){
             alert("Plese select at least one item.");
-            $scope.loading = false;
+            
             return;
         }
+        if($scope.formData.name == ''){
+            alert("Plese enter the name");
+            
+            return;
+        }
+        if($scope.formData.pay_type == ''){
+            alert("Plese select the pay type");
+           
+            return;
+        }
+        if($scope.formData.total_amount == 0){
+            alert("Please select at least one item");
+           
+            return;
+        }
+
+        $scope.loading = true;
+
         DBService.postCall($scope.formData, '/api/daily-entries/store').then((data) => {
             if (data.success) {
                 alert(data.message);
                 $("#exampleModalCenter").modal("hide");
-
-                $scope.formData = {
-                    name:'',
-                    mobile:'',
-                    items:[],
-                };
                 $scope.products = [];
                 $scope.init();
                 setTimeout(function(){
@@ -1238,11 +1270,11 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
     $scope.onAddProdcut = () => {
         
         let products = $scope.products;
-        var my_item = $scope.canteen_items.find(item => item.barcodevalue == $scope.productName);
+        var my_item = $scope.canteen_items.find(item => item.barcodevalue == $scope.productname);
 
         let index = -1;
         if(products.length > 0){
-            index = products.findIndex(item => item.barcodevalue == $scope.productName);
+            index = products.findIndex(item => item.barcodevalue == $scope.productname);
         }
 
         // if (index == -1) {
@@ -1275,8 +1307,8 @@ app.controller('dailyEntryCtrl', function($scope , $http, $timeout , DBService) 
 
         $scope.formData.total_amount = total_amount;
         $scope.formData.total_item = total_item;
-        $scope.productName = '';
-        $("#productName").focus();
+        $scope.productname = '';
+        $("#productname").focus();
 
     }
 

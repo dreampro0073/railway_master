@@ -19,15 +19,14 @@ use App\Models\DailyEntry;
 
 class ApiController extends Controller {
 
-	public function login(Request $request){
-
-		$cre = ["email"=>$request->input("email"),"password"=>$request->input("password")];
+    public function login(Request $request){
+        $cre = ["email"=>$request->input("email"),"password"=>$request->input("password")];
         $rules = ["email"=>"required","password"=>"required"];
         $validator = Validator::make($cre,$rules);
 
-		if($validator->passes()){
+        if($validator->passes()){
 
-		 	if(Auth::attempt($cre)){
+            if(Auth::attempt($cre)){
                 $user = Auth::user();
                 if($user->active == 0){
                     $data["success"] = true;
@@ -45,16 +44,16 @@ class ApiController extends Controller {
                     $data["success"] = false;
                     $data["message"] = "Account is not active";
                 }
-		 	} else {
-		 		$data["success"] = false;
-		 		$data["message"] = "Invalid Username and Password";
-		 	}
-		} else {
-		 	$data["success"] = false;
-		 	$data["message"] = $validator->errors()->first();
-		}
-		return Response::json($data,200,array());
-	}
+            } else {
+                $data["success"] = false;
+                $data["message"] = "Invalid Username and Password";
+            }
+        } else {
+            $data["success"] = false;
+            $data["message"] = $validator->errors()->first();
+        }
+        return Response::json($data,200,array());
+    }
     public function mLogin(Request $request){
         
         $cre = ["mobile"=>$request->input("mobile"),"password"=>$request->input("password")];
@@ -88,10 +87,10 @@ class ApiController extends Controller {
         return Response::json($data,200,array());
     }
 
-	public function changePassword(Request $request){
+    public function changePassword(Request $request){
         $user = User::AuthenticateUser($request->header("apiToken"));
         $user_id = $user->id;
-		
+        
         $cre = ["old_password"=>$request->old_password,"password"=>$request->password,"confirm_password"=>$request->confirm_password];
         $rules = ["old_password"=>'required',"password"=>"required|min:8","confirm_password"=>"required|min:8|same:password"];
 
@@ -113,20 +112,18 @@ class ApiController extends Controller {
                 $data["message"] = "The old password you have entered is incorrect.";
             } 
 
-		}else{
-		 	$data["success"] = false;
-		 	$data["message"] = $validator->errors()->first();
-		}
+        }else{
+            $data["success"] = false;
+            $data["message"] = $validator->errors()->first();
+        }
 
-		return Response::json($data,200,array());
+        return Response::json($data,200,array());
 
-	}
+    }
 
 
     public function initCanteens(Request $request){
-        // $user = User::AuthenticateUser($request->header("apiToken"));
-        // $canteens = DB::table('canteens')->orderBy('id', 'DESC');
-
+       
         $user = Auth::user();
 
         $prives = [1,2,3];
@@ -301,7 +298,7 @@ class ApiController extends Controller {
             $canteen_items = $canteen_items->where('item_name','LIKE','%'.$request->item_name.'%');
         }
 
-        $canteen_items = $canteen_items->where('client_id',$client_id)->get();
+        $canteen_items = $canteen_items->where('client_id',$client_id)->orderBy('id','DESC')->get();
 
         $data["success"] = true;
         $data["canteen_items"] = $canteen_items;
@@ -329,14 +326,25 @@ class ApiController extends Controller {
             'item_name'=>$request->item_name,
             'item_short_name'=>$request->item_short_name,
             'price'=>$request->price,
+            'barcodevalue'=>$request->barcodevalue,
         ];
 
         $rules = [
             'item_name'=>'required',
             'item_short_name'=>'required',
             'price'=>'required',
+            
         ];
+        if($request->has('id')){
+            $rules['barcodevalue'] = 'required';
+
+        }else{
+            $rules['barcodevalue'] = 'required|unique:canteen_items';
+
+        }
+
         $validator = Validator::make($cre,$rules);
+
         if($validator->passes()){
 
             $canteen_item = CanteenItem::find($request->id);
@@ -350,8 +358,8 @@ class ApiController extends Controller {
             $canteen_item->price = $request->price; 
             $canteen_item->added_by = $user->id; 
             $canteen_item->client_id = $user->client_id; 
+            $canteen_item->barcodevalue = $request->barcodevalue; 
 
-            
             $canteen_item->save();
             $data['success'] = true;
             
@@ -367,7 +375,7 @@ class ApiController extends Controller {
         $user = Auth::user();
         $client_id = $user->client_id;
 
-        $canteen_items = DB::table('canteen_items')->select('id as canteen_item_id','price','item_name')->where('client_id',$client_id)->get();
+        $canteen_items = DB::table('canteen_items')->select('id as canteen_item_id','price','item_name','barcodevalue')->where('status',0)->where('stock','>',0)->where('client_id',$client_id)->get();
 
         foreach ($canteen_items as $key => $canteen_item) {
             $canteen_item->quantity  = 1;
@@ -617,26 +625,40 @@ class ApiController extends Controller {
 
             $entry_id = DB::table('daily_entries')->insertGetId($ins_data);
             $items = $request->products;
-            $total_amount = 0;
-            $final_ar = [];
-            if(sizeof($items) > 0){
-                foreach ($items as $key => $item) {
-                    if($item['quantity'] !=0){
-                        DB::table('daily_entry_items')->insert([
-                            'canteen_item_id' => $item['canteen_item_id'],
-                            'entry_id' => $entry_id,
-                            'paid_amount' => $item['paid_amount'],
-                            'quantity' => $item['quantity'],
-                        ]);
-
-                        $check = DB::table('canteen_items')->where('id',$item['canteen_item_id'])->first();
-                        $avil_stock = $check->stock;
-                        DB::table('canteen_items')->where('id',$item['canteen_item_id'])->update([
-                            'stock' => $avil_stock - $item['quantity'],
-                        ]);
-                    }       
-                }
+            $final_array = [];
+            foreach ($items as $value) {
+                if(in_array($value, $final_array))
             }
+            // $total_amount = 0;
+            // $final_ar = [];
+            // if(sizeof($items) > 0){
+            //     $f_ar =[];
+            //     $f_item_ids = [];
+
+            //     foreach ($items as $key => $item) {
+            //         if($item['quantity'] !=0){
+            //             if(in_array($item['canteen_item_id'], $f_item_ids)){
+
+            //             }
+            //         }       
+            //     }
+                // foreach ($items as $key => $item) {
+                //     if($item['quantity'] !=0){
+                //         DB::table('daily_entry_items')->insert([
+                //             'canteen_item_id' => $item['canteen_item_id'],
+                //             'entry_id' => $entry_id,
+                //             'paid_amount' => $item['paid_amount'],
+                //             'quantity' => $item['quantity'],
+                //         ]);
+
+                //         $check = DB::table('canteen_items')->where('id',$item['canteen_item_id'])->first();
+                //         $avil_stock = $check->stock;
+                //         DB::table('canteen_items')->where('id',$item['canteen_item_id'])->update([
+                //             'stock' => $avil_stock - $item['quantity'],
+                //         ]);
+                //     }       
+                // }
+            // }
 
             $data['success'] = true;
             $data['unique_id'] = $unique_id;
@@ -676,11 +698,8 @@ class ApiController extends Controller {
         
         $s_entry->total_quantity = DB::table('daily_entry_items')->where('daily_entry_items.entry_id','=',$s_entry->id)->sum('quantity');
 
-
         $s_entry->products = $products;
-
         $print_data = $s_entry;
-
         return view('admin.canteens.daily_entries.print_entry',compact('print_data'));
     }
 }

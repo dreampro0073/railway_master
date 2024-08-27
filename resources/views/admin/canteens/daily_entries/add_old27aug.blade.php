@@ -1,5 +1,5 @@
 <div style="margin-top:20px;">
-    <form name="myForm">
+    <form name="myForm" novalidate="novalidate" ng-submit="onSubmit(myForm.$valid)">
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -105,7 +105,7 @@
        
        
         <div class="pt-4">
-            <button type="button" ng-click="onSubmit()" class="btn btn-primary" ng-disabled="loading">
+            <button type="submit" class="btn btn-primary" ng-disabled="loading">
                 <span ng-if="!loading">Submit</span>
                 <span ng-if="loading">Loading...</span>
             </button> 

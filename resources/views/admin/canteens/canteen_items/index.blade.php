@@ -2,7 +2,39 @@
 
 @section('main')
     <div class="main" ng-controller="canteenItemsCtrl" ng-init="init();"> 
-        @include("admin.canteens.canteen_items.add")
+        <!--@include("admin.canteens.canteen_items.add")-->
+        <form name="myForm" novalidate="novalidate" ng-submit="onSubmit(myForm.$valid)" style="margin-top:20px;">
+
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label>Barcode</label>
+                    <input id="barcodevalue" autofocus type="text" ng-model="formData.barcodevalue" class="form-control" required />
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Item Name</label>
+                    <input type="text" ng-model="formData.item_name" class="form-control" required />
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Item Short Name</label>
+                    <input type="text" ng-model="formData.item_short_name" class="form-control" required />
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Price</label>
+                    <input type="number" ng-model="formData.price" class="form-control" required  />
+                </div>
+               
+              
+            </div>
+           
+           
+            <div class="pt-4">
+                <button type="submit" class="btn btn-primary" ng-disabled="loading">
+                    <span ng-if="!loading">Submit</span>
+                    <span ng-if="loading">Loading...</span>
+                </button> 
+            </div>  
+            
+       </form>
         <div class="card shadow mb-4 p-4">
             
             <div class="filters" style="margin:24px 0;">
@@ -66,5 +98,4 @@
         </div>
     </div>
 @endsection
-    
     

@@ -19,6 +19,10 @@
 
                     <div class="row">
                         <div class="col-md-12 form-group">
+                            <label>Barcode</label>
+                            <input id="barcodevalue" autofocus type="text" ng-model="formData.barcodevalue" class="form-control" required />
+                        </div>
+                        <div class="col-md-12 form-group">
                             <label>Item Name</label>
                             <input type="text" ng-model="formData.item_name" class="form-control" required />
                         </div>
