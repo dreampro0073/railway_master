@@ -67,4 +67,45 @@ ALTER TABLE `massage_entries_backup`
   ALTER TABLE `sitting_entries` ADD `checkout_th` TINYINT NOT NULL DEFAULT '0' AFTER `checkout_by`;
 
   ALTER TABLE `canteen_items` ADD `barcodevalue` VARCHAR(255) NULL DEFAULT NULL AFTER `client_id`;
+
+//   {name: "dipanshu", mobile: 7878, pay_type: "1", total_amount: 170, total_item: 7, products: [,…]}
+// mobile
+// : 
+// 7878
+// name
+// : 
+// "dipanshu"
+// pay_type
+// : 
+// "1"
+// products
+// : 
+// [,…]
+// 0
+// : 
+// {canteen_item_id: 1, price: 20, item_name: "Real Juice 20", barcodevalue: "8901207032110", quantity: 1,…}
+// 1
+// : 
+// {canteen_item_id: 1, price: 20, item_name: "Real Juice 20", barcodevalue: "8901207032110", quantity: 1,…}
+// 2
+// : 
+// {canteen_item_id: 1, price: 20, item_name: "Real Juice 20", barcodevalue: "8901207032110", quantity: 1,…}
+// 3
+// : 
+// {canteen_item_id: 1, price: 20, item_name: "Real Juice 20", barcodevalue: "8901207032110", quantity: 1,…}
+// 4
+// : 
+// {canteen_item_id: 18, price: 30, item_name: "Biscuit 30", barcodevalue: "8902268013131", quantity: 1,…}
+// 5
+// : 
+// {canteen_item_id: 18, price: 30, item_name: "Biscuit 30", barcodevalue: "8902268013131", quantity: 1,…}
+// 6
+// : 
+// {canteen_item_id: 18, price: 30, item_name: "Biscuit 30", barcodevalue: "8902268013131", quantity: 1,…}
+// total_amount
+// : 
+// 170
+// total_item
+// : 
+// 7
 ?>
