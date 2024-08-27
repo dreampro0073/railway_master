@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Sitting</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Checkout Sitting</h5>
                     </div>
                     <div class="col-md-6" style="text-align:right;">
                         <button type="button" class="close" ng-click="hideModal();" aria-label="Close">
@@ -85,8 +85,12 @@
                             <input type="number" ng-model="formData.balance_amount" class="form-control" style="color: red;" readonly />
                         </div>
                         <div class="col-md-4 form-group" ng-if="formData.id > 0">
+                            <label>Checkout Time</label>
+                            <input type="text" class="form-control" ng-model="formData.check_out" readonly>
+                        </div>
+                        <div class="col-md-4 form-group" ng-if="formData.id > 0">
                             <label>Valid Upto</label>
-                            <input type="text" class="form-control" ng-model="formData.checkout_date" readonly>
+                            <input type="text" class="form-control" ng-model="formData.show_checkout_date" readonly>
                         </div>
                         <div class="col-md-12 form-group">
                             <label>Remarks</label>

@@ -113,7 +113,7 @@ Route::group(['prefix'=>"api"], function(){
 		Route::post('/checkout-init/{type}',[SittingController::class,'checkoutInit']);	
 		Route::post('/checkout-store',[SittingController::class,'checkoutStore']);
 		// Route::get('/delete/{id}',[SittingController::class,'delete']);
-		Route::post('/checkout-new',[SittingController::class,'newCheckout']);
+		Route::post('/checkout-new/{type}',[SittingController::class,'newCheckout']);
 			
 	});
 	Route::group(['prefix'=>"cloak-rooms"], function(){

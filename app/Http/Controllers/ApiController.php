@@ -525,14 +525,7 @@ class ApiController extends Controller {
         }         
         if($request->mobile){
             $entries = $entries->where('daily_entries.mobile', 'LIKE', '%'.$request->mobile.'%');
-        }       
-
-        // if($request->search_field){
-        //     $search = $request->search_field;
-        //     $entries = $entries->where(function($query) use ($search) {
-        //         $query->where('daily_entries.name', 'LIKE' ,"%".$search."%")->orWhere('daily_entries.mobile', 'LIKE' ,"%".$search."%");
-        //     });
-        // }
+        }
         
         $entries = $entries->skip(($page_no-1)*$max_per_page)->take($max_per_page)->orderBy('id','DESC')->where('client_id',$user->client_id)->get();
 
@@ -543,7 +536,9 @@ class ApiController extends Controller {
         $data['success'] = true;
         $data['daily_entries'] = $entries;
 
-        $canteen_items = DB::table('canteen_items')->select('id as canteen_item_id','price','item_name')->where("stock", '>', 0)->where('client_id',$client_id)->get();
+        // dd(Auth::user());
+
+        $canteen_items = DB::table('canteen_items')->select('id as canteen_item_id','price','item_name','barcodevalue')->where("stock", '>', 0)->where('client_id',$client_id)->get();
 
         foreach ($canteen_items as $key => $canteen_item) {
             $canteen_item->quantity  = 1;
@@ -621,13 +616,11 @@ class ApiController extends Controller {
 
 
             $entry_id = DB::table('daily_entries')->insertGetId($ins_data);
-
             $items = $request->products;
-
             $total_amount = 0;
+            $final_ar = [];
             if(sizeof($items) > 0){
                 foreach ($items as $key => $item) {
-
                     if($item['quantity'] !=0){
                         DB::table('daily_entry_items')->insert([
                             'canteen_item_id' => $item['canteen_item_id'],

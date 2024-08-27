@@ -179,4 +179,13 @@ label.error {
 tr.not_checkout {
   background-color: #e08080 !important; }
 
+.t-danger {
+  background-color: #e62b40 !important; }
+
+.t-warning {
+  background-color: #FFC107 !important; }
+
+.t-info {
+  background-color: #9FCC2E !important; }
+
 /*# sourceMappingURL=custom.css.map */

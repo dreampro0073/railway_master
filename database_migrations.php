@@ -64,4 +64,7 @@ ALTER TABLE `massage_entries_backup`
   DROP `deleted`,
   DROP `deleted_by`,
   DROP `delete_time`;
+  ALTER TABLE `sitting_entries` ADD `checkout_th` TINYINT NOT NULL DEFAULT '0' AFTER `checkout_by`;
+
+  ALTER TABLE `canteen_items` ADD `barcodevalue` VARCHAR(255) NULL DEFAULT NULL AFTER `client_id`;
 ?>

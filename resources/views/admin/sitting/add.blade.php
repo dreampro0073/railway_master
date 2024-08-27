@@ -52,20 +52,22 @@
                         </div>
 
                         <div class="col-md-3 form-group">
-                            <label>Pay Type</label>
-                            <select ng-model="formData.pay_type" class="form-control" required >
-                                <option value="">--select--</option>
-                                <option ng-repeat="item in pay_types" ng-value=@{{item.value}}>@{{ item.label}}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-
-                        <div class="col-md-3 form-group">
                             <label>Hour Occ</label>
                             <select ng-model="formData.hours_occ" class="form-control" ng-change="changeAmount()" ng-disabled="checkout_process" required >
                                 <option value="">--select--</option>
                                 <option ng-disabled="entry_id > 0 && old_hr > item.value" ng-repeat="item in hours" ng-value=@{{item.value}}>@{{ item.label}}</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-3 form-group">
+                            <label>Pay Type</label>
+                            <select ng-model="formData.pay_type" class="form-control" required >
+                                <option value="">--select--</option>
+                                <option ng-repeat="item in pay_types" ng-value=@{{item.value}}>@{{ item.label}}</option>
                             </select>
                         </div>
 

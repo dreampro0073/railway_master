@@ -36,15 +36,16 @@ class SittingController extends Controller {
 	}
 
 	public function dumpSittingData(Request $request){
-		$old_entry_ids = DB::table('users_backup')->pluck('id')->toArray();
-		foreach ($old_entry_ids as $key => $old_id) {
-			$newTask = (new User)
-			->setTable('users_backup')
-			->find($old_id)
-			->replicate()
-			->setTable('users')
-			->save();
-		}
+	    return "Wow";
+// 		$old_entry_ids = DB::table('users_backup')->pluck('id')->toArray();
+// 		foreach ($old_entry_ids as $key => $old_id) {
+// 			$newTask = (new User)
+// 			->setTable('users_backup')
+// 			->find($old_id)
+// 			->replicate()
+// 			->setTable('users')
+// 			->save();
+// 		}
 
 		// $old_entry_ids = DB::table('massage_entries_backup')->where('is_backup',0)->take(1000)->pluck('id')->toArray();
 		// foreach ($old_entry_ids as $key => $old_id) {
@@ -177,7 +178,7 @@ class SittingController extends Controller {
 	}	
 	
 	public function editEntry(Request $request){
-		$sitting_entry = Sitting::where('id', $request->entry_id)->first();
+		$sitting_entry = Sitting::where('id', $request->entry_id)->where("client_id", Auth::user()->client_id)->first();
 
 		if($sitting_entry){
 			$sitting_entry->mobile_no = $sitting_entry->mobile_no*1;
@@ -203,10 +204,10 @@ class SittingController extends Controller {
 	
 	public function checkoutInit(Request $request,$type=0){
 		if($type== 1){
-			$sitting_entry = Sitting::where('id', $request->entry_id)->where("checkout_status", 0)->first();
+			$sitting_entry = Sitting::where('id', $request->entry_id)->where("checkout_status", 0)->where("client_id", Auth::user()->client_id)->first();
 		}else{
 			$productName =$request->productName;
-    		$sitting_entry = Sitting::where('unique_id', $productName)->where("checkout_status", 0)->first();
+    		$sitting_entry = Sitting::where('unique_id', $productName)->where("checkout_status", 0)->where("client_id", Auth::user()->client_id)->first();
 		}
 
 		if($sitting_entry){
@@ -447,6 +448,7 @@ class SittingController extends Controller {
 			$e_total = Sitting::eSum($entry->id);
 			$entry->total_amount = $e_total + $entry->paid_amount;
 			$entry->is_late = 1;
+			$entry->checkout_th = $request->checkout_th;
 
 			$entry->save();
 
@@ -474,7 +476,7 @@ class SittingController extends Controller {
 	
 	public function printPost($id = 0){
 
-        $print_data = DB::table('sitting_entries')->where('id', $id)->first();
+        $print_data = DB::table('sitting_entries')->where("client_id", Auth::user()->client_id)->where('id', $id)->first();
 		$print_data->type = "silip";
         
         $print_data->total_member = $print_data->no_of_adults + $print_data->no_of_children + $print_data->no_of_baby_staff;
@@ -496,7 +498,7 @@ class SittingController extends Controller {
 	}
 
 	public function printPostUnq($type =1,$print_id = ''){
-        $print_data = DB::table('sitting_entries')->where('barcodevalue', $print_id)->first();
+        $print_data = DB::table('sitting_entries')->where('barcodevalue', $print_id)->where("client_id", Auth::user()->client_id)->first();
 
         if($type == 1 && Auth::user()->priv == 3 && $print_data->print_count >= $print_data->max_print){
 			return "Print not allowed";
@@ -551,9 +553,16 @@ class SittingController extends Controller {
 		return view('admin.sitting.print_sitting_unq',compact('print_data','total_amount','rate_list','type'));
 	}
 
-	public function newCheckout(Request $request){
+	public function newCheckout(Request $request,$type=0){
 		$client_id = Auth::user()->client_id;
-		$entry = Sitting::where("client_id", $client_id)->where("id", $request->checkout_id)->first();
+
+		if($type== 1){
+			$entry = Sitting::where("client_id", Auth::user()->client_id)->where("id", $request->checkout_id)->first();
+		}else{
+			$productName =$request->productName;
+    		$entry = Sitting::where("client_id", Auth::user()->client_id)->where('unique_id', $productName)->where("checkout_status", 0)->first();
+		}
+
 		if($entry){
 			if($entry->checkout_status == 1){
 				$data["success"] = true;
@@ -565,6 +574,7 @@ class SittingController extends Controller {
 					$entry->checkout_status = 1;
 					$entry->checkout_by = Auth::id();
 					$entry->checkout_time = date("Y-m-d H:i:s");
+					$entry->checkout_th = $request->checkout_th;
 					$entry->save();
 
 					DB::table('checks')->insert([
@@ -606,6 +616,9 @@ class SittingController extends Controller {
 					$entry->check_in = date("h:i A",strtotime($entry->check_in));
 					$entry->check_out = date("h:i A",strtotime($entry->check_out));
 					$entry->checkout_date = date("d-m-Y h:i A",strtotime($entry->checkout_date));
+
+					$entry->show_checkout_date = $this->getValTime($entry->hours_occ,$entry->date,$entry->check_in);
+
 					$data['success'] = false;
 					$data['ex_hours'] = $ex_hours;
 					$data['entry'] = $entry;
